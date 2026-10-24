@@ -1,6 +1,8 @@
 # Tiến độ dự án
 
-**Cập nhật:** 22/10/2026 (Ngày 6), đối chiếu với `results/` trên Drive và GitHub: Chí đã xong toàn bộ code cho Colab (C3, C5–C16, C21–C24). Doanh xong D1, D2 (21/10). Hòa dừng H5 ở E1.7a (19/10): SEARLE gốc trên CIRR ra R@1 25.59, mốc là 25.66, ngưỡng ±0,05. Từ đó H4–H18 và D3 trở đi chưa chạy. Dữ liệu trên Drive có lỗi: `FashionIQ.tar` 0 byte, `CIRR.tar` (6,0 GB) bị cụt. **Phần chạy Colab trễ 3–4 ngày so với lịch gốc** (theo lịch hôm nay Hòa ở H8, Doanh ở D7); mốc M1 (18/10) chưa đạt.
+**Cập nhật:** 24/10/2026 (Ngày 8): đối chiếu lại Drive, **không có kết quả mới kể từ 21/10**. `results/` vẫn chỉ có `Hoa_H4_H5_20261019_…` và `Doanh_D2_20261021_COMPLETED`, `cache/` chỉ có cache CIRR val mặc định. Lỗi dữ liệu (C1) chưa sửa: hai file `.tar` và 4 thư mục `dryrun_2ep` trùng tên vẫn còn. Theo lịch hôm nay Hòa phải ở H10, Doanh ở D9, nên **phần Colab trễ khoảng 5–6 ngày**; M1, M3 đã quá hạn mà chưa đạt.
+
+**Bản trước:** 22/10/2026 (Ngày 6), đối chiếu với `results/` trên Drive và GitHub: Chí đã xong toàn bộ code cho Colab (C3, C5–C16, C21–C24). Doanh xong D1, D2 (21/10). Hòa dừng H5 ở E1.7a (19/10): SEARLE gốc trên CIRR ra R@1 25.59, mốc là 25.66, ngưỡng ±0,05. Từ đó H4–H18 và D3 trở đi chưa chạy. Dữ liệu trên Drive có lỗi: `FashionIQ.tar` 0 byte, `CIRR.tar` (6,0 GB) bị cụt. **Phần chạy Colab trễ 3–4 ngày so với lịch gốc** (theo lịch hôm nay Hòa ở H8, Doanh ở D7); mốc M1 (18/10) chưa đạt.
 **Cách dùng:** làm xong việc nào thì đổi `- [ ]` thành `- [x]`, ghi ngày xong ở cuối dòng, rồi cập nhật bảng tóm tắt bên dưới. Việc làm được một phần thì giữ `- [ ]` và ghi "(một phần: …)".
 
 ## Tóm tắt
@@ -12,7 +14,7 @@
 | Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 1 | 20 | 5% | H3 xong; H1, H5 một phần; H5 dừng ở E1.7a (R@1 25.59, mốc 25.66) |
 | Kế hoạch 2 tuần: Doanh (D1–D17) | 2 | 17 | 12% | D1, D2 xong 21/10; D3 là việc kế tiếp |
 | **Kế hoạch 2 tuần: cả nhóm** | 20 | 61 | **33%** | Phần chạy trên Colab mới 3/37 việc: H5 đang chặn Hòa (và H4) |
-| Mốc kiểm tra M1–M5 | 0 | 5 | 0% | M1 (hạn 18/10) chưa đạt: chưa nộp test, H5 chưa qua |
+| Mốc kiểm tra M1–M5 | 0 | 5 | 0% | M1 (hạn 18/10), M2 (21/10), M3 (23/10) quá hạn chưa đạt; M4 hạn 27/10 |
 
 Trang tự đánh giá của demo (`/api/assessment`, chỉ tính phần tái lập): lõi **93%**, tính cả phần mở rộng (SEARLE-XL, SEARLE-OTI) **75%**.
 
@@ -133,4 +135,4 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
 3. **Doanh: D3 (E4.1, E4.2), D5, D6 làm được ngay.** Cache CIRR val của Hòa đã có trên Drive, nhưng chỉ dùng lại được với cấu hình mặc định (targetpad 1.25, bicubic). Các cấu hình khác của E4.1, E4.2 phải trích đặc trưng lại.
 4. Trước E3.3 (Ngày 9), Chí hiệu chỉnh lại ngưỡng phục hồi tự động trên ảnh CIRR train ở Colab rồi commit `src/restore_rules.json`:
    `$PY tools/calibrate_restore_rules.py --images-dir $DATA/CIRR/train --n 300 --out src/restore_rules.json --report-dir $DRIVE/results/E3.3-calibration`
-5. Họp mốc M3 dự kiến 23/10 sẽ thiếu E2.0, E2.2 vì Hòa chưa tới H9. E2.0 chỉ đọc câu mô tả, không cần GPU, nên Hòa chạy được ngay song song với việc gỡ H5. Số sơ bộ của Chí (FashionIQ 90,7%, CIRR 36,3%, CIRCO 25,5%) đã vượt ngưỡng 10%.
+5. Mốc M3 (23/10) đã quá hạn mà chưa có E2.0, E2.2 vì Hòa chưa tới H9. E2.0 chỉ đọc câu mô tả, không cần GPU, nên Hòa chạy được ngay song song với việc gỡ H5. Số sơ bộ của Chí (FashionIQ 90,7%, CIRR 36,3%, CIRCO 25,5%) đã vượt ngưỡng 10%.
