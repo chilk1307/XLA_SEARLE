@@ -11,12 +11,12 @@
 
 ## 0. Cập nhật 18/10: code đã xong, làm sớm được
 
-Toàn bộ code mà các việc H1–H18 cần đã có trên GitHub. Lịch ở mục 3 là lịch gốc; hạn chế duy nhất khi làm sớm là quota GPU. Thứ tự gợi ý:
+Toàn bộ code mà các việc H1–H18 cần đã có trên GitHub. Lịch ở mục 3 là lịch gốc; khi làm sớm vẫn phải kiểm tra đầu vào, quota GPU và các quyết định phụ thuộc. Thứ tự gợi ý:
 
 1. **H1, H2, H4** (không cần GPU mạnh).
 2. **H5**: làm sớm nhất có thể, vì **Doanh cần cache của H5 để làm D3**; đây cũng là nghiệm thu bộ module mới (C4). Số CIRR lệch quá 0,05 so với bảng kỳ vọng thì dừng và báo Chí.
 3. **H6, H7, H8, H9, H17**: code đã đủ. H9 càng sớm càng tốt để Chí họp mốc M3.
-4. **H10, H11** chờ Chí chọn trọng số sau khi xem kết quả H9.
+4. **H10:** chờ Chí chốt M3 sau H9, rồi Hòa chạy quét E2.3 (40 lượt); Chí chọn trọng số **từ kết quả quét**, sau đó mới chạy top-k/mask/negation. **H11:** E4.4/E4.5 độc lập với trọng số thuộc tính; E2.6/E2.7 chờ cấu hình của Chí. **H12:** E1.13 dùng baseline nên làm sớm được; E1.12/E2.8 chờ kết quả cấu hình cuối.
 5. **T1, H16** (A100, chạy nền nhiều giờ): chỉ chạy khi còn quota; dùng chung A100 với Doanh nên báo nhau trước khi chạy.
 6. **H15** làm được ngay sau H17; **H18** chờ Doanh sinh xong bộ câu ở D16.
 
@@ -278,6 +278,9 @@ nohup $PY src/train_phi.py --exp-name phi_scale_s01 --clip-model-name ViT-B/32 \
 ```
 
 ### H11. Kết hợp và tổng quát hoá (Ngày 10) — E2.6, E2.7, E4.4, E4.5
+
+**26/10: E4.4/E4.5 đã hoàn thành** (5 mức fusion, 1 ensemble); E2.6/E2.7 còn chờ cấu hình cuối. [Báo cáo và CI](https://drive.google.com/file/d/16TaOoHstW6zlG53JiFEHdRK8LJQhzQTS/view). Không chạy lại các lượt đã nghiệm thu.
+
 Cần: C15.
 - **E2.6:** chạy cấu hình kết hợp mọi họ thuộc tính (Chí gửi lệnh) trên CIRR val và FIQ val.
 - **E4.4:** kết hợp điểm ảnh + văn bản trên CIRR val:
@@ -290,6 +293,9 @@ Cần: C15.
 - **E2.7:** cấu hình cuối (Chí gửi) trên CIRCO val và FIQ val, **không chỉnh lại tham số**.
 
 ### H12. Ví dụ định tính, bản đồ che khuất (Ngày 11) — E1.12, E1.13, E2.8
+
+**26/10: E1.13 đã hoàn thành** (10 hình, seed 0, baseline phi CIRR). E1.12/E2.8 còn chờ kết quả cấu hình cuối. [Hình và log](https://drive.google.com/drive/folders/1JKdS_atipjH9Z1LsqNxSGalMNoQijC-K).
+
 Cần: C16. Thay `<cuối>` bằng mã thư mục cấu hình cuối mà Chí gửi.
 ```bash
 R=$DRIVE/results
