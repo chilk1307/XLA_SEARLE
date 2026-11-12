@@ -86,6 +86,8 @@ def make_pipeline(spec: str, args) -> Tuple[core.RetrievalPipeline, str]:
             '--clip-model-name', args.clip_model_name, '--num-workers', str(args.num_workers)]
     if args.cache_dir:
         argv += ['--cache-dir', args.cache_dir]
+    if args.exclude_reference:
+        argv.append('--exclude-reference')
     if method['kind'] == 'phi':
         argv += ['--exp-name', method['exp'], '--phi-checkpoint-name', method['file'] or 'phi_last.pt']
     elif method['kind'] == 'oti':
@@ -821,6 +823,8 @@ def main():
         p.add_argument('--clip-model-name', default='ViT-B/32', help="Backbone of the image and sum methods")
         p.add_argument('--num-workers', type=int, default=8)
         p.add_argument('--seed', type=int, default=0)
+        p.add_argument('--exclude-reference', action='store_true',
+                       help="Remove the reference image from the ranking, as validate.py (CIRR always does it)")
         if name in ('tokens', 'gap'):
             p.add_argument('--sources', nargs='+', required=name == 'tokens', help="Methods (see the module help)")
         if name == 'tokens':

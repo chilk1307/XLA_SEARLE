@@ -132,3 +132,4 @@ File mới `src/attributes/meters.py`, dùng OpenCV và scikit-image; ảnh thu 
 ## Lịch sử thay đổi
 
 - 2026-10-16: tạo kế hoạch.
+- 2026-11-12: quyết định M3: giữ hướng thuộc tính làm đóng góp chính (E2.0: FIQ 90,7%, CIRR 36,3%; E2.2: FIQ 4/5 họ, CIRR 3/5 họ đạt 65%).

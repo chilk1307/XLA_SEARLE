@@ -1,5 +1,17 @@
 # Tiến độ dự án
 
+**Cập nhật 12/11/2026 (Chí):**
+- **Quyết định gỡ chặn Hòa** (chi tiết ở đầu [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md)):
+  - **M3: giữ hướng thuộc tính (02)** theo đúng luật của 02. Hòa chạy H10 ngay.
+  - **H5:** file test lịch sử sinh trên A100. Khi khác GPU, tiêu chí đạt là top-1 trùng ≥ 99% và tập hợp top-10 trùng ≥ 95%. Lượt 26/10 cho 99,59% và 96,31% nên đạt. Hòa chạy tiếp E1.7b/c/e/f và H4.
+- **Doanh** (kết quả ở Drive riêng `Doanh_SEARLE`, [link](https://drive.google.com/drive/folders/1aIGshqcJNtr_QBon3mh_72pF-_S_xcec)):
+  - D3, D4 xong 26/10. Cấu hình mặc định targetpad 1.25 + bicubic tốt nhất (R@1 25,50). Lật ảnh không giúp, nên Chí chốt giữ mặc định.
+  - D5 (E3.1, 10/11): **CIRR dùng được**. Nặng nhất là `motion_blur:2` −2,80, `low_light:2` −2,25, `salt_pepper:2` −2,03; nhẹ nhất `low_res:1` −0,10.
+  - **E3.1 trên CIRCO không dùng được** do lệnh mẫu trong kế hoạch thiếu `--exclude-reference`. Ảnh tham chiếu sạch đứng hạng 1 ở 116/220 truy vấn; khi ảnh bị làm xấu, nó tụt hạng làm mAP@5 tăng giả (`motion_blur:2` +1,81). Đã sửa lệnh, Doanh chạy lại 17 lượt CIRCO.
+  - D6 (E3.5) xong: lọc thông thấp từ bán kính 0,1 trở lên gần như không mất điểm; lọc thông cao mất 4,6–7,7 điểm.
+  - D7 một phần: đã có đặc trưng 9 phiên bản ảnh shard s0; `phi_s0_clean` 50 epoch cho R@1 24,32.
+- **Hòa H18-P1** (11/11, [Drive](https://drive.google.com/drive/folders/1v0oeRA5u0r6NOEeTRMODYQGc8x4crAfg)): bộ câu P1 cho CIRCO mAP@5 5,85 so với 6,67 của P0. Chênh −0,81, CI [−2,13; +0,52] chứa 0, nên chưa kết luận. Phần P2/P3 chờ D16.
+
 **Cập nhật 31/10/2026:** H14 đã hoàn thành phần tổng hợp kết quả hiện có: [bản bàn giao](https://drive.google.com/file/d/1Sgz4m2cfz_cRWWeWg8ceqXJqqgrgtOcH/view) và [gói bảng/CSV/6 hình/báo cáo nguồn](https://drive.google.com/file/d/1oiSszdML3RktHy71994U4yb5ADqLFU6C/view). Đã kiểm tra 71 dòng OTI (70 snapshot + đối chứng), sáu hình hợp lệ; không chạy lại các thí nghiệm đã nghiệm thu. H14 vẫn một phần vì còn thiếu cấu hình cuối và điểm test.
 
 **H16 hoàn tất 31/10/2026 lúc 16:59 (giờ Việt Nam):** đã train đủ 100/100 epoch và đánh giá CIRR/CIRCO, experiment `phi_B32_cosine_Hoa_20261031_062447_bcb2c7`, code `7df558e`, A100 40 GB, seed 42, cosine LR/warm-up 5 epoch. CSV đủ 100 epoch và 20 mốc validation; checkpoint cuối epoch 100, tham số hữu hạn. Bốn lượt đối chứng/cosine đủ 4.181 truy vấn CIRR và 220 truy vấn CIRCO mỗi lượt, không lỗi ảnh, không bỏ hoặc trùng truy vấn. CIRR R@1: 25,47 → 24,61 (−0,86 điểm; CI 95% [−1,55; −0,17]); CIRCO mAP@5: 6,46 → 7,69 (+1,24 điểm; CI [+0,24; +2,31]). CI ghép cặp 1.000 lần, seed 0; một seed train, chưa điều chỉnh nhiều phép so sánh. CIRCO giữ mặc định ảnh tham chiếu, không so trực tiếp với H6-ex. Kết luận: tăng CIRCO nhưng giảm CIRR. [Báo cáo](https://drive.google.com/file/d/1zsgdbUUE3uzCAqg64RLKGpj1uSj8VXQ-/view) · [Toàn bộ phiên](https://drive.google.com/drive/folders/1oH1crt3x-9zLRfcVnpcMG6-iZnFiOfqx). Hòa hoàn tất **9/20 (45%)**. H14 đã bổ sung kết quả H16 vào gói tổng hợp, vẫn một phần vì thiếu cấu hình cuối và test chính thức.
@@ -38,9 +50,9 @@
 | **Giai đoạn 0: tái lập SEARLE** (trước kế hoạch) | 14 | 15 | **93%** | Còn điểm test từ server; FashionIQ val đầy đủ đã được đánh giá với `--exclude-reference` ngày 26/10 |
 | Kế hoạch 2 tuần: Chí (C1–C24) | 17 | 24 | 71% | Xong toàn bộ code cần cho Colab (C3, C5–C16, C21–C24); C2, C4 chờ nghiệm thu trên Colab; C1 cần làm tay; còn C17–C20 (demo, cấu hình cuối, báo cáo, video) |
 | Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 9 | 20 | 45% | H2, H3, H6, H7, H8, H9, H15, H16, H17 xong; H4/H5 còn vướng file test lịch sử; các việc tiếp theo phụ thuộc Chí, dữ liệu/GPU hoặc bộ câu GPT mới |
-| Kế hoạch 2 tuần: Doanh (D1–D17) | 2 | 17 | 12% | D1, D2 xong 21/10; D3 là việc kế tiếp |
-| **Kế hoạch 2 tuần: cả nhóm** | 28 | 61 | **46%** | Phần chạy trên Colab xong 11/37 việc; H6–H9, H15–H17 hoàn tất; H4/H5 và các mốc còn chờ |
-| Mốc kiểm tra M1–M5 | 0 | 5 | 0% | M1 (hạn 18/10), M2 (21/10), M3 (23/10) quá hạn chưa đạt; M4 hạn 27/10 |
+| Kế hoạch 2 tuần: Doanh (D1–D17) | 5 | 17 | 29% | D1–D4, D6 xong; D5 (CIRCO chạy lại), D7 một phần; D8 là việc kế tiếp |
+| **Kế hoạch 2 tuần: cả nhóm** | 31 | 61 | **51%** | Phần chạy trên Colab xong 14/37 việc; 12/11 Chí gỡ chặn M3 và H4/H5 |
+| Mốc kiểm tra M1–M5 | 1 | 5 | 20% | M3 đạt 12/11 (giữ hướng 02); M1, M2, M4, M5 quá hạn chưa đạt |
 
 Trang tự đánh giá của demo (`/api/assessment`, chỉ tính phần tái lập): lõi **93%**, tính cả phần mở rộng (SEARLE-XL, SEARLE-OTI) **75%**.
 
@@ -103,13 +115,13 @@ Chi tiết: [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md).
 - [ ] **H1** (Ngày 1) Dựng Colab, đóng gói dữ liệu, chạy thử SEARLE gốc trên CIRR val (một phần: Colab chạy được, cache CIRR val đã có trên Drive; đóng gói `.tar` hỏng nên dùng thư mục giải nén sẵn)
 - [x] **H2** (Ngày 1) Kiểm tra dữ liệu nhanh CIRR, CIRCO, FashionIQ (E1.2) — 26/10. Báo cáo ở `Hoa_continue_20261026_100802_0ab7841f/E1.2-inventory-parallel/`: CIRR val/test1 2.297/2.315 ảnh đủ; CIRCO gallery 123.403/123.403; FashionIQ val đủ 6.016 truy vấn và 15.536 ảnh gallery theo danh sách tệp, nhưng train/test thiếu ảnh. Không kiểm tra CIRR train trong lượt nhanh; chưa kiểm tra giải mã mọi ảnh.
 - [x] **H3** File subset CIRR (`subset_phi_B32_cirr.json` đã có, hợp lệ) — 16/10
-- [ ] **H4** (Ngày 2) Sinh file test của SEARLE gốc; nộp test SEARLE gốc và phi_B32 (B8–B11) (26/10: vẫn dừng trước H4 do H5 top-10 test chỉ trùng 82,43% <99%; file test phi mới chỉ dùng chẩn đoán, không phải nộp server)
+- [ ] **H4** (Ngày 2) Sinh file test của SEARLE gốc; nộp test SEARLE gốc và phi_B32 (B8–B11) (12/11: **đã gỡ chặn**, theo quyết định H5 của Chí; phi_B32 nộp bằng file lịch sử, SEARLE gốc sinh trên T4)
 - [ ] **H5** (Ngày 3) Kiểm tra không hồi quy; chạy lại baseline E1.7a–f (26/10: đã so code gốc `70328e1` với `main` trên cùng T4, cả hai R@1 25,59, 7 chỉ số khớp trong sai số làm tròn; xem `H5-same-GPU-comparison.json`. E1.7d xong: R@1 25,50, đủ 4.181 truy vấn, không lỗi tải ảnh/truy vấn bị bỏ. Top-10 test trên 4.148 truy vấn chỉ trùng 82,43% <99% với file lịch sử: DỪNG H4, giữ ngưỡng 99%, bộ sinh test gốc và main trên cùng T4 đã trùng top-10 100% (4.148 truy vấn), xem `H5-test-diagnosis.json`; khác biệt với file lịch sử chưa rõ nguyên nhân. Còn E1.7b/c/e/f. Lịch sử 19/10: E1.7a chạy 19/10 trên T4 ra R@1 25.59 / R@5 55.49 / R@10 69.17 / R@50 90.58, mốc A100 là 25.66 / 55.47 / 69.24 / 90.58; lệch 0,07 điểm, khoảng 3 truy vấn, vượt ngưỡng 0,05 nên dừng; E1.7b–f chưa chạy)
 - [x] **H6** (Ngày 4) Baseline CLIP E1.8 và CBIR E1.9 — 26/10: đủ 26 lượt baseline CIRR/FashionIQ/CIRCO, không lỗi ảnh hoặc truy vấn bị bỏ. CBIR CIRCO là phần tùy chọn, chưa chạy; CBIR+text CIRR đã chạy. Xem summary-all.md trong phiên CIRCO/OTI.
 - [x] **H7** (Ngày 5) Kiểm tra dữ liệu bằng công cụ E1.2; khoảng tin cậy E1.4; gom kết quả — 26/10: đủ ba bảng CI 95%, 1.000 lần bootstrap, seed 0, baseline phi_B32 cùng tập; kiểm tra bộ val local đủ ảnh/truy vấn và gom 26 lượt vào summary-all.md.
 - [x] **H8** (Ngày 6) Taxonomy E1.10 cả ba tập; keep-edit E1.11, token E1.15a và modality gap E1.15b CIRR/CIRCO — 26/10. Keep-edit CIRCO dùng phi_B32 --exclude-reference của H6 thay cho lượt E1.7e chưa nghiệm thu ở H5. Có report.md và các hình tokens.png, gap.png; phần bổ sung token OTI sẽ chạy sau H15.
 - [x] **H9** (Ngày 7) Thống kê thuộc tính E2.0 và đồng thuận bộ đo E2.2 — 26/10: đủ ba tập, không lỗi ảnh; CIRR 67,1%/ngẫu nhiên 45,8%; FashionIQ 75,8%/51,6% trên 9.778 ràng buộc; CIRCO 62,7%/49,3%. Đủ dữ liệu bàn giao M3; Chí chưa quyết định giữ/đổi hướng.
-- [ ] **H10** (Ngày 8–9) Quét xếp hạng lại (E2.3); mặt nạ (E2.4); phủ định (E2.5)
+- [ ] **H10** (Ngày 8–9) Quét xếp hạng lại (E2.3); mặt nạ (E2.4); phủ định (E2.5) (12/11: M3 đã chốt, **chạy được ngay**)
 - [ ] **H11** (Ngày 10) Kết hợp (E2.6), tổng quát hoá (E2.7), kết hợp điểm (E4.4), ensemble prompt (E4.5) — 26/10: **E4.4/E4.5 đã xong**, 5 trọng số fusion và 1 ensemble, đủ 4.181 truy vấn/lượt, có CI ghép cặp. Còn E2.6/E2.7 chờ cấu hình cuối của Chí. Xem báo cáo H11/H12 ở đầu trang.
 - [ ] **H12** (Ngày 11) Ví dụ định tính (E1.12), bản đồ che khuất (E1.13), ví dụ có giải thích (E2.8) — 26/10: **E1.13 đã xong**, đủ 10 hình che khuất baseline phi CIRR, seed 0. Còn E1.12/E2.8 chờ kết quả cấu hình cuối.
 - [ ] **H13** (Ngày 12) Nộp test cấu hình cuối (E2.9); khoảng tin cậy bảng chính
@@ -117,7 +129,7 @@ Chi tiết: [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md).
 - [x] **H15** (Ngày 11) OTI warm-start CIRCO val E7.1a–d — 26/10: đủ 5 cấu hình (random 0,02; phi 0,02/0,005; SEARLE 0,02/0,005), 7 snapshot × token thường/EMA = 70 lượt đánh giá, seed 42. Mỗi lượt đủ 220 truy vấn, không lỗi ảnh hoặc truy vấn bị bỏ. Đã phân tích lại token OTI, lưu thời gian batch, đường cong và CI ghép cặp với P0. Xem H17_H15_attempt2/, oti-snapshot-metrics.csv, oti-inversion-timing.csv, oti-warmstart-curves.png, E7.1-ci-finals-circo/ trong phiên CIRCO/OTI. Chí chọn cấu hình cho D15; chưa tự chọn thay nhóm.
 - [x] **H16** (Ngày 10) Train phi với lịch LR cosine (E8.2a) — 31/10: đủ 100 epoch, checkpoint cuối và đánh giá CIRR/CIRCO cùng đối chứng; có CI ghép cặp và báo cáo nghiệm thu ở đầu trang.
 - [x] **H17** (Ngày 7) Liên kết khái niệm CIRCO val E7.0 và OTI E6.2-Pλ0 — 26/10: CSV đủ 220 ảnh tham chiếu, 250 khái niệm/ảnh; OTI 350 bước, seed 42, bộ câu gốc với lambda_gpt=0; mAP@5/10/25/50 = 2,16/3,03/3,89/4,32. Đánh giá đủ 220 truy vấn, không lỗi ảnh/truy vấn bị bỏ. Kết quả ở phiên CIRCO/OTI, thư mục H17_H15_attempt2. Giữ mặc định không --exclude-reference theo kế hoạch.
-- [ ] **H18** (Ngày 13) OTI với bộ câu GPT mới trên CIRCO val (E6.2)
+- [ ] **H18** (Ngày 13) OTI với bộ câu GPT mới trên CIRCO val (E6.2) (một phần: P1 xong 11/11, mAP@5 5,85 so với P0 6,67, CI chênh lệch [−2,13; +0,52]; P2/P3 chờ D16)
 - [ ] **T1** (Ngày 6, tuỳ chọn) Train phi trên shard s0 (E1.14a = E8.1a)
 - [ ] **T2** (Ngày 8, tuỳ chọn) Train phi trên shard s0 + s1 (E1.14b = E8.1b)
 
@@ -127,11 +139,11 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
 
 - [x] **D1** (Ngày 1) Dựng Colab, giải nén ImageNet, kiểm tra file trên Drive (ImageNet đủ 100.000 ảnh; CIRR val đủ 2.297 ảnh) — 21/10
 - [x] **D2** (Ngày 2) Chạy thử train 2 epoch, đo thời gian (A100: epoch 1 R@1 22.24 so với mốc 22.05, epoch 2 22.79 so với 22.53; khoảng 2,4 phút mỗi epoch nên 100 epoch mất khoảng 4 giờ; kết quả ở `results/Doanh_D2_20261021_COMPLETED`) — 21/10
-- [ ] **D3** (Ngày 3) Đệm ảnh (E4.1), nội suy (E4.2)
-- [ ] **D4** (Ngày 4) Lật ảnh (E4.3); cấu hình tốt nhất trên CIRCO, FIQ
-- [ ] **D5** (Ngày 5) Mức sụt giảm với 8 loại suy giảm (E3.1)
-- [ ] **D6** (Ngày 5) Phân tích miền tần số (E3.5)
-- [ ] **D7** (Ngày 6) Đặc trưng ảnh xấu shard s0; bắt đầu sàng lọc phi bền (E3.8a)
+- [x] **D3** (Ngày 3) Đệm ảnh (E4.1), nội suy (E4.2) — 26/10: 9 lượt CIRR; targetpad 1.25 + bicubic tốt nhất (25,50); pad 1.0 −1,70, clipcrop −2,15, nearest −2,46
+- [x] **D4** (Ngày 4) Lật ảnh (E4.3); cấu hình tốt nhất trên CIRCO, FIQ — 26/10: flip-gallery +0,05, flip-ref −0,29; Chí chốt giữ mặc định (12/11), lượt CIRCO/FIQ của cấu hình mặc định chính là baseline H6 của Hòa
+- [ ] **D5** (Ngày 5) Mức sụt giảm với 8 loại suy giảm (E3.1) (một phần: 16 lượt CIRR 10/11 dùng được; 16 lượt CIRCO phải chạy lại với `--exclude-reference`, tên `-circo-ex`)
+- [x] **D6** (Ngày 5) Phân tích miền tần số (E3.5) — 10/11: 10 lượt CIRR; lowpass ≥ 0,1 mất ≤ 0,24 điểm, highpass mất 4,6–7,7 điểm
+- [ ] **D7** (Ngày 6) Đặc trưng ảnh xấu shard s0; bắt đầu sàng lọc phi bền (E3.8a) (một phần: đặc trưng 9/9 phiên bản, `phi_s0_clean` 50 epoch R@1 24,32 ngày 10/11)
 - [ ] **D8** (Ngày 7) Phục hồi cố định (E3.2); sàng lọc tiếp; nhóm left/right (E4.3b)
 - [ ] **D9** (Ngày 8) Đánh giá 3 bản sàng lọc, chọn biến thể; đặc trưng ảnh xấu 100k
 - [ ] **D10** (Ngày 9) Train phi bền bản đầy đủ (E3.8b); phục hồi tự động (E3.3)
@@ -147,15 +159,22 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
 
 - [ ] **M1** (Ngày 2, 18/10) Colab chạy được cho Hòa và Doanh; dữ liệu đã kiểm tra; code cũ ra đúng số; đã nộp test SEARLE gốc và phi_B32
 - [ ] **M2** (Ngày 5, 21/10) Quy trình mới ra đúng số cũ; bảng baseline có khoảng tin cậy; code suy giảm, phục hồi, train mới chạy được
-- [ ] **M3** (Ngày 7, 23/10) Có E2.0, E2.2 và quyết định giữ hay đổi đóng góp chính
+- [x] **M3** (Ngày 7, 23/10) Có E2.0, E2.2 và quyết định giữ hay đổi đóng góp chính — 12/11: giữ hướng thuộc tính (02)
 - [ ] **M4** (Ngày 11, 27/10) Đủ kết quả chính của 02, 03, 04; phi bền bản đầy đủ đã train; demo có 2 tab mới
 - [ ] **M5** (Ngày 14, 30/10) Báo cáo, slide, video, README hoàn chỉnh; nộp bài
 
 ## Việc tiếp theo
 
-1. **Chí: nghiệm thu M3, chọn cấu hình warm-start cho D15 và xử lý file test lịch sử của H5.** Hòa đã xong H6–H9, H15 và H17 ngày 26/10, H16 ngày 31/10; H11 xong E4.4/E4.5, H12 xong E1.13. H10 E2.3 chờ quyết định M3, sau đó Hòa quét 40 cấu hình để Chí chọn trọng số; không cần chọn sẵn trọng số trước lượt quét. H11 E2.6/E2.7 và H12 E1.12/E2.8 chờ cấu hình cuối. H4/H5 vẫn bị chặn. Về H5: Code gốc `70328e1` và `main` trên T4 cùng ra 25,59, cả 7 chỉ số CIRR trùng đến làm tròn; không cần chạy lại phép thử này. E1.7d đã đạt R@1 25,50 (mốc 25,47 ±0,05). Top-10 test đã kiểm tra nhưng chỉ trùng 82,43% <99% với file lịch sử; H4 vẫn dừng. Đã xác nhận bộ sinh test gốc/main trên cùng T4 trùng top-10 100%. Chí cần nghiệm thu nguồn gốc checkpoint/file nộp cũ và môi trường tạo file lịch sử, dùng `H5-test-diagnosis.json`/`.md`; không hạ ngưỡng hay tự chạy H4. Sau khi được xử lý mới hoàn tất E1.7b/c/e/f và H4. Giữ riêng mốc A100 25,66 và T4 25,59, không nới ngưỡng ±0,05. Kết quả mới phải dùng tên/thư mục riêng, giữ nguyên kết quả cũ.
-2. **Chí: sửa dữ liệu trên Drive (C1).** Đóng gói lại `CIRR.tar` (đủ train, dev, test1) và `FashionIQ.tar`, hoặc sửa `colab/prepare_data.sh` để đọc thẳng các thư mục giải nén sẵn. Dọn các thư mục `dryrun_2ep` trùng tên trong `outputs/phi_models/`. Nhắc Doanh dùng lối tắt `SEARLE` thay cho bản sao `SEARLE (1)`.
-3. **Doanh: D3 (E4.1, E4.2), D5, D6 làm được ngay.** Cache CIRR val của Hòa đã có trên Drive, nhưng chỉ dùng lại được với cấu hình mặc định (targetpad 1.25, bicubic). Các cấu hình khác của E4.1, E4.2 phải trích đặc trưng lại.
-4. Trước E3.3 (Ngày 9), Chí hiệu chỉnh lại ngưỡng phục hồi tự động trên ảnh CIRR train ở Colab rồi commit `src/restore_rules.json`:
-   `$PY tools/calibrate_restore_rules.py --images-dir $DATA/CIRR/train --n 300 --out src/restore_rules.json --report-dir $DRIVE/results/E3.3-calibration`
-5. Mốc M3 (23/10) đã quá hạn; ngày 26/10 đã đủ E2.0/E2.2 cả ba tập để Chí quyết định hướng chính. E2.0 đã được Hòa chạy đủ ba tập ngày 26/10 (FashionIQ 90,7%, CIRR 36,3%, CIRCO 25,5%), vượt ngưỡng 10%. E2.2 CIRR (67,1% so với ngẫu nhiên 45,8%) và CIRCO (62,7% so với 49,3%) đã có, không lỗi ảnh; E2.2 FashionIQ cũng đã xong: 75,8% so với 51,6%, không lỗi ảnh. Chí quyết định giữ/đổi hướng trước khi chọn trọng số H10/H11.
+1. **Hòa (đã gỡ chặn 12/11):** H10, quét E2.3 (40 lượt), và H5, E1.7b/c/e/f, chạy song song → H4 nộp test → gửi Chí `summary.md` của E2.3 để chọn trọng số → E2.3 (tiếp), E2.4, E2.5. Chi tiết ở đầu [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md).
+2. **Doanh:**
+   - chạy lại E3.1 trên CIRCO (16 lượt + 1 lượt ảnh sạch, biến `CIRCO` mới có `--exclude-reference`, tên thư mục `-circo-ex`);
+   - tiếp D8: E3.2 phục hồi cố định trên CIRR, hai bản sàng lọc `phi_s0_degaug`, `phi_s0_noise`;
+   - chép kết quả vào `SEARLE/results` chung hoặc ghi link vào file này.
+3. **Chí:**
+   - sau E3.2 thì điền `src/restore_oracle.json`;
+   - trước E3.3, hiệu chỉnh ngưỡng `--restore auto` trên CIRR train:
+     `$PY tools/calibrate_restore_rules.py --images-dir $DATA/CIRR/train --n 300 --out src/restore_rules.json --report-dir $DRIVE/results/E3.3-calibration`
+   - chọn cấu hình warm-start cho D15: E7.1 chưa có cấu hình nào hơn khởi tạo ngẫu nhiên rõ ràng, nên D15 có thể bỏ;
+   - chọn trọng số sau E2.3, rồi gửi cấu hình cuối (C18);
+   - C1: đóng gói lại `CIRR.tar`, `FashionIQ.tar` và dọn 4 thư mục `dryrun_2ep`;
+   - C17–C20.

@@ -9,6 +9,13 @@
 4. Ví dụ định tính, bản đồ che khuất, phân tích vector ảnh – vector từ (E1.15).
 5. Kết quả train phân tích lượng dữ liệu, luồng học máy và bộ câu GPT (nếu đã chạy).
 
+## Quyết định của Chí, 12/11: gỡ chặn H4/H5 và H10
+
+1. **M3: giữ hướng thuộc tính ([02](02_kiem_chung_thuoc_tinh.md)) làm đóng góp chính.** Theo luật ở 02 (dòng "Điểm quyết định ở mốc M3"), chỉ đổi hướng khi truy vấn có thuộc tính dưới 10% ở cả CIRR và FIQ, hoặc đa số họ có độ đồng thuận E2.2 dưới 65%. Số của Hòa: FIQ 90,7%, CIRR 36,3%; FIQ 4/5 họ và CIRR 3/5 họ đạt 65%. → **Chạy H10 ngay** (quét E2.3, 40 lượt, lệnh ở mục H10).
+2. **H5: so file test khác GPU.** File lịch sử `outputs/submissions/phi_B32_cirr.json` sinh trên **A100** (torch 1.11, TF32; xem `outputs/REPORT.md`), Hòa sinh lại trên T4. Code gốc và `main` cùng T4 trùng 100%, nên phần lệch là do GPU, không phải do code. Tiêu chí mới khi **khác GPU**: top-1 trùng ≥ 99% **và** tập hợp top-10 trùng ≥ 95% (không xét thứ tự trong top-10). Kết quả 26/10 của Hòa: 99,59% và 96,31% → **đạt**. Khi **cùng GPU** vẫn giữ tiêu chí top-10 trùng ≥ 99%. Mốc CIRR R@1: A100 = 25.66, T4 = 25.59; mỗi GPU so với mốc của chính nó, ±0,05.
+   → **H5 tiếp tục**: chạy E1.7b, c, e, f (mục H5). → **H4 tiếp tục**: sinh file SEARLE gốc trên T4 và nộp như mục H4. File phi_B32 nộp bằng **file lịch sử** trong repo (không nộp file chẩn đoán T4).
+3. Thứ tự: H10 (E2.3) và H5 (E1.7b/c/e/f) chạy song song → H4 nộp test → gửi Chí `summary.md` của E2.3 để chọn trọng số → E2.3 (tiếp), E2.4, E2.5. Cấu hình cuối (cho H11 E2.6/E2.7, H12 E1.12/E2.8, H13) Chí gửi sau khi có E2.4, E2.5; phần tiền xử lý và truy vấn đã chốt: targetpad 1.25 + bicubic, không lật ảnh, `--fusion-weight 0`, prompt mặc định (E4.1–E4.5).
+
 ## 0. Cập nhật 18/10: code đã xong, làm sớm được
 
 Toàn bộ code mà các việc H1–H18 cần đã có trên GitHub. Lịch ở mục 3 là lịch gốc; khi làm sớm vẫn phải kiểm tra đầu vào, quota GPU và các quyết định phụ thuộc. Thứ tự gợi ý:
@@ -133,7 +140,7 @@ $PY src/validate.py $PHI --dataset cirr      --dataset-path $DATA/CIRR      $OPT
 $PY src/validate.py $PHI --dataset circo     --dataset-path $DATA/CIRCO     $OPTS --output-dir $DRIVE/results/E1.7e-phiB32-circo
 $PY src/validate.py $PHI --dataset fashioniq --dataset-path $DATA/FashionIQ $OPTS --output-dir $DRIVE/results/E1.7f-phiB32-fiq
 ```
-- Kỳ vọng CIRR: SEARLE R@1 = 25.66, phi_B32 R@1 = 25.47 (±0.05). Lệch nhiều hơn → **dừng**, báo Chí.
+- Kỳ vọng CIRR: SEARLE R@1 = 25.66 trên A100, 25.59 trên T4; phi_B32 R@1 = 25.47 (±0.05). Lệch nhiều hơn mốc của đúng loại GPU → **dừng**, báo Chí (quyết định 12/11 ở đầu file).
 - Lượt CIRCO đầu tiên lâu (trích đặc trưng khoảng 123 nghìn ảnh gallery); các lượt sau dùng cache.
 - **Báo nhóm khi xong**: Doanh cần cache này để bắt đầu D3.
 - So file nộp test sinh bằng code mới với file cũ:
@@ -148,7 +155,7 @@ $PY src/validate.py $PHI --dataset fashioniq --dataset-path $DATA/FashionIQ $OPT
   keys = [k for k in a if k not in ("version", "metric")]
   print(sum(a[k][:10] == b[k][:10] for k in keys), "/", len(keys), "truy vấn có top-10 trùng")
   ```
-  Kỳ vọng ≥ 99% (khác loại GPU có thể làm lệch vài truy vấn có điểm sát nhau).
+  Kỳ vọng ≥ 99% khi cùng loại GPU. Khác loại GPU (file lịch sử sinh trên A100): đạt khi top-1 trùng ≥ 99% và tập hợp top-10 trùng ≥ 95% (quyết định 12/11; lượt 26/10 đã đạt 99,59% và 96,31%).
 
 ### H6. Baseline CLIP và CBIR cổ điển (Ngày 4) — E1.8, E1.9
 Cần: C5, C8.
@@ -239,7 +246,7 @@ $PY tools/attribute_stats.py --agreement --attr-mask auto --dataset circo     --
 ```
 
 ### H10. Quét xếp hạng lại theo thuộc tính (Ngày 8–9) — E2.3, E2.4, E2.5
-Cần: C13.
+Cần: C13. **M3 đã chốt 12/11 (giữ hướng 02): chạy ngay**, không chờ thêm.
 ```bash
 PHI="--eval-type phi --exp-name phi_B32 --phi-checkpoint-name phi_last.pt --cache-dir $DRIVE/cache"
 # E2.3: từng họ thuộc tính × trọng số, trên CIRR val và FIQ val (40 lượt, mỗi lượt vài phút)

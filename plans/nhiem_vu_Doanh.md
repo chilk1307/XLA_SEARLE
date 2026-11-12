@@ -69,8 +69,9 @@ Các lệnh dưới đây dùng biến chung:
 ```bash
 PHI="--eval-type phi --exp-name phi_B32 --phi-checkpoint-name phi_last.pt --cache-dir $DRIVE/cache"
 CIRR="--dataset cirr --dataset-path $DATA/CIRR"
-CIRCO="--dataset circo --dataset-path $DATA/CIRCO"
+CIRCO="--dataset circo --dataset-path $DATA/CIRCO --exclude-reference"
 ```
+**Sửa 12/11 (`--exclude-reference` cho CIRCO):** bản cũ của biến `CIRCO` thiếu cờ này. Trong gallery CIRCO có chính ảnh tham chiếu (bản sạch). Trên ảnh sạch, nó đứng hạng 1 ở 116/220 truy vấn, chiếm chỗ của ảnh đích. Khi ảnh tham chiếu bị làm xấu, nó tụt hạng (`motion_blur:2` chỉ còn 34/220), nên mAP@5 tăng giả. Vì vậy các lượt **E3.1 trên CIRCO ngày 10/11 không dùng được; chạy lại** 16 lượt + 1 lượt ảnh sạch với biến `CIRCO` mới (lệnh ở D5, đổi tên thư mục thành `E3.1-<loại><mức>-circo-ex` và `E3.1-clean-circo-ex`, giữ thư mục cũ). Đặc trưng ảnh đã xử lý có sẵn trong cache nên chạy nhanh. Kết quả E3.1 trên CIRR không bị ảnh hưởng (CIRR luôn loại ảnh tham chiếu).
 
 ### D1. Dựng Colab, kiểm tra file trên Drive (Ngày 1)
 - Làm mục 1, chạy ô 1–5 với ô 4 gồm `cirr circo imagenet`.
@@ -114,18 +115,20 @@ $PY tools/collect_results.py --results-dir $DRIVE/results --out $DRIVE/results/s
 ```
 - Gửi Chí bảng E4.1–E4.3; Chí chọn cấu hình tốt nhất.
 - Chạy cấu hình đó trên CIRCO val và FIQ val, **không chỉnh thêm**: `--output-dir $DRIVE/results/E4.x-best-circo` và `...-best-fiq`.
+- **Chí chốt 12/11:** cấu hình tốt nhất là **mặc định** (targetpad 1.25 + bicubic, không lật). Lật gallery chỉ hơn 0,05 điểm R@1, khoảng 2 truy vấn, không đáng thêm chi phí. Lượt mặc định trên CIRCO và FIQ chính là baseline phi_B32 có `--exclude-reference` mà Hòa đã chạy ở H6 (CIRCO mAP@5 8,85; FIQ R@10 22,83), nên **không cần chạy lại**: D4 coi như xong.
 
 ### D5. Mức sụt giảm (Ngày 5) — E3.1
-Cần: C9. Kết quả trên ảnh sạch dùng lại E1.7d, E1.7e của Hòa.
+Cần: C9. Kết quả trên ảnh sạch: CIRR dùng E1.7d của Hòa (hoặc E4.1-pad1.25 của Doanh); CIRCO chạy lượt ảnh sạch riêng (dòng đầu dưới đây).
 ```bash
+$PY src/validate.py $PHI $CIRCO --output-dir $DRIVE/results/E3.1-clean-circo-ex
 for D in gauss_noise salt_pepper gauss_blur motion_blur jpeg low_light low_res color_cast; do
   for L in 1 2; do
     $PY src/validate.py $PHI $CIRR  --degrade $D:$L --save-quality --output-dir $DRIVE/results/E3.1-$D$L-cirr
-    $PY src/validate.py $PHI $CIRCO --degrade $D:$L --save-quality --output-dir $DRIVE/results/E3.1-$D$L-circo
+    $PY src/validate.py $PHI $CIRCO --degrade $D:$L --save-quality --output-dir $DRIVE/results/E3.1-$D$L-circo-ex
   done
 done
 ```
-32 lượt, mỗi lượt vài phút (chỉ ảnh tham chiếu phải mã hoá lại).
+32 lượt, mỗi lượt vài phút (chỉ ảnh tham chiếu phải mã hoá lại). **12/11:** 16 lượt CIRR ngày 10/11 đã đúng, không chạy lại; chỉ chạy dòng đầu và các lượt `-circo-ex`.
 
 ### D6. Phân tích miền tần số (Ngày 5) — E3.5
 ```bash
@@ -242,7 +245,7 @@ R=$DRIVE/results
 $PY tools/vector_analysis.py drift $CIRR  --cache-dir $DRIVE/cache --method phi:phi_B32 \
   --runs $R/E3.1-*-cirr $R/E3.2-* $R/E3.3-*-cirr $R/E3.5-*-cirr --out $R/E3.9-drift-cirr
 $PY tools/vector_analysis.py drift $CIRCO --cache-dir $DRIVE/cache --method phi:phi_B32 \
-  --runs $R/E3.1-*-circo --out $R/E3.9-drift-circo
+  --runs $R/E3.1-*-circo-ex --out $R/E3.9-drift-circo
 # Phi bền (sau E3.8c): token có ít trôi hơn phi_B32 trên cùng suy giảm không
 $PY tools/vector_analysis.py drift $CIRR  --cache-dir $DRIVE/cache --method phi:phi_B32_robust \
   --runs $R/E3.8c-robust-*-cirr --out $R/E3.9-drift-robust-cirr

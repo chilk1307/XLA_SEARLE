@@ -152,3 +152,9 @@ Trên dữ liệu thật, Hòa kiểm tra lại ở H5 (CIRR R@1 phải là 25.6
 | File | Việc | Nội dung |
 |---|---|---|
 | `tools/vector_analysis.py` | C24 | `tokens` (E1.15a): độ lớn, từ thật gần nhất, độ giống nhau giữa các token, độ khớp giữa hai phương pháp (phi, SEARLE, OTI); `--snap-eval` đánh giá lại với token thay bằng từ gần nhất hoặc đưa về độ lớn của từ. `gap` (E1.15b): khoảng cách giữa tâm vector ảnh gallery và tâm từng kiểu vector truy vấn, thang điểm, z-score của ảnh đích, hình PCA. `drift` (E3.9): độ trôi vector ảnh, token, truy vấn của ảnh đã làm xấu / phục hồi / lọc tần số so với ảnh sạch; tương quan Spearman của độ trôi và của PSNR/SSIM với mức thiệt hại (điểm và thứ hạng ảnh đích, chỉ số); bảng "phục hồi có kéo vector về gần ảnh sạch không"; tách theo loại suy giảm với `mixed`. |
+
+## 12/11/2026: sửa sau khi đối chiếu kết quả Colab
+
+| File | Việc | Thay đổi |
+|---|---|---|
+| `tools/vector_analysis.py` | C24 | Thêm `--exclude-reference` (truyền xuống pipeline như `validate.py`), để `drift` trên CIRCO dùng cùng quy tắc với các lượt E3.1 chạy lại. |
