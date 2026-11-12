@@ -6,7 +6,7 @@
 
 **Kết quả chọn theo CIRR (chỉ là đề xuất để Chí duyệt):** màu w=0,3 cho R@1 **25,57**, chênh **+0,10**, CI 95% **[−0,12; +0,29]** chứa 0 nên **chưa có bằng chứng cải thiện rõ**. Điểm cao nhất của các họ còn lại: brightness w=0,05 (25,47), colorfulness w=0,05 (25,47), pattern w=0,1 (25,50), zoom w=0,05 (25,50); CI chênh lệch R@1 đều chứa 0. FIQ chỉ báo cùng w, không dùng để chọn lại tham số. CI chưa điều chỉnh nhiều phép so sánh/thiên lệch chọn cấu hình. H10 vẫn một phần: chờ Chí chọn trọng số rồi chạy K=50, mặt nạ, phủ định. Xem `E2.3-cirr-selection-proposal.json`, `CI-E2.3-cirr/ci.md`, `CI-E2.3-fiq/ci.md`, `E2.3-all-40.csv`, `final-audit.json` và `Hoa_H5_H10_20261112_report.md`.
 
- **H4:** chưa sinh SEARLE chính thức hoặc nộp server; Colab chưa cấp được T4 ở hai lần yêu cầu. Lượt chẩn đoán SEARLE CIRR trên L4 dùng cache ảnh chung đạt R@1 **25,52**, không dùng để nghiệm thu so với mốc T4 **25,59** hay A100 **25,66**. Ba file phi_B32 lịch sử đã sao chép nguyên trạng và kiểm tra cấu trúc/SHA-256 trong `H4-historical-phi-files/`; không dùng file chẩn đoán tái sinh để nộp. Mã `src/` không đổi so với `4ca396e` đã nghiệm thu.
+**H4 — cập nhật sau phiên T4 ngày 12/11:** đã sinh và kiểm tra đủ **6/6 file nộp**. Baseline SEARLE CIRR val trên **Tesla T4 đạt R@1 25,5919636451**, đúng mốc 25,59 ±0,05. Hai file SEARLE CIRR đủ 4.148 truy vấn/file; file SEARLE CIRCO đủ 800 truy vấn; không lỗi ảnh hoặc bỏ/trùng truy vấn. Ba file phi_B32 dùng nguyên bản lịch sử. Đã kiểm tra query ID, số dự đoán, thành viên gallery/subset, tính duy nhất và SHA-256; đã gói `H4_ready_to_submit.zip`. **Chưa hoàn tất H4:** chưa gửi thành công file lên server/chưa có điểm chính thức; thao tác tải file đang bị chặn do quyền truy cập file của tiện ích trình duyệt, CIRR còn cần hCaptcha do người dùng thực hiện. Không tăng số nhiệm vụ hoàn tất. [Toàn bộ phiên H4](https://drive.google.com/drive/folders/1vjmMR31sqibMUO_pWooKCRTSBtk5Xxl6) · [Notebook H4](https://colab.research.google.com/drive/1EGHZJ0bUhxkESVC-BQOFtKa5Fe7azyqu). CIRCO dùng cache gallery đầy đủ 123.403 ảnh; 798 vector tham chiếu được lấy nguyên từ đúng hàng gallery cùng backbone/tiền xử lý, đã kiểm tra torch.equal và ghi provenance; không sửa src/.
 
 **Cập nhật 12/11/2026 (Chí):**
 - **Quyết định gỡ chặn Hòa** (chi tiết ở đầu [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md)):
@@ -57,7 +57,7 @@
 |---|---|---|---|---|
 | **Giai đoạn 0: tái lập SEARLE** (trước kế hoạch) | 14 | 15 | **93%** | Còn điểm test từ server; FashionIQ val đầy đủ đã được đánh giá với `--exclude-reference` ngày 26/10 |
 | Kế hoạch 2 tuần: Chí (C1–C24) | 17 | 24 | 71% | Xong toàn bộ code cần cho Colab (C3, C5–C16, C21–C24); C2, C4 chờ nghiệm thu trên Colab; C1 cần làm tay; còn C17–C20 (demo, cấu hình cuối, báo cáo, video) |
-| Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 10 | 20 | 50% | H2, H3, H5, H6, H7, H8, H9, H15, H16, H17 xong; H10 xong quét E2.3 (40 lượt), chờ Chí chọn trọng số; H4 chờ T4; H18 P2/P3 chờ Doanh |
+| Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 10 | 20 | 50% | H2, H3, H5, H6, H7, H8, H9, H15, H16, H17 xong; H10 xong quét E2.3 (40 lượt), chờ Chí chọn trọng số; H4 đủ 6 file, chờ nộp/điểm server; H18 P2/P3 chờ Doanh |
 | Kế hoạch 2 tuần: Doanh (D1–D17) | 5 | 17 | 29% | D1–D4, D6 xong; D5 (CIRCO chạy lại), D7 một phần; D8 là việc kế tiếp |
 | **Kế hoạch 2 tuần: cả nhóm** | 32 | 61 | **52%** | Phần chạy trên Colab xong 15/37 việc; H5 hoàn tất và H10 xong phần quét E2.3 (40 lượt) ngày 12/11 |
 | Mốc kiểm tra M1–M5 | 1 | 5 | 20% | M3 đạt 12/11 (giữ hướng 02); M1, M2, M4, M5 quá hạn chưa đạt |
@@ -123,7 +123,7 @@ Chi tiết: [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md).
 - [ ] **H1** (Ngày 1) Dựng Colab, đóng gói dữ liệu, chạy thử SEARLE gốc trên CIRR val (một phần: Colab chạy được, cache CIRR val đã có trên Drive; đóng gói `.tar` hỏng nên dùng thư mục giải nén sẵn)
 - [x] **H2** (Ngày 1) Kiểm tra dữ liệu nhanh CIRR, CIRCO, FashionIQ (E1.2) — 26/10. Báo cáo ở `Hoa_continue_20261026_100802_0ab7841f/E1.2-inventory-parallel/`: CIRR val/test1 2.297/2.315 ảnh đủ; CIRCO gallery 123.403/123.403; FashionIQ val đủ 6.016 truy vấn và 15.536 ảnh gallery theo danh sách tệp, nhưng train/test thiếu ảnh. Không kiểm tra CIRR train trong lượt nhanh; chưa kiểm tra giải mã mọi ảnh.
 - [x] **H3** File subset CIRR (`subset_phi_B32_cirr.json` đã có, hợp lệ) — 16/10
-- [ ] **H4** (Ngày 2) Sinh file test của SEARLE gốc; nộp test SEARLE gốc và phi_B32 (B8–B11) (12/11: **đã gỡ chặn**, theo quyết định H5 của Chí; phi_B32 nộp bằng file lịch sử, SEARLE gốc sinh trên T4)
+- [ ] **H4** (Ngày 2) Sinh file test SEARLE gốc; nộp test SEARLE gốc và phi_B32 (B8–B11) — 12/11: **đã đủ 6/6 file**, kiểm tra hợp lệ; baseline T4 R@1 25,5919636451 đạt mốc. Ba file phi_B32 lịch sử giữ nguyên; ba file SEARLE sinh trên T4. Còn nộp server và lưu điểm chính thức; trình duyệt cần quyền tải file và hCaptcha CIRR. Xem phiên H4 mới ở đầu trang.
 - [x] **H5** (Ngày 3) Kiểm tra không hồi quy; baseline E1.7a–f — 12/11: E1.7a/d và kiểm tra code gốc/main cùng T4 đã xong 26/10; tiêu chí test khác GPU đã được Chí chấp thuận. Đã chạy nốt E1.7b/c/e/f trên L4, đủ 220 truy vấn CIRCO và 6.016 truy vấn FIQ mỗi lượt, không lỗi ảnh/truy vấn bị bỏ/trùng. Xem cập nhật và link phiên 12/11 ở đầu trang. Lượt chẩn đoán SEARLE L4 R@1 25,52 được ghi riêng, không thay mốc T4/A100.
 - [x] **H6** (Ngày 4) Baseline CLIP E1.8 và CBIR E1.9 — 26/10: đủ 26 lượt baseline CIRR/FashionIQ/CIRCO, không lỗi ảnh hoặc truy vấn bị bỏ. CBIR CIRCO là phần tùy chọn, chưa chạy; CBIR+text CIRR đã chạy. Xem summary-all.md trong phiên CIRCO/OTI.
 - [x] **H7** (Ngày 5) Kiểm tra dữ liệu bằng công cụ E1.2; khoảng tin cậy E1.4; gom kết quả — 26/10: đủ ba bảng CI 95%, 1.000 lần bootstrap, seed 0, baseline phi_B32 cùng tập; kiểm tra bộ val local đủ ảnh/truy vấn và gom 26 lượt vào summary-all.md.
@@ -173,7 +173,7 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
 
 ## Việc tiếp theo
 
-1. **Hòa (12/11):** H5 đã hoàn tất, H10 đã xong quét E2.3 (40 lượt) và bàn giao bảng/CI. Chờ **Chí chọn trọng số** để chạy top-k, mask, negation. H4 chờ T4 và kiểm tra đúng mốc 25,59 ±0,05 trước khi sinh SEARLE chính thức; phi_B32 dùng ba file lịch sử đã kiểm tra trong phiên 12/11. Chưa nộp server.
+1. **Hòa (12/11):** H5 hoàn tất; H10 đã xong quét E2.3 (40 lượt), chờ Chí chọn trọng số để chạy top-k, mask, negation. **H4 đã sinh và kiểm tra đủ 6 file trên T4**, còn nộp server và lưu điểm; phi_B32 dùng đúng ba file lịch sử. Cần bật quyền tải file cho tiện ích trình duyệt và thực hiện hCaptcha CIRR.
 2. **Doanh:**
    - chạy lại E3.1 trên CIRCO (16 lượt + 1 lượt ảnh sạch, biến `CIRCO` mới có `--exclude-reference`, tên thư mục `-circo-ex`);
    - tiếp D8: E3.2 phục hồi cố định trên CIRR, hai bản sàng lọc `phi_s0_degaug`, `phi_s0_noise`;
