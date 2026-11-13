@@ -19,10 +19,10 @@
 | B5 | trước 16/10 | Tái lập | phi_B32, `phi_last.pt` | CIRCO val | mAP@5 6.42, mAP@10 7.15 | −0.40 / −0.63 so với B4 | `outputs/logs/eval_phi_circo.log` | Chưa chắc gallery đủ ảnh |
 | B6 | trước 16/10 | SEARLE gốc | torch.hub B/32 | FIQ val (tập con) | TB R@10 36.99, R@50 56.82 | — | `outputs/logs/eval5_searle_fashioniq.log` | Thiếu khoảng 2.431 ảnh |
 | B7 | trước 16/10 | Tái lập | phi_B32, `phi_last.pt` | FIQ val (tập con) | TB R@10 36.51, R@50 57.05 | −0.48 / +0.23 so với B6 | `outputs/logs/eval5_phi_fashioniq.log` | Thiếu khoảng 2.431 ảnh |
-| B8 | 16/10 | File nộp test | phi_B32 | CIRR test1 | _(chờ điểm server)_ | — | `outputs/submissions/phi_B32_cirr.json` | 4.148 truy vấn, mỗi truy vấn 50 kết quả; đã có `subset_phi_B32_cirr.json` (4.148 truy vấn, 3 kết quả) |
-| B9 | 16/10 | File nộp test | phi_B32 | CIRCO test | _(chờ điểm server)_ | — | `outputs/submissions/phi_B32_circo.json` | 800 truy vấn |
-| B10 | | File nộp test | SEARLE gốc | CIRR test1 | _(chờ)_ | — | sinh ở H4 | |
-| B11 | | File nộp test | SEARLE gốc | CIRCO test | _(chờ)_ | — | sinh ở H4 | |
+| B8 | 13/11 | Điểm test chính thức | phi_B32 (file lịch sử) | CIRR test1 rc2 | R@1/5/10/50 = 23.349 / 52.651 / 66.940 / 89.735; subset R@1/2/3 = 54.458 / 75.855 / 88.072 | — | CIRR server, H4 | 4.148 truy vấn; recall và recall_subset nộp riêng; tên file trong ghi chi tiết H4 |
+| B9 | 13/11 | Điểm test chính thức | phi_B32 (file lịch sử) | CIRCO test | mAP@5/10/25/50 = 9.44 / 9.79 / 11.05 / 11.76 | — | Email CIRCO, H4 | 800 truy vấn; người dùng xác nhận nộp phi_B32 trước; xem đủ Recall và khía cạnh ngữ nghĩa bên dưới |
+| B10 | 13/11 | Điểm test chính thức | SEARLE gốc, sinh trên T4 | CIRR test1 rc2 | R@1/5/10/50 = 23.301 / 52.916 / 66.916 / 89.831; subset R@1/2/3 = 54.000 / 76.265 / 87.783 | — | CIRR server, H4 | 4.148 truy vấn; recall và recall_subset nộp riêng; không trộn với baseline val T4 25.59 |
+| B11 | 13/11 | Điểm test chính thức | SEARLE gốc, sinh trên T4 | CIRCO test | mAP@5/10/25/50 = 9.39 / 9.96 / 11.14 / 11.86 | — | Email CIRCO, H4 | 800 truy vấn; người dùng xác nhận nộp SEARLE sau phi_B32 |
 | E2.0s | 18/10 | Tỉ lệ truy vấn có thuộc tính đo được (**sơ bộ**) | `attributes/parser.py` | CIRR val (4.181), FIQ val (6.016, đủ câu), CIRCO val (220) | 36,3% / 90,7% / 25,5% | Ngưỡng M3: 10% | file chú thích công khai trên GitHub của từng tập | Chưa phải lượt chính thức (H9, trên tập con FIQ có ảnh) |
 | E2.1 | 18/10 | Kiểm thử bộ đo trên ảnh tổng hợp | `attributes/meters.py` | 46 sắc độ màu, 20 ảnh sọc/không sọc, 6 ảnh mẫu | Màu 100%; sọc 19/20 (đúng hướng 8/8); độ sáng, độ rực màu, diện tích đơn điệu; mặt nạ Otsu, GrabCut IoU 1,00, spectral residual 0,05–0,08 | — | `tools/test_meters.py` | Sai duy nhất: đốm thưa (ít cạnh) không được coi là có hoa văn |
 | C11-chấm | 18/10 | Độ chính xác parser và bộ phân loại | `parser.py`, `taxonomy.py` | 100 câu thật ngẫu nhiên (50 CIRR + 50 FIQ, seed 1) | Ràng buộc đúng 97%; nhóm đúng 78% | — | `tools/grading/parser_grading_seed1.csv` | Chấm bởi trợ lý AI thay Chí: Chí nên rà lại phiếu |
@@ -55,5 +55,52 @@ Copy khối dưới đây cho mỗi kết quả dùng trong báo cáo:
 ````
 
 ## Ghi chi tiết
+
+### H4 (B8–B11): điểm test chính thức 13/11/2026
+
+- **Người nộp:** người dùng tự nộp sáu file; trợ lý đọc và lưu các điểm trả về. H4 hoàn tất, không đồng nghĩa H13 (test cấu hình cuối) đã xong.
+- **Nguồn CIRR:** https://cirr.zheyuanliu.me/evaluate, phiên bản rc2; cả bốn lượt đều báo `Submission successful`.
+- **Nguồn CIRCO:** hai email `CIRCO test set results`. Email không ghi tên file; người dùng xác nhận phi_B32 nộp trước và SEARLE gốc nộp sau. Giữ nguyên mốc UTC trong email theo server, không suy đoán tên mô hình từ điểm số.
+- **Đầu vào:** phi_B32 giữ nguyên ba file lịch sử; ba file SEARLE sinh trên T4 ngày 12/11 sau gate CIRR val R@1 25,5919636451, đúng 25,59 ±0,05. Giao thức mặc định targetpad 1.25 + bicubic, không lật, fusion=0; CIRCO loại ảnh tham chiếu theo giao thức test. Đã kiểm tra 6 file, 4.148 truy vấn CIRR/file và 800 truy vấn CIRCO/file trước khi nộp.
+- **Giới hạn:** các bảng dưới là điểm test (%), không phải val; không có CI trên test để khẳng định chênh lệch có ý nghĩa thống kê. Không dùng điểm test để chọn trọng số hay chỉnh tham số.
+
+#### Sáu lượt nộp
+
+| File | Server / metric | Mốc UTC trả về / ghi trong email |
+|---|---|---|
+| `phi_B32_cirr.json` | CIRR rc2 / recall | 2026-11-13T14:58:47.630Z |
+| `subset_phi_B32_cirr.json` | CIRR rc2 / recall_subset | 2026-11-13T15:05:13.786Z |
+| `searle_official_cirr.json` | CIRR rc2 / recall | 2026-11-13T15:08:06.423Z |
+| `subset_searle_official_cirr.json` | CIRR rc2 / recall_subset | 2026-11-13T15:10:13.178Z |
+| `phi_B32_circo.json` | CIRCO test / email đầu | 2026-11-13T14:42:00Z (theo nội dung email) |
+| `searle_official_circo.json` | CIRCO test / email sau | 2026-11-13T14:42:33Z (theo nội dung email) |
+
+#### CIRR test1 rc2
+
+| Mô hình | R@1 | R@2 | R@5 | R@10 | R@50 | Subset R@1 | Subset R@2 | Subset R@3 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| phi_B32 | 23.349 | 34.964 | 52.651 | 66.940 | 89.735 | 54.458 | 75.855 | 88.072 |
+| SEARLE gốc | 23.301 | 34.867 | 52.916 | 66.916 | 89.831 | 54.000 | 76.265 | 87.783 |
+
+#### CIRCO test
+
+| Mô hình | mAP@5 | mAP@10 | mAP@25 | mAP@50 | R@5 | R@10 | R@25 | R@50 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| phi_B32 | 9.44 | 9.79 | 11.05 | 11.76 | 20.12 | 27.88 | 40.38 | 51.88 |
+| SEARLE gốc | 9.39 | 9.96 | 11.14 | 11.86 | 19.88 | 28.12 | 39.50 | 50.75 |
+
+CIRCO mAP xét tất cả ảnh đúng của truy vấn; Recall chỉ xét ảnh target dùng để viết mô tả tương đối.
+
+| Khía cạnh CIRCO (mAP@10) | phi_B32 | SEARLE gốc |
+|---|---:|---:|
+| Cardinality | 7.22 | 7.54 |
+| Addition | 10.32 | 10.38 |
+| Negation | 5.80 | 6.72 |
+| Direct Addressing | 11.31 | 11.55 |
+| Compare & Change | 8.10 | 8.12 |
+| Comparative Statement | 8.87 | 8.42 |
+| Statement with Conjunction | 9.05 | 9.30 |
+| Spatial Relations & Background | 10.76 | 11.19 |
+| Viewpoint | 7.62 | 7.48 |
 
 _(Thêm các mục chi tiết bên dưới, mới nhất ở trên cùng.)_
