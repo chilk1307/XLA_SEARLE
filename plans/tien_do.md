@@ -1,5 +1,14 @@
 # Tiến độ dự án
 
+**Nơi lưu kết quả train/chạy Colab** (xem trước khi cập nhật tiến độ):
+- **Hòa:** thư mục chung `SEARLE`, mục `results/Hoa_*`: https://drive.google.com/drive/folders/1EZZBD4lZxgVf65RhwHEM8eHAFYPSiZti
+- **Doanh:** thư mục riêng `Doanh_SEARLE`, mục `results/` và `outputs/phi_models/`: https://drive.google.com/drive/folders/1aIGshqcJNtr_QBon3mh_72pF-_S_xcec
+
+**Đối chiếu 13/11/2026 (Chí):** không có kết quả mới sau lần cập nhật 12/11.
+- **Hòa:** lượt mới nhất là H4 và H10/H5 ngày 12/11, đã ghi bên dưới. H4 có đủ 6 file trong `results/Hoa_H4_20261112_143910_08904b/H4_ready_to_submit.zip` nhưng **chưa nộp server**; trang CIRR cần người làm hCaptcha nên phải nộp tay. E2.3b chưa chạy.
+- **Doanh:** không có gì mới kể từ 10/11. Chưa chạy lại E3.1 trên CIRCO (`-circo-ex`), chưa bắt đầu D8 (E3.2 phục hồi cố định, hai bản sàng lọc phi bền); `outputs/phi_models/` vẫn chỉ có `phi_s0_clean`.
+- Số việc không đổi: Chí 17/24 (71%), Hòa 10/20 (50%), Doanh 5/17 (29%), cả nhóm 32/61 (52%).
+
 **Cập nhật 13/11/2026 (Chí): trọng số xếp hạng lại thuộc tính.** Chưa chọn trọng số từ 40 lượt E2.3 của Hòa. Với w = 0,05–0,3, mọi họ đều gần như không đổi chỉ số: CIRR R@1 lệch tối đa +0,10 (màu, w = 0,3; CI [−0,12; +0,29]), FIQ R@10 lệch tối đa ±0,05. Lý do: điểm mới = z(CLIP) + w · c với c ∈ [0, 1], nên w ≤ 0,3 hiếm khi đổi được thứ hạng; lượt quét mới nằm ở vùng chưa có tác dụng. Hòa chạy **E2.3b**: w = 0,5 / 1 / 2 / 4 cho màu, độ sáng, hoa văn (24 lượt). Luật chọn trọng số ghi trước ở đầu [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md): chọn trên CIRR; nếu không họ nào có CI > 0 thì cấu hình cuối không dùng xếp hạng lại thuộc tính.
 
 **Cập nhật 12/11/2026 (Hòa — H5):** H5 đã chạy xong bốn lượt còn thiếu E1.7b/c/e/f trên L4, commit `8673464`: SEARLE/phi_B32 CIRCO mAP@5 **6,82 / 6,46** (220 truy vấn/lượt); FashionIQ trung bình R@10 **22,75 / 22,65** (6.016 truy vấn/lượt), giữ mặc định ảnh tham chiếu. Không trộn các số này với H6-ex hoặc B6/B7 tập con cũ. Đủ truy vấn, không lỗi ảnh, không bỏ/trùng truy vấn. Ghép với E1.7a/d và đối chiếu cùng T4 ngày 26/10, tiêu chí test được Chí chấp thuận ngày 12/11: **H5 hoàn tất, Hòa 10/20 (50%)**. [Kết quả và log](https://drive.google.com/drive/folders/1M7qbwy9GDN5IXqudIuNLkNvHVqHJQTj4) · [Notebook](https://colab.research.google.com/drive/1tQ3wGrxBWU8OeCfmvjmSndBx7UoEOZIs).
