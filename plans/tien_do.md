@@ -59,7 +59,7 @@
 |---|---|---|---|---|
 | **Giai đoạn 0: tái lập SEARLE** (trước kế hoạch) | 14 | 15 | **93%** | Còn điểm test từ server; FashionIQ val đầy đủ đã được đánh giá với `--exclude-reference` ngày 26/10 |
 | Kế hoạch 2 tuần: Chí (C1–C24) | 17 | 24 | 71% | Xong toàn bộ code cần cho Colab (C3, C5–C16, C21–C24); C2, C4 chờ nghiệm thu trên Colab; C1 cần làm tay; còn C17–C20 (demo, cấu hình cuối, báo cáo, video) |
-| Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 10 | 20 | 50% | H2, H3, H5, H6, H7, H8, H9, H15, H16, H17 xong; H10 xong quét E2.3 (40 lượt), chờ Chí chọn trọng số; H4 đủ 6 file, chờ nộp/điểm server; H18 P2/P3 chờ Doanh |
+| Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 10 | 20 | 50% | H2, H3, H5, H6, H7, H8, H9, H15, H16, H17 xong; H10 xong quét E2.3 (40 lượt), 13/11 giao thêm E2.3b (w = 0,5–4) trước khi chọn trọng số; H4 đủ 6 file, chờ nộp/điểm server; H18 P2/P3 chờ Doanh |
 | Kế hoạch 2 tuần: Doanh (D1–D17) | 5 | 17 | 29% | D1–D4, D6 xong; D5 (CIRCO chạy lại), D7 một phần; D8 là việc kế tiếp |
 | **Kế hoạch 2 tuần: cả nhóm** | 32 | 61 | **52%** | Phần chạy trên Colab xong 15/37 việc; H5 hoàn tất và H10 xong phần quét E2.3 (40 lượt) ngày 12/11 |
 | Mốc kiểm tra M1–M5 | 1 | 5 | 20% | M3 đạt 12/11 (giữ hướng 02); M1, M2, M4, M5 quá hạn chưa đạt |
