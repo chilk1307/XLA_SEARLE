@@ -16,6 +16,31 @@
    → **H5 tiếp tục**: chạy E1.7b, c, e, f (mục H5). → **H4 tiếp tục**: sinh file SEARLE gốc trên T4 và nộp như mục H4. File phi_B32 nộp bằng **file lịch sử** trong repo (không nộp file chẩn đoán T4).
 3. Thứ tự: H10 (E2.3) và H5 (E1.7b/c/e/f) chạy song song → H4 nộp test → gửi Chí `summary.md` của E2.3 để chọn trọng số → E2.3 (tiếp), E2.4, E2.5. Cấu hình cuối (cho H11 E2.6/E2.7, H12 E1.12/E2.8, H13) Chí gửi sau khi có E2.4, E2.5; phần tiền xử lý và truy vấn đã chốt: targetpad 1.25 + bicubic, không lật ảnh, `--fusion-weight 0`, prompt mặc định (E4.1–E4.5).
 
+## Quyết định của Chí, 13/11: trọng số sau E2.3
+
+**Chưa chọn trọng số từ 40 lượt E2.3.** Với w = 0,05–0,3, mọi họ đều gần như không đổi chỉ số: CIRR R@1 lệch tối đa +0,10 (màu, w = 0,3; CI [−0,12; +0,29]), FIQ R@10 lệch tối đa ±0,05, dù màu có tới 1.265 truy vấn CIRR và 4.280 truy vấn FIQ có ràng buộc. Lý do: điểm mới = z(điểm CLIP trong top-K) + w · c, với c ∈ [0, 1]. Ảnh hạng 1 thường cao hơn các ảnh quanh hạng 10 khoảng 1 đơn vị z, nên w ≤ 0,3 hiếm khi đổi được thứ hạng. Lượt quét mới nằm ở vùng "chưa có tác dụng". Kết quả 40 lượt vẫn giữ nguyên, dùng cho bảng ablation.
+
+**E2.3b, quét tiếp w lớn hơn** (24 lượt; cache thuộc tính của E2.3 dùng lại được nên nhanh). Chỉ làm 3 họ có nhiều truy vấn: màu, độ sáng, hoa văn. Bỏ colorfulness (46 truy vấn CIRR) và zoom (2 truy vấn FIQ).
+```bash
+PHI="--eval-type phi --exp-name phi_B32 --phi-checkpoint-name phi_last.pt --cache-dir $DRIVE/cache"
+for FAM in color brightness pattern; do
+  for W in 0.5 1 2 4; do
+    $PY src/validate.py $PHI --dataset cirr --dataset-path $DATA/CIRR \
+      --attr-rerank --attr-families $FAM --attr-weight $W --output-dir $DRIVE/results/E2.3b-$FAM-w$W-cirr
+    $PY src/validate.py $PHI --dataset fashioniq --dataset-path $DATA/FashionIQ --exclude-reference \
+      --attr-rerank --attr-families $FAM --attr-weight $W --output-dir $DRIVE/results/E2.3b-$FAM-w$W-fiq
+  done
+done
+```
+Gửi Chí bảng gộp E2.3 + E2.3b (cùng dạng `E2.3-all-40.csv`, kèm CI ghép cặp như lần trước).
+
+**Luật chọn, ghi trước để không chọn theo kết quả:** theo 02 (mục 2.3), trọng số chọn trên **CIRR val**, FIQ chỉ báo cáo (vì E2.7 dùng FIQ để kiểm tra tổng quát hoá).
+- Với mỗi họ, lấy w có Δ R@1 trên CIRR lớn nhất trong cả 8 mức; nếu bằng nhau thì lấy w nhỏ hơn.
+- Họ có Δ tốt nhất mà CI vẫn chứa 0 thì ghi là "không cải thiện có ý nghĩa", nhưng vẫn dùng w đó để chạy E2.4, E2.5 (mục đích của hai thí nghiệm này là phân tích, không phải chọn cấu hình).
+- Nếu cả 3 họ đều không có CI > 0 thì cấu hình cuối sẽ **không** dùng xếp hạng lại thuộc tính. Đóng góp của 02 khi đó là phân tích (bộ đo đồng thuận với câu mô tả 63–76% so với mức ngẫu nhiên 46–52% ở E2.2, nhưng không thêm được thông tin mà CLIP chưa có), ghi trung thực trong báo cáo.
+
+**Sau E2.3b:** K = 50 (với w đã chọn) → E2.4 mặt nạ → E2.5 phủ định, đều làm trên họ màu, vì màu có nhiều truy vấn nhất. Lệnh như mục H10, thay `$FAM`, `$W` bằng giá trị Chí gửi.
+
 ## 0. Cập nhật 18/10: code đã xong, làm sớm được
 
 Toàn bộ code mà các việc H1–H18 cần đã có trên GitHub. Lịch ở mục 3 là lịch gốc; khi làm sớm vẫn phải kiểm tra đầu vào, quota GPU và các quyết định phụ thuộc. Thứ tự gợi ý:

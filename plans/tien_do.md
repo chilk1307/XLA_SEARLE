@@ -1,5 +1,7 @@
 # Tiến độ dự án
 
+**Cập nhật 13/11/2026 (Chí): trọng số xếp hạng lại thuộc tính.** Chưa chọn trọng số từ 40 lượt E2.3 của Hòa. Với w = 0,05–0,3, mọi họ đều gần như không đổi chỉ số: CIRR R@1 lệch tối đa +0,10 (màu, w = 0,3; CI [−0,12; +0,29]), FIQ R@10 lệch tối đa ±0,05. Lý do: điểm mới = z(CLIP) + w · c với c ∈ [0, 1], nên w ≤ 0,3 hiếm khi đổi được thứ hạng; lượt quét mới nằm ở vùng chưa có tác dụng. Hòa chạy **E2.3b**: w = 0,5 / 1 / 2 / 4 cho màu, độ sáng, hoa văn (24 lượt). Luật chọn trọng số ghi trước ở đầu [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md): chọn trên CIRR; nếu không họ nào có CI > 0 thì cấu hình cuối không dùng xếp hạng lại thuộc tính.
+
 **Cập nhật 12/11/2026 (Hòa — H5):** H5 đã chạy xong bốn lượt còn thiếu E1.7b/c/e/f trên L4, commit `8673464`: SEARLE/phi_B32 CIRCO mAP@5 **6,82 / 6,46** (220 truy vấn/lượt); FashionIQ trung bình R@10 **22,75 / 22,65** (6.016 truy vấn/lượt), giữ mặc định ảnh tham chiếu. Không trộn các số này với H6-ex hoặc B6/B7 tập con cũ. Đủ truy vấn, không lỗi ảnh, không bỏ/trùng truy vấn. Ghép với E1.7a/d và đối chiếu cùng T4 ngày 26/10, tiêu chí test được Chí chấp thuận ngày 12/11: **H5 hoàn tất, Hòa 10/20 (50%)**. [Kết quả và log](https://drive.google.com/drive/folders/1M7qbwy9GDN5IXqudIuNLkNvHVqHJQTj4) · [Notebook](https://colab.research.google.com/drive/1tQ3wGrxBWU8OeCfmvjmSndBx7UoEOZIs).
 
 **H10 — E2.3 đã xong 40/40 lượt:** 5 họ × 4 trọng số × CIRR/FashionIQ, K=100, mask=auto, negation=on. Mỗi lượt đủ 4.181 truy vấn CIRR hoặc 6.016 truy vấn FIQ, không lỗi ảnh, không bỏ/trùng truy vấn, không ứng viên thiếu phép đo; top-100 và chỉ số của các truy vấn không có ràng buộc thuộc họ đang xét giữ nguyên so với đối chứng cùng L4. Đối chứng CIRR R@1 **25,47**, FIQ R@10 **22,81** (`--exclude-reference` trên FIQ). Có hai bảng CI ghép cặp 1.000 lần, seed 0, CSV 40 lượt và gói bàn giao `Hoa_H5_H10_20261112_handover.zip` trong phiên ở trên. Kiểm tra 10 cache ảnh đầy đủ, đặc trưng hữu hạn, đã ghi SHA-256 checkpoint và cache.
@@ -129,7 +131,7 @@ Chi tiết: [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md).
 - [x] **H7** (Ngày 5) Kiểm tra dữ liệu bằng công cụ E1.2; khoảng tin cậy E1.4; gom kết quả — 26/10: đủ ba bảng CI 95%, 1.000 lần bootstrap, seed 0, baseline phi_B32 cùng tập; kiểm tra bộ val local đủ ảnh/truy vấn và gom 26 lượt vào summary-all.md.
 - [x] **H8** (Ngày 6) Taxonomy E1.10 cả ba tập; keep-edit E1.11, token E1.15a và modality gap E1.15b CIRR/CIRCO — 26/10. Keep-edit CIRCO dùng phi_B32 --exclude-reference của H6 thay cho lượt E1.7e chưa nghiệm thu ở H5. Có report.md và các hình tokens.png, gap.png; phần bổ sung token OTI sẽ chạy sau H15.
 - [x] **H9** (Ngày 7) Thống kê thuộc tính E2.0 và đồng thuận bộ đo E2.2 — 26/10: đủ ba tập, không lỗi ảnh; CIRR 67,1%/ngẫu nhiên 45,8%; FashionIQ 75,8%/51,6% trên 9.778 ràng buộc; CIRCO 62,7%/49,3%. Đủ dữ liệu bàn giao M3; Chí chưa quyết định giữ/đổi hướng.
-- [ ] **H10** (Ngày 8–9) Quét xếp hạng lại (E2.3); mặt nạ (E2.4); phủ định (E2.5) — 12/11: **xong quét E2.3, 40/40 lượt**, hai bảng CI ghép cặp, seed 0; mọi truy vấn/ứng viên được kiểm tra đủ, truy vấn không có ràng buộc giữ nguyên top-100. Màu w=0,3 tốt nhất CIRR: R@1 25,47 → 25,57; CI Δ [−0,12; +0,29] chứa 0. Còn K=50, E2.4/E2.5 chờ Chí chọn trọng số; chưa chốt cấu hình cuối.
+- [ ] **H10** (Ngày 8–9) Quét xếp hạng lại (E2.3); mặt nạ (E2.4); phủ định (E2.5) — 12/11: **xong quét E2.3, 40/40 lượt**, hai bảng CI ghép cặp, seed 0; mọi truy vấn/ứng viên được kiểm tra đủ, truy vấn không có ràng buộc giữ nguyên top-100. Màu w=0,3 tốt nhất CIRR: R@1 25,47 → 25,57; CI Δ [−0,12; +0,29] chứa 0. 13/11: Chí chưa chọn trọng số (w ≤ 0,3 gần như không đổi thứ hạng), giao **E2.3b**: w = 0,5–4, 3 họ, 24 lượt; sau đó mới đến K=50, E2.4, E2.5.
 - [ ] **H11** (Ngày 10) Kết hợp (E2.6), tổng quát hoá (E2.7), kết hợp điểm (E4.4), ensemble prompt (E4.5) — 26/10: **E4.4/E4.5 đã xong**, 5 trọng số fusion và 1 ensemble, đủ 4.181 truy vấn/lượt, có CI ghép cặp. Còn E2.6/E2.7 chờ cấu hình cuối của Chí. Xem báo cáo H11/H12 ở đầu trang.
 - [ ] **H12** (Ngày 11) Ví dụ định tính (E1.12), bản đồ che khuất (E1.13), ví dụ có giải thích (E2.8) — 26/10: **E1.13 đã xong**, đủ 10 hình che khuất baseline phi CIRR, seed 0. Còn E1.12/E2.8 chờ kết quả cấu hình cuối.
 - [ ] **H13** (Ngày 12) Nộp test cấu hình cuối (E2.9); khoảng tin cậy bảng chính
@@ -173,7 +175,7 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
 
 ## Việc tiếp theo
 
-1. **Hòa (12/11):** H5 hoàn tất; H10 đã xong quét E2.3 (40 lượt), chờ Chí chọn trọng số để chạy top-k, mask, negation. **H4 đã sinh và kiểm tra đủ 6 file trên T4**, còn nộp server và lưu điểm; phi_B32 dùng đúng ba file lịch sử. Cần bật quyền tải file cho tiện ích trình duyệt và thực hiện hCaptcha CIRR.
+1. **Hòa (12/11):** H5 hoàn tất; H10: chạy **E2.3b** (24 lượt, lệnh ở đầu [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md)), gửi Chí bảng gộp E2.3 + E2.3b; Chí chọn trọng số theo luật đã ghi, rồi Hòa chạy K=50, E2.4, E2.5. **H4 đã sinh và kiểm tra đủ 6 file trên T4**, còn nộp server và lưu điểm; phi_B32 dùng đúng ba file lịch sử. Cần bật quyền tải file cho tiện ích trình duyệt và thực hiện hCaptcha CIRR.
 2. **Doanh:**
    - chạy lại E3.1 trên CIRCO (16 lượt + 1 lượt ảnh sạch, biến `CIRCO` mới có `--exclude-reference`, tên thư mục `-circo-ex`);
    - tiếp D8: E3.2 phục hồi cố định trên CIRR, hai bản sàng lọc `phi_s0_degaug`, `phi_s0_noise`;
@@ -183,6 +185,6 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
    - trước E3.3, hiệu chỉnh ngưỡng `--restore auto` trên CIRR train:
      `$PY tools/calibrate_restore_rules.py --images-dir $DATA/CIRR/train --n 300 --out src/restore_rules.json --report-dir $DRIVE/results/E3.3-calibration`
    - chọn cấu hình warm-start cho D15: E7.1 chưa có cấu hình nào hơn khởi tạo ngẫu nhiên rõ ràng, nên D15 có thể bỏ;
-   - chọn trọng số từ kết quả 40 lượt E2.3 của Hòa ngày 12/11 (`E2.3-cirr-selection-proposal.json` và hai bảng CI); sau E2.4/E2.5 mới gửi cấu hình cuối (C18);
+   - chọn trọng số sau E2.3b theo luật ghi ngày 13/11; sau E2.4/E2.5 mới gửi cấu hình cuối (C18);
    - C1: đóng gói lại `CIRR.tar`, `FashionIQ.tar` và dọn 4 thư mục `dryrun_2ep`;
    - C17–C20.

@@ -94,6 +94,7 @@ File mới `src/attributes/meters.py`, dùng OpenCV và scikit-image; ảnh thu 
 | E2.1 | Kiểm thử bộ đo trên ảnh tổng hợp | Bộ đo đo đúng thứ cần đo | Chí | 6 |
 | E2.2 | Độ đồng thuận bộ đo – câu mô tả trên cặp (tham chiếu, đích) thật. Ví dụ: với truy vấn "darker", bao nhiêu phần trăm cặp có L*(đích) < L*(tham chiếu)? | Bộ đo khớp cách người viết mô tả | Hòa | 7 |
 | E2.3 | Xếp hạng lại với từng họ thuộc tính riêng; quét w = 0.05, 0.1, 0.2, 0.3 và K = 50, 100 | GT1, GT2 | Hòa | 8–9 |
+| E2.3b | Thêm 13/11: w = 0.5, 1, 2, 4 cho màu, độ sáng, hoa văn (E2.3 với w ≤ 0.3 gần như không đổi thứ hạng) | GT1, GT2 | Hòa | — |
 | E2.4 | Mặt nạ: không tách / Otsu / GrabCut / spectral residual | GT3 | Hòa | 9 |
 | E2.5 | Có và không xử lý phủ định | GT4 | Hòa | 9 |
 | E2.6 | Kết hợp mọi họ thuộc tính; kết hợp thêm với [04](04_tien_xu_ly_va_truy_van.md) | Cấu hình cuối | Hòa | 10 |
@@ -133,3 +134,4 @@ File mới `src/attributes/meters.py`, dùng OpenCV và scikit-image; ảnh thu 
 
 - 2026-10-16: tạo kế hoạch.
 - 2026-11-12: quyết định M3: giữ hướng thuộc tính làm đóng góp chính (E2.0: FIQ 90,7%, CIRR 36,3%; E2.2: FIQ 4/5 họ, CIRR 3/5 họ đạt 65%).
+- 2026-11-13: E2.3 (w ≤ 0.3) gần như không đổi chỉ số; thêm E2.3b (w = 0.5–4) và luật chọn trọng số ghi trước (xem nhiem_vu_Hoa.md, quyết định 13/11).
