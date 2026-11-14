@@ -1,5 +1,7 @@
 # Tiến độ dự án
 
+**14/11/2026 — T1 đã khởi chạy, chưa hoàn tất:** [Notebook T1](https://colab.research.google.com/drive/1fy8aH6k1unuvMVEdZdxleBn30Vr71oC0) · [Kết quả và log](https://drive.google.com/drive/folders/1Efh_KhmM6PldYHMM9VrSS2ovZv3KfokS). NVIDIA A100-SXM4-80GB; code `e64f1c5`, không sửa `src/`. Preflight đạt đủ **33.334 ảnh/token EMA s0**, CIRR val **2.297 ảnh/4.181 truy vấn**; cache s0 lấy đúng hàng từ cache 100.000 ảnh, đã kiểm tra thứ tự và SHA-256. Train mục tiêu **100 epoch**, seed 42, batch 256, LR cố định 0,0001, validation mỗi 5 epoch; experiment `phi_scale_s0_Hoa_20261114_e0dbcd`. Đã quan sát epoch 6 lúc **10:35 (GMT+7)**; loss hữu hạn, giảm từ 5,11 (epoch 3) xuống 4,94 (epoch 6). Script điều phối lưu trạng thái/log và đã thiết lập kiểm tra checkpoint, đánh giá T1 + phi_B32 cùng A100/CIRR, CI ghép cặp và báo cáo sau epoch 100. `phi_last.pt` lưu mỗi epoch; `resume.pt` theo mốc 5 epoch. **T1 chưa nghiệm thu, T2 chưa chạy; Hòa giữ 11/20 (55%)**. Lỗi ghi nhật ký của script điều phối trước preflight đã được sửa; không có lượt train thứ hai hay thay đổi mã mô hình.
+
 **H14 — gói tổng hợp hiện có đã hoàn thiện ngày 13/11/2026:** [Gói ZIP, báo cáo, bảng/CI và hình](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Có **18 bảng CSV, 26 hình PNG**, báo cáo Markdown/HTML, nguồn chỉ số, manifest/SHA-256 và kiểm tra gói. Đã đối chiếu **26 lượt baseline, 64 cấu hình H10, 71 dòng OTI (70 snapshot + Pλ0), 100 epoch/20 mốc validation H16, 10 hình che khuất và đủ 6 kết quả test H4**. Gói giữ riêng giao thức mặc định / loại ảnh tham chiếu / test; nêu giới hạn L4–T4 của H18 P1 và kết quả H16 tăng CIRCO nhưng giảm CIRR. Tệp chính: `Hoa_H14_20261113_handover.zip`, `Hoa_H14_20261113_report.md`. **H14 vẫn một phần**: còn H10 K=50/E2.4/E2.5, cấu hình cuối H11/H12 và test H13; chưa gửi thông báo cho Chí. Hòa giữ **11/20 (55%)**.
 
 **H4 hoàn tất 13/11/2026:** người dùng đã nộp đủ **6/6 file** và đã lưu điểm test chính thức của phi_B32 và SEARLE gốc: bốn kết quả CIRR rc2 (recall và recall_subset) cùng hai email CIRCO. Người dùng xác nhận thứ tự CIRCO: `phi_B32_circo.json` trước, `searle_official_circo.json` sau. Hòa **11/20 việc (55%)**; cả nhóm **33/61 (54%)**; giai đoạn 0 **15/15 (100%)**. H13 là lượt test cấu hình cuối riêng, chưa hoàn tất.
@@ -174,7 +176,7 @@ Chi tiết: [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md).
 - [x] **H16** (Ngày 10) Train phi với lịch LR cosine (E8.2a) — 31/10: đủ 100 epoch, checkpoint cuối và đánh giá CIRR/CIRCO cùng đối chứng; có CI ghép cặp và báo cáo nghiệm thu ở đầu trang.
 - [x] **H17** (Ngày 7) Liên kết khái niệm CIRCO val E7.0 và OTI E6.2-Pλ0 — 26/10: CSV đủ 220 ảnh tham chiếu, 250 khái niệm/ảnh; OTI 350 bước, seed 42, bộ câu gốc với lambda_gpt=0; mAP@5/10/25/50 = 2,16/3,03/3,89/4,32. Đánh giá đủ 220 truy vấn, không lỗi ảnh/truy vấn bị bỏ. Kết quả ở phiên CIRCO/OTI, thư mục H17_H15_attempt2. Giữ mặc định không --exclude-reference theo kế hoạch.
 - [ ] **H18** (Ngày 13) OTI với bộ câu GPT mới trên CIRCO val (E6.2) (một phần: P1 xong 11/11, mAP@5 5,85 so với P0 6,67, CI chênh lệch [−2,13; +0,52]; P2/P3 chờ D16)
-- [ ] **T1** (Ngày 6, tuỳ chọn) Train phi trên shard s0 (E1.14a = E8.1a)
+- [ ] **T1** (Ngày 6, tuỳ chọn) Train phi trên shard s0 (E1.14a = E8.1a) — **14/11 đang chạy** trên A100 80GB; preflight 33.334 ảnh/token đạt; đã quan sát epoch 6/100, seed 42. Tự đánh giá CIRR + CI sau train; chưa đủ điều kiện đánh dấu xong. [Notebook](https://colab.research.google.com/drive/1fy8aH6k1unuvMVEdZdxleBn30Vr71oC0) · [Log/kết quả](https://drive.google.com/drive/folders/1Efh_KhmM6PldYHMM9VrSS2ovZv3KfokS).
 - [ ] **T2** (Ngày 8, tuỳ chọn) Train phi trên shard s0 + s1 (E1.14b = E8.1b)
 
 ## Kế hoạch 2 tuần: Doanh (Colab)
@@ -209,7 +211,7 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
 
 ## Việc tiếp theo
 
-1. **Hòa (13/11):** **H4 hoàn tất**, đủ sáu lượt và điểm test B8–B11; Hòa 11/20 (55%). E2.3b hoàn tất 24/24 lượt, bảng gộp E2.3 + E2.3b có 64 lượt và CI/đường cong. Chờ Chí xác nhận trọng số màu để chạy K=50, E2.4, E2.5. H11/H12/H13 chờ cấu hình cuối; H18 P2/P3 chờ D16. Gói H14 hiện có đã hợp nhất và kiểm tra (link đầu trang); bổ sung tiếp sau H10–H13.
+1. **Hòa (13/11):** **H4 hoàn tất**, đủ sáu lượt và điểm test B8–B11; Hòa 11/20 (55%). E2.3b hoàn tất 24/24 lượt, bảng gộp E2.3 + E2.3b có 64 lượt và CI/đường cong. Chờ Chí xác nhận trọng số màu để chạy K=50, E2.4, E2.5. H11/H12/H13 chờ cấu hình cuối; H18 P2/P3 chờ D16. Gói H14 hiện có đã hợp nhất và kiểm tra (link đầu trang); bổ sung tiếp sau H10–H13. **14/11 T1 đang train trên A100, chưa nghiệm thu; T2 chưa chạy.**
 2. **Doanh:**
    - chạy lại E3.1 trên CIRCO (16 lượt + 1 lượt ảnh sạch, biến `CIRCO` mới có `--exclude-reference`, tên thư mục `-circo-ex`);
    - tiếp D8: E3.2 phục hồi cố định trên CIRR, hai bản sàng lọc `phi_s0_degaug`, `phi_s0_noise`;
