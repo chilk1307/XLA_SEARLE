@@ -27,3 +27,9 @@ outputs/phi_models/*
 outputs/phi_models/phi_B32/*
 !outputs/phi_models/phi_B32/*.csv
 !outputs/phi_models/phi_B32/*.json
+# report: generated Word/PDF files and figures copied from the team's Drive (they contain dataset images)
+report/*.docx
+report/*.pdf
+report/figures_ext/
+report/node_modules/
+report/package*.json

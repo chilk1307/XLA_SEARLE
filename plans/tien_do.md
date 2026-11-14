@@ -212,7 +212,7 @@ Chi tiết: [nhiem_vu_Chi.md](nhiem_vu_Chi.md).
 - [x] **C16** (Ngày 9) Công cụ hình ảnh: ví dụ, bản đồ che khuất, hình suy giảm, PSNR so với điểm truy xuất (`visualize_queries.py`, `occlusion_map.py`, `visualize_degradations.py`, `quality_vs_retrieval.py`; thử trên dữ liệu giả lập) — 18/10
 - [ ] **C17** (Ngày 10–11) Demo: tab thuộc tính, tab ảnh xấu → phục hồi, so sánh phương pháp, nút "Vì sao?" (một phần, 15/11: đủ 4 tính năng trong `demo/features.py`, thử mọi endpoint bằng Flask test client trên 18 ảnh mẫu; còn kiểm tra giao diện trên trình duyệt và chụp ảnh màn hình cho báo cáo; nhập tiếng Việt chưa làm)
 - [ ] **C18** (Ngày 11) Chọn cấu hình cuối, gửi lệnh nộp test
-- [ ] **C19** (Ngày 12–13) README gốc repo, `CHANGES.md`, báo cáo, slide (một phần, 15/11: README gốc repo và CHANGES.md xong; còn báo cáo, slide)
+- [ ] **C19** (Ngày 12–13) README gốc repo, `CHANGES.md`, báo cáo, slide (một phần, 15/11: README, CHANGES.md xong; **báo cáo Word 35 trang, đủ 11 chương** dựng bằng `report/build_report.js` (file `report/Bao_cao_XLA_SEARLE.docx`, không đưa lên git vì có ảnh dataset); còn: kết quả φ bền E3.8b/c ở Mục 7.8, ảnh chụp demo ở Chương 9, họ tên/MSSV/giảng viên ở bìa; slide chưa làm)
 - [ ] **C20** (Ngày 14) Video demo, kiểm tra trước khi nộp, nộp bài
 - [x] **C21** (Ngày 9) Code OTI warm-start (`--init`, `--snapshot-steps`, `--token-file`) (`--init random` trùng từng bit code gốc; thêm `timing.json`, `--gpt-exp-name none`, nội suy token khi đánh giá) — 18/10
 - [x] **C22** (Ngày 9) Công cụ bộ câu GPT: thống kê, làm sạch (P1), `--phrase-match`, `--concept-filter`, sửa lỗi `saved_exp_name` (đọc/ghi file câu dạng luồng, không cần nạp cả 700 MB) — 18/10
