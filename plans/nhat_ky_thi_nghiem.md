@@ -187,3 +187,13 @@ Cả 12 CI chênh lệch của chỉ số chính đều chứa 0: chưa có bằ
 
 Đối chứng K100/auto/negation on: CIRR R@1 25,78, FIQ R@10 22,81. CI chưa điều chỉnh nhiều phép so sánh; các lượt này dùng phân tích, không tự thay cấu hình cuối. Nguồn: `Hoa_H10_H12_20261114_handover.zip`, `Hoa_H11_E27_20261114_handover.zip` và các JSON audit/CI trong phiên.
 
+
+## H1/H13/H14 — nghiệm thu cuối phần Hòa, 14/11/2026
+
+**14/11/2026 — Hòa hoàn tất H1, H13 và H14; đủ 20/20 việc (100%) theo cấu hình mặc định phi_B32.** [Notebook](https://colab.research.google.com/drive/1fy8aH6k1unuvMVEdZdxleBn30Vr71oC0) · [Gói H14 cuối, báo cáo và bảng kết luận bàn giao](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Cả nhóm **51/61 (84%)**; hoàn tất phần Hòa không có nghĩa toàn bộ dự án đã xong.
+
+- **H1:** thực hiện quyết định Chí `470a568`, checkout runner `158927b`: đổi `CIRR.tar` (6.449.920.000 byte) thành `.broken`, `FashionIQ.tar` (0 byte) thành `.empty`; chuyển đủ bốn `dryrun_2ep*` chỉ có hyperparameters.json sang `outputs/discarded/dryrun_2ep_D2/`, SHA-256 giữ nguyên. Không xoá ảnh/checkpoint, không đóng gói thêm dữ liệu. Chạy `prepare_data.sh cirr circo fiq`, cả ba đường dẫn sẵn sàng, exit 0. Lần đầu FIQ `ls` bị I/O và in nhầm 0 ảnh; đã giữ log lỗi, đối chiếu metadata đủ 6.016 truy vấn/15.536 vị trí gallery (15.415 tên ảnh), giải mã ảnh mẫu theo tên trực tiếp, rồi chạy lại script nguyên bản: cả ba `already in`, không lỗi. Không coi log lần đầu là nghiệm thu hay kiểm kê ảnh mới.
+- **H13:** dùng lại ba file/điểm test phi_B32 đã nghiệm thu H4 và CI H7 theo cấu hình mặc định Chí cho phép; **không sinh/nộp test thêm, không chạy lại mô hình**. Bảng đủ 23 chỉ số val/CI và 16 chỉ số test. CIRR val R@1 **25,50 [24,23;26,74]** (4.181 truy vấn); FIQ R@10 **22,83 [21,80;23,88]** (6.016); CIRCO mAP@5 **8,85 [6,79;11,47]** (220). FIQ/CIRCO dùng exclude-reference; val T4, test phi lịch sử A100. Không gán CI val cho test. Test: CIRR R@1 **23,349**, subset R@1 **54,458**, CIRCO mAP@5 **9,44**. Nguồn `tables/H13_final_val_ci.csv`, `tables/H13_reused_official_test.csv`, audit và cấu hình trong `sources/closeout_20261114/` của H14.
+- **H14:** đã chạy collector từ 212 bản ghi nguồn, gom **38 CSV, 74 PNG**, `summary.md`, báo cáo MD/HTML, `BAN_GIAO_CHO_CHI.md` (mã thí nghiệm → một câu kết luận), log/audit và SHA-256. Bàn giao bằng thư mục chung và plans; chưa gửi email/tin nhắn riêng. Tên ZIP/report H14 giữ nguyên, nội dung là bản cuối.
+- **Nhánh phi bền/C18 vẫn mở:** chỉ bổ sung test nếu E3.8c có cận dưới CI ΔR@1 sạch ≥ −1,0 và CI ΔR@1 trung bình tám suy giảm nằm hẳn trên 0. Không ghi phi bền đạt điều kiện khi chưa có kết quả. P3 vẫn tùy chọn; H10/H11/H12/H18/T1/T2 không cần chạy lại.
+
