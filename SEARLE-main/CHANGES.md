@@ -158,3 +158,9 @@ Trên dữ liệu thật, Hòa kiểm tra lại ở H5 (CIRR R@1 phải là 25.6
 | File | Việc | Thay đổi |
 |---|---|---|
 | `tools/vector_analysis.py` | C24 | Thêm `--exclude-reference` (truyền xuống pipeline như `validate.py`), để `drift` trên CIRCO dùng cùng quy tắc với các lượt E3.1 chạy lại. |
+
+## 14/11/2026: bảng oracle từ E3.2
+
+| File | Việc | Thay đổi |
+|---|---|---|
+| `src/restore_oracle.json` | C14 | Thay bảng tạm bằng phép phục hồi có R@1 CIRR val cao nhất ở E3.2 (Doanh, 13/11): gauss_noise → bilateral, salt_pepper → median, gauss_blur → unsharp, motion_blur → wiener, jpeg → bilateral, low_light → gamma, low_res → unsharp, color_cast → white_patch. Khoá cache của `--restore oracle` chứa hash của file nên kết quả cũ không bị dùng lại nhầm. |

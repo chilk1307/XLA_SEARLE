@@ -41,6 +41,31 @@ Gửi Chí bảng gộp E2.3 + E2.3b (cùng dạng `E2.3-all-40.csv`, kèm CI gh
 
 **Sau E2.3b:** K = 50 (với w đã chọn) → E2.4 mặt nạ → E2.5 phủ định, đều làm trên họ màu, vì màu có nhiều truy vấn nhất. Lệnh như mục H10, thay `$FAM`, `$W` bằng giá trị Chí gửi.
 
+## Quyết định của Chí, 14/11: trọng số sau E2.3b
+
+**Xác nhận màu, w = 2, cho phần phân tích** (K = 50, E2.4, E2.5). Đây là w có Δ R@1 lớn nhất trên CIRR trong 8 mức (+0,31), theo đúng luật ghi ngày 13/11. CI [−0,19; +0,79] chứa 0, và độ sáng, hoa văn cũng vậy. Vì thế **cấu hình cuối không dùng xếp hạng lại thuộc tính**: dùng phi_B32 mặc định, targetpad 1.25 + bicubic, không lật ảnh, `--fusion-weight 0`, prompt mặc định. Đây cũng là cấu hình đã nộp test ở H4. Nếu C18 giữ phi_B32 (còn chờ kết quả phi bền của Doanh), H13 dùng lại điểm test của H4, không nộp thêm.
+
+Đáng ghi vào báo cáo: hoa văn với w = 4 làm FIQ R@10 giảm 0,56 điểm, CI [−0,90; −0,24] nằm hẳn dưới 0. Trọng số lớn đẩy lên các ảnh mà bộ đo đánh giá sai, nên bộ đo nhiễu thì xếp hạng lại có hại.
+
+**H10, phần còn lại** (12 lượt; mỗi lượt đối chiếu với lượt màu w = 2, K = 100, mask auto, negation on của E2.3b):
+```bash
+PHI="--eval-type phi --exp-name phi_B32 --phi-checkpoint-name phi_last.pt --cache-dir $DRIVE/cache"
+ATTR="--attr-rerank --attr-families color --attr-weight 2"
+CIRR="--dataset cirr --dataset-path $DATA/CIRR"
+FIQ="--dataset fashioniq --dataset-path $DATA/FashionIQ --exclude-reference"
+for T in cirr fiq; do
+  if [ $T = cirr ]; then DS=$CIRR; else DS=$FIQ; fi
+  $PY src/validate.py $PHI $DS $ATTR --attr-topk 50 --output-dir $DRIVE/results/E2.3-color-w2-k50-$T
+  for M in none otsu grabcut saliency; do
+    $PY src/validate.py $PHI $DS $ATTR --attr-mask $M --output-dir $DRIVE/results/E2.4-mask-$M-$T
+  done
+  $PY src/validate.py $PHI $DS $ATTR --attr-negation off --output-dir $DRIVE/results/E2.5-neg-off-$T
+done
+```
+Tính CI ghép cặp như E2.3b, so mỗi lượt với `E2.3b-color-w2-<tập>` (cấu hình đối chứng: mask auto, negation on, K = 100). Gửi Chí bảng; H10 xong sau bước này.
+
+**Sau H10:** H11 E2.6 không cần chạy (cấu hình cuối không có xếp hạng lại). E2.7 chạy cấu hình màu w = 2 trên CIRCO val, giữ nguyên tham số, để báo tổng quát hoá. H12 E1.12 và E2.8 dùng lượt màu w = 2 làm `<cuối>` để minh hoạ xếp hạng lại (E2.8 cần lượt có xếp hạng lại thì mới có phần giải thích).
+
 ## 0. Cập nhật 18/10: code đã xong, làm sớm được
 
 Toàn bộ code mà các việc H1–H18 cần đã có trên GitHub. Lịch ở mục 3 là lịch gốc; khi làm sớm vẫn phải kiểm tra đầu vào, quota GPU và các quyết định phụ thuộc. Thứ tự gợi ý:

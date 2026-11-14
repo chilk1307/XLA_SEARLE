@@ -1,14 +1,14 @@
 {
-  "note": "Best restoration per degradation for --restore oracle. Provisional values (expected best method); replace them with the best method of each row of experiment E3.2 (Doanh, D8). Keys '<type>' or '<type>:<level>'; 'none' = no restoration.",
-  "source": "provisional, before E3.2",
+  "note": "Best restoration per degradation for --restore oracle: the method with the highest CIRR val R@1 for each degradation at level 2 in experiment E3.2 (Doanh, D8, 13/11/2026; phi_B32). Keys '<type>' or '<type>:<level>'; 'none' = no restoration. Level 1 uses the same method as level 2 (not measured separately).",
+  "source": "E3.2, CIRR val R@1 gain over E3.1 (no restoration): gauss_noise bilateral +0.14 (nlm -0.65, gaussian -0.17); salt_pepper median +1.72; gauss_blur unsharp +0.17 (wiener -0.19, richardson_lucy -0.22); motion_blur wiener +1.87 (richardson_lucy +1.67); jpeg bilateral +0.38 (deblock +0.24); low_light gamma +0.79 (retinex +0.55, clahe +0.26, histeq -0.17); low_res unsharp +0.07; color_cast white_patch +0.14 (gray_world +0.07)",
   "methods": {
-    "gauss_noise": "nlm",
+    "gauss_noise": "bilateral",
     "salt_pepper": "median",
-    "gauss_blur": "wiener",
+    "gauss_blur": "unsharp",
     "motion_blur": "wiener",
-    "jpeg": "deblock",
-    "low_light": "clahe",
+    "jpeg": "bilateral",
+    "low_light": "gamma",
     "low_res": "unsharp",
-    "color_cast": "gray_world"
+    "color_cast": "white_patch"
   }
 }

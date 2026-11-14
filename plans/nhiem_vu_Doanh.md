@@ -10,6 +10,26 @@
 5. Hình minh hoạ (E3.7), độ bền bộ đo thuộc tính (E3.6).
 6. Kết quả luồng học máy và bộ câu GPT (E7.2, E6.1, E6.4), nếu đã chạy.
 
+## Quyết định của Chí, 14/11: sau D5–D8
+
+Đã nhận đủ: E3.1 CIRCO chạy lại có `--exclude-reference` (17 lượt), E3.2 (18 lượt), E4.3b, `phi_s0_degaug` và `phi_s0_noise` 50 epoch. **D5, D7, D8 xong.**
+
+- **E3.2 → bảng `oracle`:** Chí đã điền `src/restore_oracle.json` bằng phép phục hồi có R@1 CIRR cao nhất cho từng loại suy giảm: `gauss_noise` → bilateral, `salt_pepper` → median, `gauss_blur` → unsharp, `motion_blur` → wiener, `jpeg` → bilateral, `low_light` → gamma, `low_res` → unsharp, `color_cast` → white_patch.
+- **Kết quả nên đưa vào báo cáo:** NLM tăng PSNR thêm 5,8 dB và SSIM từ 0,36 lên 0,72 trên `gauss_noise:2`, nhưng R@1 **giảm** 0,65 điểm; Wiener trên `gauss_blur:2` tăng PSNR 2,5 dB nhưng R@1 giảm 0,19. Ngược lại median (`salt_pepper:2`, +1,72) và Wiener (`motion_blur:2`, +1,87) kéo R@1 gần về mức ảnh sạch.
+
+**Thứ tự tiếp theo:**
+1. **D9 (E3.8a):** đánh giá 3 bản sàng lọc × 9 điều kiện ảnh trên CIRR (27 lượt, lệnh ở mục D9). Trên ảnh sạch cả ba gần bằng nhau (clean 24,32; degaug 24,20; noise 24,16), nên cần bảng suy giảm để chọn. Gửi Chí bảng, rồi tính đặc trưng ảnh xấu cho 100.000 ảnh (mục D9).
+2. **E3.3, chạy song song với D9** (không phải chờ Chí nữa):
+   ```bash
+   cd /content/XLA_SEARLE && git pull && cd SEARLE-main     # lấy bảng oracle mới
+   # Hiệu chỉnh ngưỡng --restore auto trên 300 ảnh CIRR train (không dùng tập đánh giá).
+   # Nếu chưa giải nén CIRR train ra $DATA, trỏ --images-dir tới thư mục SEARLE/datasets/CIRR/train trên Drive.
+   $PY tools/calibrate_restore_rules.py --images-dir $DATA/CIRR/train --n 300 --out src/restore_rules.json --report-dir $DRIVE/results/E3.3-calibration
+   cp src/restore_rules.json $DRIVE/results/E3.3-calibration/
+   ```
+   Lệnh này chỉ ghi file ngưỡng (dữ liệu), không sửa code. Gửi Chí `E3.3-calibration/restore_rules.json` và `report` để commit lên GitHub. Sau đó chạy các lệnh E3.3 ở mục D10 **trong cùng phiên Colab** (để dùng đúng file ngưỡng vừa tạo). Lặp lại cấu hình tốt nhất trên CIRCO bằng biến `CIRCO` mới (có `--exclude-reference`).
+3. **D15 (OTI warm-start CIRR): bỏ.** E7.1 của Hòa cho thấy không cấu hình nào hơn khởi tạo ngẫu nhiên rõ ràng (mọi CI đều chứa 0).
+
 ## 0. Cập nhật 18/10: code đã xong, làm sớm được
 
 Toàn bộ code mà các việc D1–D17 cần đã có trên GitHub. Lịch ở mục 3 là lịch gốc; hạn chế duy nhất khi làm sớm là quota GPU. Thứ tự gợi ý:
