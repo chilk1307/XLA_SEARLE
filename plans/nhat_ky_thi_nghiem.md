@@ -147,3 +147,43 @@ _(Thêm các mục chi tiết bên dưới, mới nhất ở trên cùng.)_
 - **Hai CI ghép cặp:** 1.000 lần, seed 0, n_shared=4.181. R@1 T2 có CI [23,46; 25,95]. So T1: +0,38 điểm, CI [−0,29; +1,05] chứa 0, chưa chứng minh cải thiện rõ. So phi_B32: −0,79 điểm, CI [−1,32; −0,26] nằm dưới 0.
 - **Giới hạn:** một seed train; CI theo truy vấn không đo biến thiên giữa seed, chưa điều chỉnh nhiều phép so sánh. Giữ 100 epoch làm số bước cập nhật khác theo lượng dữ liệu; T1/T2 cùng dùng cache. Mốc B3 6.824 ảnh là lịch sử, chọn mẫu có thể khác/không lồng nhau. Không kết luận bão hòa ở 100.000 ảnh hoặc quan hệ nhân quả chỉ do lượng dữ liệu.
 - **Bàn giao:** [T2 — báo cáo MD/HTML, bốn CSV, ba hình, chỉ số/CI/audit và gói ZIP](https://drive.google.com/drive/folders/1aYIIvTm-csZG0pfFfhA-fkmgab4vubG0). [H14 cập nhật T1/T2](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq): 26 CSV, 32 PNG, Hòa 13/20 (65%). H14 cuối cùng vẫn chờ các phần H10–H13; Chí đã xác nhận màu w=2 để chạy 12 lượt H10 còn lại. Không gửi thông báo cho Chí trong phiên này.
+
+## H10/H11/H12 — nghiệm thu 14/11/2026
+
+**14/11/2026 — Hòa đã nghiệm thu H10, H11, H12 và H18-P2.** [Notebook](https://colab.research.google.com/drive/1fy8aH6k1unuvMVEdZdxleBn30Vr71oC0) · [Kết quả H10/H11/H12](https://drive.google.com/drive/folders/1S-Hd658_vouhe4w__4B-BGfw7bv9FiUh) · [Gói H14 cập nhật](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Phiên `results/Hoa_H10_L4_20261114_085609_3cdcbc`, code `e64f1c5`, NVIDIA L4. **Hòa 17/20 (85%); cả nhóm 45/61 (74%).**
+
+- **H10:** đủ 12 lượt còn lại (K50, bốn mặt nạ none/otsu/grabcut/saliency, negation off trên CIRR/FIQ), màu w=2; tổng **76 cấu hình**. Mỗi lượt đủ 4.181/6.016 truy vấn, không lỗi ảnh/bỏ/trùng qid/thiếu phép đo, có CI ghép cặp 1.000 lần seed 0; FIQ phân tầng theo loại và bật `--exclude-reference`. So với chính `E2.3b-color-w2-<tập>` theo chỉ dẫn Chí. Bốn replay phục vụ kiểm tra, không cộng vào 76; cả hai lượt màu w=2 khớp hoàn toàn chỉ số từng truy vấn và top-100 E2.3b trên L4. Phiên A100 chẩn đoán lệch 4 truy vấn subset đã dừng trước ablation, không trộn vào kết quả chính.
+- **H11:** E2.7 màu w=2, K100/auto/negation on trên CIRCO val đủ 220 truy vấn, gallery 123.403 ảnh, cùng giao thức loại ảnh tham chiếu ở cả hai lượt. mAP@5 phi **8.85 → 9.01**; Δ **+0.15 điểm, CI 95% [-0.04; +0.42]**. FIQ dùng lại lượt màu w=2, không chọn lại tham số trên CIRCO/FIQ. E2.6 bỏ theo Chí; E4.4/E4.5 đã xong từ trước.
+- **H12:** thêm 20 ví dụ CIRR E1.12 phi so với màu w=2 và 20 ví dụ FIQ có giải thích E2.8, seed 0. Giữ 10 hình che khuất E1.13 đã nghiệm thu, tổng 50 hình. Chọn minh họa theo thành công/thất bại top-5 và taxonomy; không coi là mẫu ước lượng chất lượng chung.
+- **H14:** đã hợp nhất **35 bảng CSV, 74 hình PNG** cùng báo cáo, nguồn/audit và SHA-256. H14 vẫn một phần: H1/C1, C18/H13 và bàn giao cuối còn chờ. Chưa gửi email/tin nhắn cho Chí. Cấu hình cuối hiện vẫn không dùng xếp hạng lại thuộc tính; không tự đóng C18 hoặc H13.
+
+**H18-P2:** đã nhận và chép nguyên bộ P2 Qwen2.5-1.5B của D16 sang thư mục chung; OTI 220 ảnh, seed 42, 350 bước, L4, cùng tham số P0/P1. Giữ ảnh tham chiếu, gallery đủ 123.403 đặc trưng; ba đối chứng dùng token đã nghiệm thu, chỉ đánh giá lại cùng L4. P1 khớp mọi chỉ số từng truy vấn của lần L4 cũ. Đủ token EMA 220x512, không lỗi/bỏ/trùng truy vấn.
+
+| Bộ câu | CIRCO mAP@5 | CI 95% |
+|---|---:|---|
+| P0 | 6.67 | [4.90; 8.87] |
+| P1 | 5.85 | [4.10; 7.88] |
+| Plambda0 | 2.16 | [1.34; 3.30] |
+| P2 | 8.20 | [6.26; 10.60] |
+
+| So sánh ghép cặp | Δ điểm | CI 95% Δ |
+|---|---:|---|
+| P2 minus P0 | +1.54 | [-0.19; +3.29] |
+| P2 minus P1 | +2.35 | [+0.54; +4.30] |
+| P2 minus Plambda0 | +6.04 | [+4.05; +8.35] |
+
+H18 đủ P1 và một bộ mới P2 theo phân công; **P3 tùy chọn**, không chặn nghiệm thu. Ba CI ghép cặp 1.000 lần, seed 0. Một seed OTI; P0/lambda=0 tối ưu token lịch sử trên T4, P1/P2 trên L4; cùng GPU đánh giá vẫn chưa loại bỏ giới hạn này. P2 có quy mô câu/khái niệm nhỏ hơn nên không quy toàn bộ chênh lệch cho riêng mô hình ngôn ngữ. Nguồn `Hoa_H18_P2_20261114_handover.zip`, dump/CI/audit và token EMA tại `results/Hoa_H18_P2_20261114_152635_02fb44`. Không tự đóng C18/H13.
+
+| Cấu hình màu w=2 | CIRR R@1 | Δ / CI 95% | FIQ R@10 | Δ / CI 95% |
+|---|---:|---|---:|---|
+| E2.3-color-w2-k50 | 25.78 | +0.00 [-0.17; +0.17] | 22.78 | -0.03 [-0.20; +0.16] |
+| E2.4-mask-none | 26.07 | +0.29 [-0.12; +0.67] | 23.13 | +0.31 [-0.02; +0.68] |
+| E2.4-mask-otsu | 25.81 | +0.02 [-0.34; +0.38] | 22.81 | +0.00 [-0.10; +0.10] |
+| E2.4-mask-grabcut | 25.88 | +0.10 [-0.02; +0.24] | 23.01 | +0.20 [-0.08; +0.50] |
+| E2.4-mask-saliency | 25.83 | +0.05 [-0.33; +0.43] | 22.83 | +0.02 [-0.32; +0.33] |
+| E2.5-neg-off | 25.81 | +0.02 [-0.05; +0.10] | 22.78 | -0.03 [-0.08; +0.00] |
+
+Cả 12 CI chênh lệch của chỉ số chính đều chứa 0: chưa có bằng chứng thay K/mask/negation tốt hơn đối chứng đã chọn.
+
+Đối chứng K100/auto/negation on: CIRR R@1 25,78, FIQ R@10 22,81. CI chưa điều chỉnh nhiều phép so sánh; các lượt này dùng phân tích, không tự thay cấu hình cuối. Nguồn: `Hoa_H10_H12_20261114_handover.zip`, `Hoa_H11_E27_20261114_handover.zip` và các JSON audit/CI trong phiên.
+
