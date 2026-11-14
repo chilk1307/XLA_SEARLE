@@ -270,7 +270,7 @@ $PY tools/vector_analysis.py gap    --dataset circo --dataset-path $DATA/CIRCO -
 Gửi Chí 4 file `report.md` cùng hình `tokens.png`, `gap.png`.
 
 ### T1. (Tuỳ chọn) Train phi trên 1 shard, chạy nền từ Ngày 6 — E1.14a
-**Nghiệm thu 14/11/2026:** E1.14a = E8.1a đã hoàn tất một lần, experiment `phi_scale_s0_Hoa_20261114_e0dbcd`: 33.334 ảnh/token s0, 100 epoch/20 validation, checkpoint epoch 100; A100 80 GB, seed 42. CIRR R@1 24,30 so với đối chứng cùng A100 25,47; Δ −1,17 điểm, CI 95% [−1,89; −0,45]. Đủ audit/CI/báo cáo và đã bổ sung H14. [Gói kết quả](https://drive.google.com/drive/folders/1Efh_KhmM6PldYHMM9VrSS2ovZv3KfokS), [nhật ký chi tiết](nhat_ky_thi_nghiem.md). Không cần chạy lại các lệnh mẫu dưới đây. T2 chưa chạy; Hòa 12/20 (60%).
+**Nghiệm thu 14/11/2026:** E1.14a = E8.1a đã hoàn tất một lần, experiment `phi_scale_s0_Hoa_20261114_e0dbcd`: 33.334 ảnh/token s0, 100 epoch/20 validation, checkpoint epoch 100; A100 80 GB, seed 42. CIRR R@1 24,30 so với đối chứng cùng A100 25,47; Δ −1,17 điểm, CI 95% [−1,89; −0,45]. Đủ audit/CI/báo cáo và đã bổ sung H14. [Gói kết quả](https://drive.google.com/drive/folders/1Efh_KhmM6PldYHMM9VrSS2ovZv3KfokS), [nhật ký chi tiết](nhat_ky_thi_nghiem.md). Không cần chạy lại các lệnh mẫu dưới đây. Tại mốc T1, T2 chưa chạy; T2 đã được nghiệm thu sau đó (xem mục T2).
 
 Cần: C10 (đã xong); runtime **A100**; ô 4 thêm `imagenet`. Khoảng 2–3 giờ. Đây cũng là E8.1a của [08](08_hoc_may_cai_tien_phi.md): chỉ chạy một lần, kết quả dẫn chiếu ở cả hai nơi. `--features-cache-dir` lưu đặc trưng CLIP của ảnh train để các lượt train sau (của Doanh và Hòa, cùng tập ảnh) khỏi trích lại.
 ```bash
@@ -326,6 +326,8 @@ $PY tools/collect_results.py --results-dir $DRIVE/results --out $DRIVE/results/s
   ```
 
 ### T2. (Tuỳ chọn) Train phi trên 2 shard, chạy nền từ Ngày 8 — E1.14b
+**Nghiệm thu 14/11/2026:** E1.14b = E8.1b đã hoàn tất một lần: `phi_scale_s01_Hoa_20261114_c059b1`, 66.667 ảnh/token s0+s1, A100 80 GB, seed 42, 100 epoch/20 validation, checkpoint epoch 100. Ba đánh giá CIRR đủ 4.181 truy vấn; R@1 T2 24,68%, so T1 +0,38 điểm (CI [−0,29; +1,05]), so phi_B32 −0,79 (CI [−1,32; −0,26]). Đủ audit/CI/báo cáo/hình và H14 cập nhật; Hòa 13/20 (65%). [Gói T2](https://drive.google.com/drive/folders/1aYIIvTm-csZG0pfFfhA-fkmgab4vubG0), [nhật ký](nhat_ky_thi_nghiem.md). Các lệnh dưới là mẫu lịch sử; không cần train lại.
+
 Cần: C10; **A100**; khoảng 4–5 giờ. Đây cũng là E8.1b của [08](08_hoc_may_cai_tien_phi.md).
 ```bash
 $PY tools/merge_oti.py --shards oti_B32_s0,oti_B32_s1 --out oti_B32_s01
