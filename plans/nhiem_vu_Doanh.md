@@ -32,6 +32,10 @@ Bảng D9 (CIRR val R@1, 4.181 truy vấn mỗi lượt, 3 bản sàng lọc 50 
 
 **Sau khi train:** chạy E3.8c (mục D11: ảnh sạch trên 3 tập, 8 suy giảm trên CIRR và CIRCO, biến `CIRCO` có `--exclude-reference`), tính CI ghép cặp với phi_B32 trên cùng điều kiện, rồi chạy lệnh E3.9 cho phi bền (mục D11). Gửi Chí bảng để chốt C18.
 
+Luật C18 đã ghi trước ở đầu `nhiem_vu_Hoa.md` cần đúng hai con số, báo rõ trong bảng E3.8c:
+1. **Ảnh sạch CIRR:** Δ R@1 (phi_B32_robust − phi_B32) và CI 95% ghép cặp, tức `tools/bootstrap_ci.py --baseline` với lượt phi_B32 sạch.
+2. **Trung bình 8 suy giảm CIRR:** với mỗi truy vấn, lấy trung bình 8 giá trị trúng-top-1 (0/1) của 8 lượt suy giảm, cho từng mô hình (đối chứng là 8 lượt E3.1 của phi_B32). Rồi bootstrap ghép cặp 1.000 lần (seed 0) trên 4.181 truy vấn để có CI 95% của Δ trung bình. Giá trị trúng-top-1 lấy từ `per_query.cirr_recall_at1` trong `dump.jsonl` của từng lượt.
+
 **Bộ câu P2 (D16):** đã có ở `Doanh_SEARLE/outputs/GPT_phrases/P2_qwen25_15b_circo_val`. Chép thư mục này sang `SEARLE/outputs/GPT_phrases/` (thư mục chung) để Hòa chạy H18-P2.
 
 ## Quyết định của Chí, 14/11: sau D5–D8

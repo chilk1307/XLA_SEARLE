@@ -80,6 +80,33 @@ Gửi Chí bảng gộp E2.3 + E2.3b (cùng dạng `E2.3-all-40.csv`, kèm CI gh
 
 **Sau E2.3b:** K = 50 (với w đã chọn) → E2.4 mặt nạ → E2.5 phủ định, đều làm trên họ màu, vì màu có nhiều truy vấn nhất. Lệnh như mục H10, thay `$FAM`, `$W` bằng giá trị Chí gửi.
 
+## Quyết định của Chí, 14/11 (tối): gỡ chặn H1, H13, H14
+
+**H1 / C1: không đóng gói lại dữ liệu.** Các thư mục đã giải nén trên Drive (`SEARLE/datasets/CIRR`, `CIRCO`, `FashionIQ`) là nguồn chính thức. H2 đã kiểm tra đủ CIRR val/test1, CIRCO val/test và FIQ val, và mọi thí nghiệm của Hòa, Doanh đều đã chạy từ các thư mục này. Đóng gói lại cần thêm khoảng 20 GB mà chưa có ai xác nhận dung lượng Drive, trong khi không đem lại kết quả mới.
+
+`colab/prepare_data.sh` đã được sửa: gặp `.tar` rỗng hoặc bị cụt thì bỏ qua, xoá phần giải nén dở và dùng thư mục trên Drive (đã thử với một `.tar` cụt, một `.tar` rỗng và một `.tar` tốt). Để H1 xong:
+```bash
+cd /content/XLA_SEARLE && git pull && cd SEARLE-main
+# Đổi tên hai gói hỏng để không ai dùng nhầm (không xoá, không cần thêm dung lượng)
+mv $DRIVE/datasets/CIRR.tar $DRIVE/datasets/CIRR.tar.broken
+mv $DRIVE/datasets/FashionIQ.tar $DRIVE/datasets/FashionIQ.tar.empty
+# Bốn thư mục dryrun_2ep trùng tên (bản chạy thử D2) đưa vào outputs/discarded/
+mkdir -p $DRIVE/outputs/discarded/dryrun_2ep_D2
+i=0; for d in $DRIVE/outputs/phi_models/dryrun_2ep*; do i=$((i+1)); mv "$d" $DRIVE/outputs/discarded/dryrun_2ep_D2/copy$i; done
+# Chạy lại ô 4 của notebook (prepare_data.sh cirr circo fiq): phải in "ready" cho cả ba tập, không có ERROR
+```
+Ghi log ô 4 vào kết quả là H1 xong. Nếu lệnh `mv` các thư mục `dryrun_2ep` báo lỗi, giữ nguyên và ghi lại; bốn thư mục đó chỉ chứa `hyperparameters.json`, không ảnh hưởng thí nghiệm.
+
+**H13 / C18: luật chọn cấu hình cuối, ghi trước** để Hòa làm ngay khi Doanh có E3.8c, không phải chờ Chí:
+- **Mặc định: cấu hình cuối = phi_B32** (targetpad 1.25 + bicubic, không lật, không fusion, prompt mặc định, không xếp hạng lại thuộc tính). H13 khi đó dùng lại điểm test của H4 và CI của H7 cho bảng chính trên 3 tập val, không nộp thêm. H13 xong khi ghi điều này kèm link.
+- **Nộp thêm `phi_B32_robust`** (sinh file như H4 và nộp CIRR, CIRCO) **chỉ khi E3.8c thoả cả hai điều kiện:**
+  - (a) trên ảnh sạch CIRR, cận dưới CI 95% của Δ R@1 so với phi_B32 không thấp hơn −1,0 điểm;
+  - (b) trên 8 suy giảm CIRR, Δ R@1 trung bình dương và CI của Δ trung bình nằm hẳn trên 0.
+
+  Khi đó báo cáo có hai dòng test: phi_B32 và phi bền.
+
+**H14:** bàn giao khi H1, H10, H13 xong theo các mục trên. Phần H18-P2 (nếu có) bổ sung sau, không chặn H14.
+
 ## Quyết định của Chí, 14/11: trọng số sau E2.3b
 
 **Xác nhận màu, w = 2, cho phần phân tích** (K = 50, E2.4, E2.5). Đây là w có Δ R@1 lớn nhất trên CIRR trong 8 mức (+0,31), theo đúng luật ghi ngày 13/11. CI [−0,19; +0,79] chứa 0, và độ sáng, hoa văn cũng vậy. Vì thế **cấu hình cuối không dùng xếp hạng lại thuộc tính**: dùng phi_B32 mặc định, targetpad 1.25 + bicubic, không lật ảnh, `--fusion-weight 0`, prompt mặc định. Đây cũng là cấu hình đã nộp test ở H4. Nếu C18 giữ phi_B32 (còn chờ kết quả phi bền của Doanh), H13 dùng lại điểm test của H4, không nộp thêm.

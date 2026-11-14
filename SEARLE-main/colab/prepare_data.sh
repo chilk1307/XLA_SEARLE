@@ -32,14 +32,23 @@ prepare_folder_dataset() {  # <name> <file that must exist inside the dataset>
     echo "$name: already in $DATA/$name"
     return
   fi
-  if [ -f "$DS/$name.tar" ]; then
+  if [ -s "$DS/$name.tar" ]; then
     echo "$name: extracting $DS/$name.tar to $DATA ..."
-    tar -xf "$DS/$name.tar" -C "$DATA" || { fail "cannot extract $DS/$name.tar"; return; }
-  elif [ -d "$DS/$name" ]; then
-    echo "WARNING: $DS/$name.tar not found, linking $DATA/$name to Drive (slow image reads; see task H1)"
+    if tar -xf "$DS/$name.tar" -C "$DATA" && [ -e "$DATA/$name/$check" ]; then
+      echo "$name: ready in $DATA/$name"
+      return
+    fi
+    # Truncated or incomplete archive: drop what was extracted and fall back to the folder below
+    echo "WARNING: $DS/$name.tar is damaged or incomplete, removing the partial copy"
+    rm -rf "${DATA:?}/$name"
+  elif [ -f "$DS/$name.tar" ]; then
+    echo "WARNING: $DS/$name.tar is empty, ignored"
+  fi
+  if [ -d "$DS/$name" ]; then
+    echo "WARNING: no usable $DS/$name.tar, linking $DATA/$name to Drive (slow image reads; see task H1)"
     ln -sfn "$DS/$name" "$DATA/$name"
   else
-    fail "neither $DS/$name.tar nor $DS/$name exists"
+    fail "neither a usable $DS/$name.tar nor $DS/$name exists"
     return
   fi
   [ -e "$DATA/$name/$check" ] && echo "$name: ready in $DATA/$name" || fail "$DATA/$name/$check missing"
@@ -50,19 +59,27 @@ prepare_fiq() {
     echo "FashionIQ: already in $DATA/FashionIQ"
     return
   fi
-  if [ -f "$DS/FashionIQ.tar" ]; then
+  local splits=""
+  if [ -s "$DS/FashionIQ.tar" ]; then
     echo "FashionIQ: extracting $DS/FashionIQ.tar ..."
     mkdir -p "$DATA/fiq_extract"
-    tar -xf "$DS/FashionIQ.tar" -C "$DATA/fiq_extract" || { fail "cannot extract FashionIQ.tar"; return; }
-    local splits
-    splits=$(find "$DATA/fiq_extract" -maxdepth 4 -type d -name image_splits | head -1)
-    [ -n "$splits" ] || { fail "no image_splits folder inside FashionIQ.tar"; return; }
+    if tar -xf "$DS/FashionIQ.tar" -C "$DATA/fiq_extract"; then
+      splits=$(find "$DATA/fiq_extract" -maxdepth 4 -type d -name image_splits | head -1)
+    fi
+    if [ -z "$splits" ]; then
+      echo "WARNING: $DS/FashionIQ.tar is damaged or has no image_splits folder, removing the partial copy"
+      rm -rf "$DATA/fiq_extract"
+    fi
+  elif [ -f "$DS/FashionIQ.tar" ]; then
+    echo "WARNING: $DS/FashionIQ.tar is empty, ignored"
+  fi
+  if [ -n "$splits" ]; then
     ln -sfn "$(dirname "$splits")" "$DATA/FashionIQ"
   elif [ -d "$DS/FashionIQ" ]; then
-    echo "WARNING: $DS/FashionIQ.tar not found, linking $DATA/FashionIQ to Drive (slow image reads)"
+    echo "WARNING: no usable $DS/FashionIQ.tar, linking $DATA/FashionIQ to Drive (slow image reads)"
     ln -sfn "$DS/FashionIQ" "$DATA/FashionIQ"
   else
-    fail "neither $DS/FashionIQ.tar nor $DS/FashionIQ exists"
+    fail "neither a usable $DS/FashionIQ.tar nor $DS/FashionIQ exists"
     return
   fi
   [ -e "$DATA/FashionIQ/image_splits" ] && echo "FashionIQ: ready in $DATA/FashionIQ ($(ls "$DATA/FashionIQ/images" | wc -l) images)" \

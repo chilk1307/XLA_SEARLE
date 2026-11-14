@@ -1,5 +1,9 @@
 # Tiến độ dự án
 
+**14/11/2026 khuya (Chí): gỡ chặn H1, H13, H14** (chi tiết ở đầu [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md)).
+- **C1 xong: không đóng gói lại dữ liệu.** Các thư mục đã giải nén trên Drive là nguồn chính thức (H2 đã kiểm tra đủ). `colab/prepare_data.sh` giờ bỏ qua `.tar` rỗng hoặc bị cụt và dùng thư mục, đã thử với ba trường hợp. Hòa đổi tên `CIRR.tar` → `.broken` và `FashionIQ.tar` → `.empty`, chuyển 4 thư mục `dryrun_2ep` vào `outputs/discarded/`, chạy lại ô 4 là H1 xong.
+- **C18: luật cấu hình cuối ghi trước.** Mặc định giữ phi_B32: H13 dùng lại điểm test của H4 và CI của H7. Chỉ nộp thêm `phi_B32_robust` khi E3.8c cho thấy cả hai: trên ảnh sạch CIRR cận dưới CI của Δ R@1 ≥ −1,0, và Δ trung bình 8 suy giảm có CI > 0. Doanh báo đúng hai con số này (cách tính ở [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md)).
+
 **14/11/2026 — Hòa đã nghiệm thu H10, H11, H12 và H18-P2.** [Notebook](https://colab.research.google.com/drive/1fy8aH6k1unuvMVEdZdxleBn30Vr71oC0) · [Kết quả H10/H11/H12](https://drive.google.com/drive/folders/1S-Hd658_vouhe4w__4B-BGfw7bv9FiUh) · [Gói H14 cập nhật](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Phiên `results/Hoa_H10_L4_20261114_085609_3cdcbc`, code `e64f1c5`, NVIDIA L4. **Hòa 17/20 (85%); cả nhóm 45/61 (74%).**
 
 - **H10:** đủ 12 lượt còn lại (K50, bốn mặt nạ none/otsu/grabcut/saliency, negation off trên CIRR/FIQ), màu w=2; tổng **76 cấu hình**. Mỗi lượt đủ 4.181/6.016 truy vấn, không lỗi ảnh/bỏ/trùng qid/thiếu phép đo, có CI ghép cặp 1.000 lần seed 0; FIQ phân tầng theo loại và bật `--exclude-reference`. So với chính `E2.3b-color-w2-<tập>` theo chỉ dẫn Chí. Bốn replay phục vụ kiểm tra, không cộng vào 76; cả hai lượt màu w=2 khớp hoàn toàn chỉ số từng truy vấn và top-100 E2.3b trên L4. Phiên A100 chẩn đoán lệch 4 truy vấn subset đã dừng trước ablation, không trộn vào kết quả chính.
@@ -148,10 +152,10 @@ Cả ba họ đều không có CI cải thiện nằm trên 0; theo luật đã 
 | Phần | Xong | Tổng | Tiến độ | Ghi chú |
 |---|---|---|---|---|
 | **Giai đoạn 0: tái lập SEARLE** (trước kế hoạch) | 15 | 15 | **100%** | Đã đủ điểm test chính thức CIRR/CIRCO cho SEARLE gốc và phi_B32 ngày 13/11; FashionIQ val đầy đủ đã đánh giá với `--exclude-reference` ngày 26/10 |
-| Kế hoạch 2 tuần: Chí (C1–C24) | 17 | 24 | 71% | Xong toàn bộ code cần cho Colab (C3, C5–C16, C21–C24); C2, C4 chờ nghiệm thu trên Colab; C1 cần làm tay; còn C17–C20 (demo, cấu hình cuối, báo cáo, video) |
+| Kế hoạch 2 tuần: Chí (C1–C24) | 18 | 24 | 75% | Xong toàn bộ code cần cho Colab và C1 (14/11); C2, C4 một phần; còn C17–C20 (demo, cấu hình cuối, báo cáo, video) |
 | Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 17 | 20 | 85% | H2–H12, H15–H18, T1/T2 xong; H10 đủ 76 cấu hình, H11 E2.7 và H12 hoàn tất 14/11; còn H1/C1, C18/H13, H14 cuối; H18 P1/P2 đã xong, P3 tùy chọn |
 | Kế hoạch 2 tuần: Doanh (D1–D17) | 11 | 17 | 65% | D1–D9, D12, D16 xong; D10 còn train `phi_B32_robust` (E3.3 xong); D11 còn E3.8c (E3.4, E3.9 xong); D15 bỏ |
-| **Kế hoạch 2 tuần: cả nhóm** | 45 | 61 | **74%** | Hòa + Doanh xong 28/37 việc; H10/H11/H12 nghiệm thu 14/11; Chí 17/24, Doanh 11/17 |
+| **Kế hoạch 2 tuần: cả nhóm** | 46 | 61 | **75%** | Hòa + Doanh xong 28/37 việc; H10/H11/H12 nghiệm thu 14/11; Chí xong C1, ghi trước luật C18 để H13 không phải chờ |
 | Mốc kiểm tra M1–M5 | 1 | 5 | 20% | M3 đạt 12/11 (giữ hướng 02); M1, M2, M4, M5 quá hạn chưa đạt |
 
 Trang tự đánh giá của demo (`/api/assessment`, chỉ tính phần tái lập): lõi **93%**, tính cả phần mở rộng (SEARLE-XL, SEARLE-OTI) **75%**.
@@ -178,7 +182,7 @@ Trang tự đánh giá của demo (`/api/assessment`, chỉ tính phần tái l�
 
 Chi tiết: [nhiem_vu_Chi.md](nhiem_vu_Chi.md).
 
-- [ ] **C1** (Ngày 1) Chia sẻ Drive cho Hòa, Doanh; xác nhận vị trí dữ liệu và dung lượng Drive (một phần: Hòa và Doanh đã đọc/ghi được thư mục `SEARLE` trên Colab; còn lại: `datasets/FashionIQ.tar` 0 byte và `datasets/CIRR.tar` bị cụt phải đóng gói lại. Hòa phải dùng thư mục giải nén sẵn trên Drive, Doanh tự tạo `CIRR_D2_val_20261021.zip` (chỉ val). Doanh đọc `outputs` từ một bản sao tên `SEARLE (1)`; `outputs/phi_models/` có 4 thư mục `dryrun_2ep` trùng tên cần dọn)
+- [x] **C1** (Ngày 1) Chia sẻ Drive cho Hòa, Doanh; xác nhận vị trí dữ liệu và dung lượng Drive — 14/11: không đóng gói lại; thư mục giải nén sẵn trên Drive là nguồn chính thức; `prepare_data.sh` bỏ qua `.tar` rỗng/cụt; hai gói hỏng đổi tên và dọn `dryrun_2ep` giao cho Hòa ở H1
 - [ ] **C2** (Ngày 1) Bộ chạy Colab: `setup_env.sh`, `prepare_data.sh`, `requirements-xla.txt`, `SEARLE_runner.ipynb` (một phần: notebook đã chạy được trên runtime mới (Hòa 19/10 trên T4, Doanh 21/10 trên A100); tiêu chí "R@1 = 25.66" chưa đạt: ra 25.59 trên T4, xem H5)
 - [x] **C3** (Ngày 1) Gộp `datasets.py`, sửa nuốt lỗi, xử lý batch rỗng, đưa file nhỏ của `outputs/` vào git — 17/10
   - [x] Gộp bản `datasets.py` của repo và bản vá Colab
