@@ -221,7 +221,9 @@ Che lần lượt từng ô của ảnh tham chiếu (ô 32 × 32 px, bước 16
 | Mã | Dữ liệu | Số ảnh | Thời gian train (100 epoch, A100) |
 |---|---|---|---|
 | E1.14a | `oti_B32_s0` | 33.334 | 2–3 giờ |
-| E1.14b | `oti_B32_s0` + `oti_B32_s1` | 66.668 | 4–5 giờ |
+| E1.14b | `oti_B32_s0` + `oti_B32_s1` | 66.667 | 4–5 giờ |
+
+**Kiểm kê T2 14/11/2026:** s0 có 33.334 ảnh, s1 có 33.333 ảnh, tổng không trùng là 66.667; đã sửa số dự kiến 66.668. T2 đang train, chưa có điểm cuối; [log/kết quả](https://drive.google.com/drive/folders/1aYIIvTm-csZG0pfFfhA-fkmgab4vubG0).
 
 Vẽ R@1, R@10 theo số ảnh (thang log). Chưa rõ 6.824 ảnh của lần chạy cũ có trùng shard s0 không; ghi chú khi vẽ.
 
