@@ -245,6 +245,8 @@ $PY tools/vector_analysis.py gap    --dataset circo --dataset-path $DATA/CIRCO -
 Gửi Chí 4 file `report.md` cùng hình `tokens.png`, `gap.png`.
 
 ### T1. (Tuỳ chọn) Train phi trên 1 shard, chạy nền từ Ngày 6 — E1.14a
+**Nghiệm thu 14/11/2026:** E1.14a = E8.1a đã hoàn tất một lần, experiment `phi_scale_s0_Hoa_20261114_e0dbcd`: 33.334 ảnh/token s0, 100 epoch/20 validation, checkpoint epoch 100; A100 80 GB, seed 42. CIRR R@1 24,30 so với đối chứng cùng A100 25,47; Δ −1,17 điểm, CI 95% [−1,89; −0,45]. Đủ audit/CI/báo cáo và đã bổ sung H14. [Gói kết quả](https://drive.google.com/drive/folders/1Efh_KhmM6PldYHMM9VrSS2ovZv3KfokS), [nhật ký chi tiết](nhat_ky_thi_nghiem.md). Không cần chạy lại các lệnh mẫu dưới đây. T2 chưa chạy; Hòa 12/20 (60%).
+
 Cần: C10 (đã xong); runtime **A100**; ô 4 thêm `imagenet`. Khoảng 2–3 giờ. Đây cũng là E8.1a của [08](08_hoc_may_cai_tien_phi.md): chỉ chạy một lần, kết quả dẫn chiếu ở cả hai nơi. `--features-cache-dir` lưu đặc trưng CLIP của ảnh train để các lượt train sau (của Doanh và Hòa, cùng tập ảnh) khỏi trích lại.
 ```bash
 mkdir -p $DRIVE/results/E1.14a-train-s0
