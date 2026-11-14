@@ -1,6 +1,15 @@
 # Nhiệm vụ của Hòa: chạy đánh giá, thí nghiệm và train trên Colab
 
-## Nghiệm thu mới nhất — 14/11/2026
+## Nghiệm thu cuối — H1/H13/H14, 14/11/2026
+
+**14/11/2026 — Hòa hoàn tất H1, H13 và H14; đủ 20/20 việc (100%) theo cấu hình mặc định phi_B32.** [Notebook](https://colab.research.google.com/drive/1fy8aH6k1unuvMVEdZdxleBn30Vr71oC0) · [Gói H14 cuối, báo cáo và bảng kết luận bàn giao](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Cả nhóm **51/61 (84%)**; hoàn tất phần Hòa không có nghĩa toàn bộ dự án đã xong.
+
+- **H1:** thực hiện quyết định Chí `470a568`, checkout runner `158927b`: đổi `CIRR.tar` (6.449.920.000 byte) thành `.broken`, `FashionIQ.tar` (0 byte) thành `.empty`; chuyển đủ bốn `dryrun_2ep*` chỉ có hyperparameters.json sang `outputs/discarded/dryrun_2ep_D2/`, SHA-256 giữ nguyên. Không xoá ảnh/checkpoint, không đóng gói thêm dữ liệu. Chạy `prepare_data.sh cirr circo fiq`, cả ba đường dẫn sẵn sàng, exit 0. Lần đầu FIQ `ls` bị I/O và in nhầm 0 ảnh; đã giữ log lỗi, đối chiếu metadata đủ 6.016 truy vấn/15.536 vị trí gallery (15.415 tên ảnh), giải mã ảnh mẫu theo tên trực tiếp, rồi chạy lại script nguyên bản: cả ba `already in`, không lỗi. Không coi log lần đầu là nghiệm thu hay kiểm kê ảnh mới.
+- **H13:** dùng lại ba file/điểm test phi_B32 đã nghiệm thu H4 và CI H7 theo cấu hình mặc định Chí cho phép; **không sinh/nộp test thêm, không chạy lại mô hình**. Bảng đủ 23 chỉ số val/CI và 16 chỉ số test. CIRR val R@1 **25,50 [24,23;26,74]** (4.181 truy vấn); FIQ R@10 **22,83 [21,80;23,88]** (6.016); CIRCO mAP@5 **8,85 [6,79;11,47]** (220). FIQ/CIRCO dùng exclude-reference; val T4, test phi lịch sử A100. Không gán CI val cho test. Test: CIRR R@1 **23,349**, subset R@1 **54,458**, CIRCO mAP@5 **9,44**. Nguồn `tables/H13_final_val_ci.csv`, `tables/H13_reused_official_test.csv`, audit và cấu hình trong `sources/closeout_20261114/` của H14.
+- **H14:** đã chạy collector từ 212 bản ghi nguồn, gom **38 CSV, 74 PNG**, `summary.md`, báo cáo MD/HTML, `BAN_GIAO_CHO_CHI.md` (mã thí nghiệm → một câu kết luận), log/audit và SHA-256. Bàn giao bằng thư mục chung và plans; chưa gửi email/tin nhắn riêng. Tên ZIP/report H14 giữ nguyên, nội dung là bản cuối.
+- **Nhánh phi bền/C18 vẫn mở:** chỉ bổ sung test nếu E3.8c có cận dưới CI ΔR@1 sạch ≥ −1,0 và CI ΔR@1 trung bình tám suy giảm nằm hẳn trên 0. Không ghi phi bền đạt điều kiện khi chưa có kết quả. P3 vẫn tùy chọn; H10/H11/H12/H18/T1/T2 không cần chạy lại.
+
+## Mốc nghiệm thu trước đó — H10/H11/H12/H18, 14/11/2026
 
 **14/11/2026 — Hòa đã nghiệm thu H10, H11, H12 và H18-P2.** [Notebook](https://colab.research.google.com/drive/1fy8aH6k1unuvMVEdZdxleBn30Vr71oC0) · [Kết quả H10/H11/H12](https://drive.google.com/drive/folders/1S-Hd658_vouhe4w__4B-BGfw7bv9FiUh) · [Gói H14 cập nhật](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Phiên `results/Hoa_H10_L4_20261114_085609_3cdcbc`, code `e64f1c5`, NVIDIA L4. **Hòa 17/20 (85%); cả nhóm 45/61 (74%).**
 
@@ -186,19 +195,9 @@ Lần chạy notebook đầu tiên chưa ai thử trên Colab thật: nếu mộ
 
 ## 4. Chi tiết từng nhiệm vụ
 
-### H1. Dựng Colab và đóng gói dữ liệu (Ngày 1)
-- Làm mục 1, rồi chạy ô 1–5 của notebook.
-- **Chỉ khi Chí xác nhận Drive còn đủ chỗ (C1):** đóng gói dataset thành một file `.tar` để các phiên sau giải nén nhanh (FashionIQ đã có `FashionIQ.tar`, bỏ qua):
-  ```bash
-  cd $DRIVE/datasets
-  tar -cf CIRR.tar CIRR
-  tar -cf CIRCO.tar CIRCO      # khoảng 19 GB ảnh, lâu: để chạy trong lúc làm H2
-  ```
-- Chạy thử (code trên GitHub đã là bản mới; đây cũng là nghiệm thu bộ chạy Colab):
-  ```bash
-  $PY src/validate.py --eval-type searle --dataset cirr --dataset-path $DATA/CIRR
-  ```
-  Kỳ vọng: `cirr_recall_at1 = 25.66` (±0.05). Ghi lại thời gian chạy.
+### H1. Dựng Colab và chuẩn bị dữ liệu — đã hoàn tất 14/11
+
+Theo quyết định Chí 470a568: không đóng gói lại, dùng thư mục đã giải nén chính thức. Đã cách ly CIRR.tar.broken/FashionIQ.tar.empty và dọn bốn dryrun; chạy lại prepare_data.sh cho CIRR/CIRCO/FIQ, cả ba sẵn sàng. Log lần đầu có lỗi FIQ ls đã giữ riêng; nghiệm thu dựa trên lần chạy lại không lỗi và xác minh metadata/ảnh mẫu theo tên. Nguồn trong H14 `sources/closeout_20261114/H1/`.
 
 ### H2. Kiểm tra dữ liệu nhanh (Ngày 1) — E1.2
 Cách nhanh: chạy ô "Kiểm tra dữ liệu (E1.2)" của notebook (gọi `tools/check_datasets.py`, ghi `$DRIVE/results/E1.2-dataset-check/report.md`). Nếu ô đó lỗi, dùng đoạn Python dưới đây (chạy trong một ô **Python**, không phải `%%bash`):
@@ -431,14 +430,13 @@ $PY tools/occlusion_map.py --run $R/E1.7d-phiB32-cirr --dataset cirr --dataset-p
 $PY tools/visualize_queries.py --explain-attributes --run $R/<cuối> --dataset fashioniq --dataset-path $DATA/FashionIQ --n 20 --seed 0 --out $R/E2.8-explained-fiq
 ```
 
-### H13. Nộp test cấu hình cuối (Ngày 12) — E2.9
-- Chạy `generate_test_submission.py` với đúng các cờ của cấu hình cuối (Chí gửi ở C18) cho CIRR và CIRCO, đặt tên `final_cirr`, `final_circo`; chép ra `$DRIVE/outputs/submissions/`; nộp server; gửi điểm cho Chí.
-- Khoảng tin cậy cho bảng chính: `tools/bootstrap_ci.py --baseline <phi_B32 cùng tập> --runs <cấu hình cuối>` trên 3 tập val.
+### H13. Cấu hình cuối — đã hoàn tất 14/11 theo phi_B32 mặc định
 
-### H14. Tổng hợp và bàn giao (Ngày 13)
-- `tools/collect_results.py` → bản `summary.md` mới nhất.
-- Gom hình vào `$DRIVE/results/figures_Hoa/`.
-- Gửi Chí danh sách: mã thí nghiệm → một câu kết luận.
+Dùng lại điểm test H4 và CI H7 theo quyết định Chí. Đủ 23 chỉ số val/CI, 16 chỉ số test; không chạy hoặc nộp file mới. Bảng: `H13_final_val_ci.csv`, `H13_reused_official_test.csv`, `H13_final_configuration.json` trong H14. Giữ riêng giao thức và GPU; không gán CI val cho test. Phi bền chỉ bổ sung khi E3.8c đạt cả hai điều kiện C18 ở phần quyết định phía trên.
+
+### H14. Tổng hợp và bàn giao — đã hoàn tất 14/11
+
+Đã chạy collect_results.py từ 212 bản ghi nguồn, gom 38 CSV và 74 PNG; có summary.md, báo cáo MD/HTML, BAN_GIAO_CHO_CHI.md, nguồn, audit và SHA-256. Bàn giao qua thư mục chung và plans; chưa gửi email/tin nhắn riêng. Phần Hòa đủ 20/20, phần Chí/Doanh còn theo phân công.
 
 ### H15. Luồng học máy: OTI warm-start trên CIRCO val (Ngày 11) — E7.1a–d
 Cần: C21; E7.0 đã chạy ở H17 (Ngày 7), không chạy lại. Ý nghĩa từng cấu hình ở [07](07_hoc_may_oti_warm_start.md). CIRCO val chỉ có 220 truy vấn, mỗi lượt OTI vài phút. Lượt E7.1a (khởi tạo ngẫu nhiên, bộ câu gốc) cũng là E6.2-P0 của [06](06_sinh_lai_cum_tu_gpt.md); H18 sẽ so với kết quả này.
