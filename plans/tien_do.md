@@ -1,5 +1,42 @@
 # Tiến độ dự án
 
+**14/11/2026 — Hòa đã nghiệm thu H10, H11, H12 và H18-P2.** [Notebook](https://colab.research.google.com/drive/1fy8aH6k1unuvMVEdZdxleBn30Vr71oC0) · [Kết quả H10/H11/H12](https://drive.google.com/drive/folders/1S-Hd658_vouhe4w__4B-BGfw7bv9FiUh) · [Gói H14 cập nhật](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Phiên `results/Hoa_H10_L4_20261114_085609_3cdcbc`, code `e64f1c5`, NVIDIA L4. **Hòa 17/20 (85%); cả nhóm 45/61 (74%).**
+
+- **H10:** đủ 12 lượt còn lại (K50, bốn mặt nạ none/otsu/grabcut/saliency, negation off trên CIRR/FIQ), màu w=2; tổng **76 cấu hình**. Mỗi lượt đủ 4.181/6.016 truy vấn, không lỗi ảnh/bỏ/trùng qid/thiếu phép đo, có CI ghép cặp 1.000 lần seed 0; FIQ phân tầng theo loại và bật `--exclude-reference`. So với chính `E2.3b-color-w2-<tập>` theo chỉ dẫn Chí. Bốn replay phục vụ kiểm tra, không cộng vào 76; cả hai lượt màu w=2 khớp hoàn toàn chỉ số từng truy vấn và top-100 E2.3b trên L4. Phiên A100 chẩn đoán lệch 4 truy vấn subset đã dừng trước ablation, không trộn vào kết quả chính.
+- **H11:** E2.7 màu w=2, K100/auto/negation on trên CIRCO val đủ 220 truy vấn, gallery 123.403 ảnh, cùng giao thức loại ảnh tham chiếu ở cả hai lượt. mAP@5 phi **8.85 → 9.01**; Δ **+0.15 điểm, CI 95% [-0.04; +0.42]**. FIQ dùng lại lượt màu w=2, không chọn lại tham số trên CIRCO/FIQ. E2.6 bỏ theo Chí; E4.4/E4.5 đã xong từ trước.
+- **H12:** thêm 20 ví dụ CIRR E1.12 phi so với màu w=2 và 20 ví dụ FIQ có giải thích E2.8, seed 0. Giữ 10 hình che khuất E1.13 đã nghiệm thu, tổng 50 hình. Chọn minh họa theo thành công/thất bại top-5 và taxonomy; không coi là mẫu ước lượng chất lượng chung.
+- **H14:** đã hợp nhất **35 bảng CSV, 74 hình PNG** cùng báo cáo, nguồn/audit và SHA-256. H14 vẫn một phần: H1/C1, C18/H13 và bàn giao cuối còn chờ. Chưa gửi email/tin nhắn cho Chí. Cấu hình cuối hiện vẫn không dùng xếp hạng lại thuộc tính; không tự đóng C18 hoặc H13.
+
+**H18-P2:** đã nhận và chép nguyên bộ P2 Qwen2.5-1.5B của D16 sang thư mục chung; OTI 220 ảnh, seed 42, 350 bước, L4, cùng tham số P0/P1. Giữ ảnh tham chiếu, gallery đủ 123.403 đặc trưng; ba đối chứng dùng token đã nghiệm thu, chỉ đánh giá lại cùng L4. P1 khớp mọi chỉ số từng truy vấn của lần L4 cũ. Đủ token EMA 220x512, không lỗi/bỏ/trùng truy vấn.
+
+| Bộ câu | CIRCO mAP@5 | CI 95% |
+|---|---:|---|
+| P0 | 6.67 | [4.90; 8.87] |
+| P1 | 5.85 | [4.10; 7.88] |
+| Plambda0 | 2.16 | [1.34; 3.30] |
+| P2 | 8.20 | [6.26; 10.60] |
+
+| So sánh ghép cặp | Δ điểm | CI 95% Δ |
+|---|---:|---|
+| P2 minus P0 | +1.54 | [-0.19; +3.29] |
+| P2 minus P1 | +2.35 | [+0.54; +4.30] |
+| P2 minus Plambda0 | +6.04 | [+4.05; +8.35] |
+
+H18 đủ P1 và một bộ mới P2 theo phân công; **P3 tùy chọn**, không chặn nghiệm thu. Ba CI ghép cặp 1.000 lần, seed 0. Một seed OTI; P0/lambda=0 tối ưu token lịch sử trên T4, P1/P2 trên L4; cùng GPU đánh giá vẫn chưa loại bỏ giới hạn này. P2 có quy mô câu/khái niệm nhỏ hơn nên không quy toàn bộ chênh lệch cho riêng mô hình ngôn ngữ. Nguồn `Hoa_H18_P2_20261114_handover.zip`, dump/CI/audit và token EMA tại `results/Hoa_H18_P2_20261114_152635_02fb44`. Không tự đóng C18/H13.
+
+| Cấu hình màu w=2 | CIRR R@1 | Δ / CI 95% | FIQ R@10 | Δ / CI 95% |
+|---|---:|---|---:|---|
+| E2.3-color-w2-k50 | 25.78 | +0.00 [-0.17; +0.17] | 22.78 | -0.03 [-0.20; +0.16] |
+| E2.4-mask-none | 26.07 | +0.29 [-0.12; +0.67] | 23.13 | +0.31 [-0.02; +0.68] |
+| E2.4-mask-otsu | 25.81 | +0.02 [-0.34; +0.38] | 22.81 | +0.00 [-0.10; +0.10] |
+| E2.4-mask-grabcut | 25.88 | +0.10 [-0.02; +0.24] | 23.01 | +0.20 [-0.08; +0.50] |
+| E2.4-mask-saliency | 25.83 | +0.05 [-0.33; +0.43] | 22.83 | +0.02 [-0.32; +0.33] |
+| E2.5-neg-off | 25.81 | +0.02 [-0.05; +0.10] | 22.78 | -0.03 [-0.08; +0.00] |
+
+Cả 12 CI chênh lệch của chỉ số chính đều chứa 0: chưa có bằng chứng thay K/mask/negation tốt hơn đối chứng đã chọn.
+
+Đối chứng K100/auto/negation on: CIRR R@1 25,78, FIQ R@10 22,81. CI chưa điều chỉnh nhiều phép so sánh; các lượt này dùng phân tích, không tự thay cấu hình cuối. Nguồn: `Hoa_H10_H12_20261114_handover.zip`, `Hoa_H11_E27_20261114_handover.zip` và các JSON audit/CI trong phiên.
+
 **14/11/2026 tối (Chí): chốt D10.** Doanh đã chạy xong trong ngày: D9, E3.3, E3.4, E3.6, E3.7, E3.9, D16 (thư mục `Doanh_SEARLE`).
 - **D9 → phi bền dùng `degaug`:** trung bình 8 suy giảm R@1 23,16 so với `clean` 22,79 (+0,37) và `noise` 23,02; suy giảm chưa thấy khi train vẫn +0,31; ảnh sạch −0,24 (24,16 so với 24,40). Doanh train ngay `phi_B32_robust` 100 epoch (D10, khoảng 4 giờ A100), sau đó chạy E3.8c. Bảng và lý do ở đầu [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
 - **E3.3 (CIRR, `mixed`):** không phục hồi 24,49; `auto` **25,16** (+0,67); `auto_iqa` 25,04; `oracle` 24,97. Trên **ảnh sạch**, `auto` còn 25,21 và `auto_iqa` 25,09, so với 25,50: phục hồi tự động làm hỏng nhẹ ảnh tốt, vì `auto` xử lý 63% ảnh sạch (riêng `deblock` 720 ảnh do ảnh CIRR vốn là JPEG). CIRCO `mixed` + `auto`: mAP@5 9,77.
@@ -19,7 +56,7 @@
 
 **14/11/2026 — T1 đã hoàn tất và nghiệm thu:** [Notebook T1](https://colab.research.google.com/drive/1fy8aH6k1unuvMVEdZdxleBn30Vr71oC0) · [Báo cáo, gói bàn giao và nguồn](https://drive.google.com/drive/folders/1Efh_KhmM6PldYHMM9VrSS2ovZv3KfokS). **E1.14a = E8.1a**, một thí nghiệm `phi_scale_s0_Hoa_20261114_e0dbcd`, code `e64f1c5`, không sửa `src/`; NVIDIA A100-SXM4-80GB. Đủ **33.334 ảnh/token EMA s0, 100/100 epoch, 20 mốc validation, checkpoint epoch 100**, tham số/loss hữu hạn; hoàn tất **11:46:55 (GMT+7)**. Seed 42, batch 256, LR cố định 0,0001; cache s0 chọn đúng hàng theo tên từ cache 100.000 ảnh, có SHA-256/provenance. T1 và phi_B32 đối chứng cùng A100/CIRR val đều đủ **4.181 truy vấn**, không lỗi ảnh/bỏ/trùng qid. R@1: **25,47 → 24,30**, Δ **−1,17 điểm**, CI 95% **[−1,89; −0,45]** (bootstrap ghép cặp 1.000 lần, seed 0). Một seed train; số bước cập nhật khác nhau khi giữ 100 epoch, nên không kết luận nhân quả chỉ do lượng dữ liệu. Đã lưu báo cáo MD/HTML, bốn CSV, ba hình, audit, manifest/SHA-256 và bổ sung H14. **Tại mốc nghiệm thu T1: Hòa 12/20 (60%); T2 được khởi chạy sau đó (xem cập nhật đầu trang).**
 
-**H14 — cập nhật T1/T2 ngày 14/11/2026:** [Gói ZIP, báo cáo, bảng/CI và hình](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Có **26 bảng CSV, 32 hình PNG**, báo cáo Markdown/HTML, nguồn chỉ số và manifest/SHA-256. Đã hợp nhất baseline, 64 cấu hình H10, OTI, H16, 10 hình che khuất, đủ sáu kết quả test H4 và T1/T2 (mỗi lượt 100 epoch/20 validation, đánh giá CIRR và CI). Giữ riêng giao thức mặc định / loại ảnh tham chiếu / test và các giới hạn so sánh GPU. Tệp chính: `Hoa_H14_20261113_handover.zip`, `Hoa_H14_20261113_report.md` (giữ tên, nội dung cập nhật 14/11). **H14 vẫn một phần**: còn H10 K=50/E2.4/E2.5 (Chí đã xác nhận màu w=2 ngày 14/11), H11/H12 và quyết định C18/H13; chưa gửi thông báo cho Chí. Hòa **13/20 (65%)**.
+**H14 — cập nhật H10/H11/H12 ngày 14/11/2026:** [Gói ZIP, báo cáo, bảng/CI và hình](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Có **35 bảng CSV, 74 hình PNG**, báo cáo Markdown/HTML, nguồn chỉ số và SHA-256. Đã hợp nhất baseline, 76 cấu hình H10, E2.7 CIRCO, đủ 50 hình H12, H18 P2 và OTI/H16, sáu kết quả test H4 và T1/T2. Hòa **17/20 (85%)**; H14 cuối vẫn chờ H1/C1, C18/H13 và bàn giao cuối. Chưa gửi thông báo cho Chí.
 
 **H4 hoàn tất 13/11/2026:** người dùng đã nộp đủ **6/6 file** và đã lưu điểm test chính thức của phi_B32 và SEARLE gốc: bốn kết quả CIRR rc2 (recall và recall_subset) cùng hai email CIRCO. Người dùng xác nhận thứ tự CIRCO: `phi_B32_circo.json` trước, `searle_official_circo.json` sau. Tại mốc H4: Hòa **11/20 việc (55%)**; cả nhóm **33/61 (54%)**; giai đoạn 0 **15/15 (100%)**. H13 là lượt test cấu hình cuối riêng, chưa hoàn tất.
 
@@ -28,7 +65,7 @@
 | phi_B32 | 23.349 | 52.651 | 66.940 | 89.735 | 54.458 | 9.44 | 9.79 |
 | SEARLE gốc | 23.301 | 52.916 | 66.916 | 89.831 | 54.000 | 9.39 | 9.96 |
 
-Các số đều là phần trăm; đây là **test**, không thay thế số val. [Đủ chỉ số, tên file và mốc trả kết quả B8–B11](nhat_ky_thi_nghiem.md). Không kết luận khác biệt có ý nghĩa thống kê từ các điểm đơn lẻ này. H10 còn K=50, E2.4/E2.5 sau khi Chí xác nhận trọng số; H11/H12/H13 chờ cấu hình cuối, H18 P2/P3 chờ D16.
+Các số đều là phần trăm; đây là **test**, không thay thế số val. [Đủ chỉ số, tên file và mốc trả kết quả B8–B11](nhat_ky_thi_nghiem.md). Không kết luận khác biệt có ý nghĩa thống kê từ các điểm đơn lẻ này. H10/H11/H12/H18 đã nghiệm thu 14/11; H13 chờ C18; P3 tùy chọn.
 
 **Cập nhật 13/11/2026 (Hòa — E2.3b): đã hoàn thành 24/24 lượt mới**, gộp với 40 lượt E2.3 thành **64 cấu hình**. Màu/độ sáng/hoa văn × w = 0,5 / 1 / 2 / 4 × CIRR/FashionIQ; K=100, mask=auto, negation=on, FashionIQ có `--exclude-reference`. NVIDIA L4, cùng checkpoint, sáu cache CLIP và hai cache thuộc tính cuối E2.3; SHA-256 khớp, không sửa `src/`. Hai đối chứng chạy lại khớp toàn bộ chỉ số và thứ hạng top-100 của đợt E2.3. Mỗi lượt đủ 4.181 truy vấn CIRR hoặc 6.016 truy vấn FashionIQ; không lỗi ảnh, không bỏ/trùng truy vấn, không thiếu phép đo. Có hai bảng CI ghép cặp 1.000 lần, seed 0, bảng gộp 64 lượt và hình đường cong.
 
@@ -112,9 +149,9 @@ Cả ba họ đều không có CI cải thiện nằm trên 0; theo luật đã 
 |---|---|---|---|---|
 | **Giai đoạn 0: tái lập SEARLE** (trước kế hoạch) | 15 | 15 | **100%** | Đã đủ điểm test chính thức CIRR/CIRCO cho SEARLE gốc và phi_B32 ngày 13/11; FashionIQ val đầy đủ đã đánh giá với `--exclude-reference` ngày 26/10 |
 | Kế hoạch 2 tuần: Chí (C1–C24) | 17 | 24 | 71% | Xong toàn bộ code cần cho Colab (C3, C5–C16, C21–C24); C2, C4 chờ nghiệm thu trên Colab; C1 cần làm tay; còn C17–C20 (demo, cấu hình cuối, báo cáo, video) |
-| Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 13 | 20 | 65% | H2, H3, H4, H5, H6, H7, H8, H9, H15, H16, H17, T1, T2 xong; H10 xong E2.3 + E2.3b (64 lượt), đã có xác nhận màu w=2 để chạy K=50/mask/negation; H4 hoàn tất sáu lượt nộp/điểm test chính thức; H18 P2/P3 chờ Doanh |
+| Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 17 | 20 | 85% | H2–H12, H15–H18, T1/T2 xong; H10 đủ 76 cấu hình, H11 E2.7 và H12 hoàn tất 14/11; còn H1/C1, C18/H13, H14 cuối; H18 P1/P2 đã xong, P3 tùy chọn |
 | Kế hoạch 2 tuần: Doanh (D1–D17) | 11 | 17 | 65% | D1–D9, D12, D16 xong; D10 còn train `phi_B32_robust` (E3.3 xong); D11 còn E3.8c (E3.4, E3.9 xong); D15 bỏ |
-| **Kế hoạch 2 tuần: cả nhóm** | 41 | 61 | **67%** | Hòa + Doanh xong 24/37 việc; 14/11 Chí chốt trọng số H10, bảng oracle, ngưỡng auto và biến thể phi bền (D10) |
+| **Kế hoạch 2 tuần: cả nhóm** | 45 | 61 | **74%** | Hòa + Doanh xong 28/37 việc; H10/H11/H12 nghiệm thu 14/11; Chí 17/24, Doanh 11/17 |
 | Mốc kiểm tra M1–M5 | 1 | 5 | 20% | M3 đạt 12/11 (giữ hướng 02); M1, M2, M4, M5 quá hạn chưa đạt |
 
 Trang tự đánh giá của demo (`/api/assessment`, chỉ tính phần tái lập): lõi **93%**, tính cả phần mở rộng (SEARLE-XL, SEARLE-OTI) **75%**.
@@ -184,15 +221,15 @@ Chi tiết: [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md).
 - [x] **H7** (Ngày 5) Kiểm tra dữ liệu bằng công cụ E1.2; khoảng tin cậy E1.4; gom kết quả — 26/10: đủ ba bảng CI 95%, 1.000 lần bootstrap, seed 0, baseline phi_B32 cùng tập; kiểm tra bộ val local đủ ảnh/truy vấn và gom 26 lượt vào summary-all.md.
 - [x] **H8** (Ngày 6) Taxonomy E1.10 cả ba tập; keep-edit E1.11, token E1.15a và modality gap E1.15b CIRR/CIRCO — 26/10. Keep-edit CIRCO dùng phi_B32 --exclude-reference của H6 thay cho lượt E1.7e chưa nghiệm thu ở H5. Có report.md và các hình tokens.png, gap.png; phần bổ sung token OTI sẽ chạy sau H15.
 - [x] **H9** (Ngày 7) Thống kê thuộc tính E2.0 và đồng thuận bộ đo E2.2 — 26/10: đủ ba tập, không lỗi ảnh; CIRR 67,1%/ngẫu nhiên 45,8%; FashionIQ 75,8%/51,6% trên 9.778 ràng buộc; CIRCO 62,7%/49,3%. Đủ dữ liệu bàn giao M3; Chí chưa quyết định giữ/đổi hướng.
-- [ ] **H10** (Ngày 8–9) Quét xếp hạng lại (E2.3/E2.3b); mặt nạ (E2.4); phủ định (E2.5) — 13/11: **xong 40 + 24 = 64 lượt**, hai CI ghép cặp cho E2.3b, bảng gộp và hình đường cong. Hai đối chứng cùng L4 khớp E2.3; đủ truy vấn/ứng viên, không lỗi ảnh hoặc truy vấn bị bỏ/trùng. Đề xuất trọng số theo CIRR ở đầu trang; chờ Chí xác nhận màu để chạy K=50, E2.4, E2.5. Chưa chốt cấu hình cuối.
-- [ ] **H11** (Ngày 10) Kết hợp (E2.6), tổng quát hoá (E2.7), kết hợp điểm (E4.4), ensemble prompt (E4.5) — 26/10: **E4.4/E4.5 đã xong**, 5 trọng số fusion và 1 ensemble, đủ 4.181 truy vấn/lượt, có CI ghép cặp. Còn E2.6/E2.7 chờ cấu hình cuối của Chí. Xem báo cáo H11/H12 ở đầu trang.
-- [ ] **H12** (Ngày 11) Ví dụ định tính (E1.12), bản đồ che khuất (E1.13), ví dụ có giải thích (E2.8) — 26/10: **E1.13 đã xong**, đủ 10 hình che khuất baseline phi CIRR, seed 0. Còn E1.12/E2.8 chờ kết quả cấu hình cuối.
+- [x] **H10** (Ngày 8–9) Quét xếp hạng lại, K50, mặt nạ, phủ định — 14/11: hoàn tất 40 E2.3 + 24 E2.3b + 12 K50/E2.4/E2.5 = 76 cấu hình và CI; màu w=2 theo Chí. Đủ truy vấn/ứng viên, replay E2.3b khớp trên L4. Không tự thay cấu hình cuối.
+- [x] **H11** (Ngày 10) E4.4/E4.5 đã xong; E2.7 màu w=2 CIRCO đủ 220 truy vấn, có CI và đối chứng cùng giao thức exclude-reference ngày 14/11; FIQ dùng lại E2.3b. E2.6 bỏ theo Chí.
+- [x] **H12** (Ngày 11) Đủ E1.12/E1.13/E2.8: 20 ví dụ CIRR, 10 hình che khuất đã có, 20 ví dụ giải thích FIQ; seed 0, cấu hình màu w=2 theo Chí. Nghiệm thu 14/11.
 - [ ] **H13** (Ngày 12) Nộp test cấu hình cuối (E2.9); khoảng tin cậy bảng chính
-- [ ] **H14** (Ngày 13) Tổng hợp bảng, hình → bàn giao Chí (một phần: đã gom baseline/OTI/H11/H12 và bổ sung báo cáo, CSV, CI, đường cong H16 ngày 31/10; còn thiếu cấu hình cuối và điểm test chính thức; chưa gửi thông báo) 12/11: đã bổ sung bốn baseline H5, 40 lượt E2.3, CSV/CI/báo cáo và gói bàn giao phiên mới; vẫn thiếu cấu hình cuối/điểm test. 13/11: đã bổ sung 24 lượt E2.3b, bảng gộp 64 lượt, CI, đường cong và gói bàn giao; còn cấu hình cuối/điểm test. Sau H4: đã bổ sung điểm baseline test B8–B11, còn cấu hình cuối và điểm test H13. **Gói cập nhật T1/T2 14/11 đã sẵn sàng:** 26 CSV, 32 hình PNG, báo cáo MD/HTML, đủ điểm H4, nguồn và kiểm tra SHA-256; [tải gói hiện tại](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Phần bàn giao cuối tiếp tục chờ H10–H13; chưa gửi thông báo.
+- [ ] **H14** (Ngày 13) Gói đã hợp nhất H10/H11/H12, T1/T2, H4 và nguồn cũ: 35 CSV, 74 PNG, báo cáo MD/HTML và SHA-256. [Gói cập nhật](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). H14 cuối còn chờ H1/C1, C18/H13; chưa gửi thông báo.
 - [x] **H15** (Ngày 11) OTI warm-start CIRCO val E7.1a–d — 26/10: đủ 5 cấu hình (random 0,02; phi 0,02/0,005; SEARLE 0,02/0,005), 7 snapshot × token thường/EMA = 70 lượt đánh giá, seed 42. Mỗi lượt đủ 220 truy vấn, không lỗi ảnh hoặc truy vấn bị bỏ. Đã phân tích lại token OTI, lưu thời gian batch, đường cong và CI ghép cặp với P0. Xem H17_H15_attempt2/, oti-snapshot-metrics.csv, oti-inversion-timing.csv, oti-warmstart-curves.png, E7.1-ci-finals-circo/ trong phiên CIRCO/OTI. Chí chọn cấu hình cho D15; chưa tự chọn thay nhóm.
 - [x] **H16** (Ngày 10) Train phi với lịch LR cosine (E8.2a) — 31/10: đủ 100 epoch, checkpoint cuối và đánh giá CIRR/CIRCO cùng đối chứng; có CI ghép cặp và báo cáo nghiệm thu ở đầu trang.
 - [x] **H17** (Ngày 7) Liên kết khái niệm CIRCO val E7.0 và OTI E6.2-Pλ0 — 26/10: CSV đủ 220 ảnh tham chiếu, 250 khái niệm/ảnh; OTI 350 bước, seed 42, bộ câu gốc với lambda_gpt=0; mAP@5/10/25/50 = 2,16/3,03/3,89/4,32. Đánh giá đủ 220 truy vấn, không lỗi ảnh/truy vấn bị bỏ. Kết quả ở phiên CIRCO/OTI, thư mục H17_H15_attempt2. Giữ mặc định không --exclude-reference theo kế hoạch.
-- [ ] **H18** (Ngày 13) OTI với bộ câu GPT mới trên CIRCO val (E6.2) (một phần: P1 xong 11/11, mAP@5 5,85 so với P0 6,67, CI chênh lệch [−2,13; +0,52]; P2/P3 chờ D16)
+- [x] **H18** (Ngày 13) OTI với P1 và bộ mới P2 của D16 trên CIRCO val đã hoàn tất 14/11, đủ 220 truy vấn, token EMA bước 350 và CI so P0/P1/lambda=0; P3 tùy chọn, không chặn nghiệm thu.
 - [x] **T1** (Ngày 6, tuỳ chọn) Train phi trên shard s0 (E1.14a = E8.1a) — **14/11 hoàn tất**: 33.334 ảnh/token, A100 80 GB, 100 epoch/20 mốc validation, checkpoint epoch 100; đủ đánh giá/CI và báo cáo. CIRR R@1 24,30 so với phi_B32 25,47; Δ −1,17, CI 95% [−1,89; −0,45]. [Notebook](https://colab.research.google.com/drive/1fy8aH6k1unuvMVEdZdxleBn30Vr71oC0) · [Gói kết quả](https://drive.google.com/drive/folders/1Efh_KhmM6PldYHMM9VrSS2ovZv3KfokS).
 - [x] **T2** (Ngày 8, tuỳ chọn) Train phi trên shard s0 + s1 (E1.14b = E8.1b) — 14/11 nghiệm thu: 66.667 ảnh/token, A100 80 GB, 100 epoch/20 validation, checkpoint epoch 100; đủ ba đánh giá CIRR, hai CI, báo cáo và hình. R@1 24,68%, Δ so T1 +0,38 (CI [−0,29; +1,05]), so phi_B32 −0,79 (CI [−1,32; −0,26]); xem gói T2 ở đầu trang.
 
@@ -231,11 +268,12 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
 1. **Doanh:**
    - **D10:** train `phi_B32_robust` (degaug, 100 epoch);
    - sau đó **E3.8c** (CI ghép cặp với phi_B32) và E3.9 cho phi bền;
-   - chép bộ câu P2 sang `SEARLE/outputs/GPT_phrases/`;
+   - bộ câu P2 đã được chép sang `SEARLE/outputs/GPT_phrases/` và H18-P2 đã nghiệm thu;
    - D17 (train phi trên shard s0 với bộ câu mới) nếu còn A100.
 2. **Hòa:**
-   - phần còn lại của H10 (màu w = 2: K = 50, E2.4, E2.5), rồi E2.7, E1.12, E2.8;
-   - H18-P2 khi bộ câu P2 đã ở thư mục chung.
+   - H10/H11/H12/H18 và T1/T2 đã nghiệm thu; Hòa 17/20 (85%). Không chạy lại các phần này.
+   - H13 chờ Chí chốt C18 sau E3.8c của phi bền. Nếu giữ phi_B32, dùng lại điểm H4 theo chỉ dẫn Chí.
+   - H1 còn C1 xác nhận dung lượng/đóng gói dữ liệu; cập nhật H14 cuối khi đủ đầu vào. P3 tùy chọn.
 3. **Chí:**
    - chốt C18 khi có E3.8c: nếu phi bền không kém phi_B32 rõ rệt trên ảnh sạch thì cân nhắc nộp test, nếu không thì giữ phi_B32 mặc định (đã có điểm test từ H4);
    - C1: đóng gói lại `CIRR.tar`, `FashionIQ.tar` và dọn 4 thư mục `dryrun_2ep`;
