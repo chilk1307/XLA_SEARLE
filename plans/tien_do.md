@@ -1,5 +1,12 @@
 # Tiến độ dự án
 
+**14/11/2026 — Hòa hoàn tất H1, H13 và H14; đủ 20/20 việc (100%) theo cấu hình mặc định phi_B32.** [Notebook](https://colab.research.google.com/drive/1fy8aH6k1unuvMVEdZdxleBn30Vr71oC0) · [Gói H14 cuối, báo cáo và bảng kết luận bàn giao](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Cả nhóm **51/61 (84%)**; hoàn tất phần Hòa không có nghĩa toàn bộ dự án đã xong.
+
+- **H1:** thực hiện quyết định Chí `470a568`, checkout runner `158927b`: đổi `CIRR.tar` (6.449.920.000 byte) thành `.broken`, `FashionIQ.tar` (0 byte) thành `.empty`; chuyển đủ bốn `dryrun_2ep*` chỉ có hyperparameters.json sang `outputs/discarded/dryrun_2ep_D2/`, SHA-256 giữ nguyên. Không xoá ảnh/checkpoint, không đóng gói thêm dữ liệu. Chạy `prepare_data.sh cirr circo fiq`, cả ba đường dẫn sẵn sàng, exit 0. Lần đầu FIQ `ls` bị I/O và in nhầm 0 ảnh; đã giữ log lỗi, đối chiếu metadata đủ 6.016 truy vấn/15.536 vị trí gallery (15.415 tên ảnh), giải mã ảnh mẫu theo tên trực tiếp, rồi chạy lại script nguyên bản: cả ba `already in`, không lỗi. Không coi log lần đầu là nghiệm thu hay kiểm kê ảnh mới.
+- **H13:** dùng lại ba file/điểm test phi_B32 đã nghiệm thu H4 và CI H7 theo cấu hình mặc định Chí cho phép; **không sinh/nộp test thêm, không chạy lại mô hình**. Bảng đủ 23 chỉ số val/CI và 16 chỉ số test. CIRR val R@1 **25,50 [24,23;26,74]** (4.181 truy vấn); FIQ R@10 **22,83 [21,80;23,88]** (6.016); CIRCO mAP@5 **8,85 [6,79;11,47]** (220). FIQ/CIRCO dùng exclude-reference; val T4, test phi lịch sử A100. Không gán CI val cho test. Test: CIRR R@1 **23,349**, subset R@1 **54,458**, CIRCO mAP@5 **9,44**. Nguồn `tables/H13_final_val_ci.csv`, `tables/H13_reused_official_test.csv`, audit và cấu hình trong `sources/closeout_20261114/` của H14.
+- **H14:** đã chạy collector từ 212 bản ghi nguồn, gom **38 CSV, 74 PNG**, `summary.md`, báo cáo MD/HTML, `BAN_GIAO_CHO_CHI.md` (mã thí nghiệm → một câu kết luận), log/audit và SHA-256. Bàn giao bằng thư mục chung và plans; chưa gửi email/tin nhắn riêng. Tên ZIP/report H14 giữ nguyên, nội dung là bản cuối.
+- **Nhánh phi bền/C18 vẫn mở:** chỉ bổ sung test nếu E3.8c có cận dưới CI ΔR@1 sạch ≥ −1,0 và CI ΔR@1 trung bình tám suy giảm nằm hẳn trên 0. Không ghi phi bền đạt điều kiện khi chưa có kết quả. P3 vẫn tùy chọn; H10/H11/H12/H18/T1/T2 không cần chạy lại.
+
 **14/11/2026 khuya (Chí): gỡ chặn H1, H13, H14** (chi tiết ở đầu [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md)).
 - **C1 xong: không đóng gói lại dữ liệu.** Các thư mục đã giải nén trên Drive là nguồn chính thức (H2 đã kiểm tra đủ). `colab/prepare_data.sh` giờ bỏ qua `.tar` rỗng hoặc bị cụt và dùng thư mục, đã thử với ba trường hợp. Hòa đổi tên `CIRR.tar` → `.broken` và `FashionIQ.tar` → `.empty`, chuyển 4 thư mục `dryrun_2ep` vào `outputs/discarded/`, chạy lại ô 4 là H1 xong.
 - **C18: luật cấu hình cuối ghi trước.** Mặc định giữ phi_B32: H13 dùng lại điểm test của H4 và CI của H7. Chỉ nộp thêm `phi_B32_robust` khi E3.8c cho thấy cả hai: trên ảnh sạch CIRR cận dưới CI của Δ R@1 ≥ −1,0, và Δ trung bình 8 suy giảm có CI > 0. Doanh báo đúng hai con số này (cách tính ở [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md)).
@@ -60,7 +67,7 @@ Cả 12 CI chênh lệch của chỉ số chính đều chứa 0: chưa có bằ
 
 **14/11/2026 — T1 đã hoàn tất và nghiệm thu:** [Notebook T1](https://colab.research.google.com/drive/1fy8aH6k1unuvMVEdZdxleBn30Vr71oC0) · [Báo cáo, gói bàn giao và nguồn](https://drive.google.com/drive/folders/1Efh_KhmM6PldYHMM9VrSS2ovZv3KfokS). **E1.14a = E8.1a**, một thí nghiệm `phi_scale_s0_Hoa_20261114_e0dbcd`, code `e64f1c5`, không sửa `src/`; NVIDIA A100-SXM4-80GB. Đủ **33.334 ảnh/token EMA s0, 100/100 epoch, 20 mốc validation, checkpoint epoch 100**, tham số/loss hữu hạn; hoàn tất **11:46:55 (GMT+7)**. Seed 42, batch 256, LR cố định 0,0001; cache s0 chọn đúng hàng theo tên từ cache 100.000 ảnh, có SHA-256/provenance. T1 và phi_B32 đối chứng cùng A100/CIRR val đều đủ **4.181 truy vấn**, không lỗi ảnh/bỏ/trùng qid. R@1: **25,47 → 24,30**, Δ **−1,17 điểm**, CI 95% **[−1,89; −0,45]** (bootstrap ghép cặp 1.000 lần, seed 0). Một seed train; số bước cập nhật khác nhau khi giữ 100 epoch, nên không kết luận nhân quả chỉ do lượng dữ liệu. Đã lưu báo cáo MD/HTML, bốn CSV, ba hình, audit, manifest/SHA-256 và bổ sung H14. **Tại mốc nghiệm thu T1: Hòa 12/20 (60%); T2 được khởi chạy sau đó (xem cập nhật đầu trang).**
 
-**H14 — cập nhật H10/H11/H12 ngày 14/11/2026:** [Gói ZIP, báo cáo, bảng/CI và hình](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Có **35 bảng CSV, 74 hình PNG**, báo cáo Markdown/HTML, nguồn chỉ số và SHA-256. Đã hợp nhất baseline, 76 cấu hình H10, E2.7 CIRCO, đủ 50 hình H12, H18 P2 và OTI/H16, sáu kết quả test H4 và T1/T2. Hòa **17/20 (85%)**; H14 cuối vẫn chờ H1/C1, C18/H13 và bàn giao cuối. Chưa gửi thông báo cho Chí.
+**H14 — bàn giao cuối 14/11/2026:** [ZIP, báo cáo, bảng/CI, hình và kết luận bàn giao](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). Có **38 CSV, 74 PNG**, đủ H1/H13 và toàn bộ kết quả trước đó; **Hòa 20/20 (100%)** theo phi_B32 mặc định. Nhánh phi bền thuộc D10/E3.8c/C18 vẫn mở; chưa gửi email/tin nhắn riêng.
 
 **H4 hoàn tất 13/11/2026:** người dùng đã nộp đủ **6/6 file** và đã lưu điểm test chính thức của phi_B32 và SEARLE gốc: bốn kết quả CIRR rc2 (recall và recall_subset) cùng hai email CIRCO. Người dùng xác nhận thứ tự CIRCO: `phi_B32_circo.json` trước, `searle_official_circo.json` sau. Tại mốc H4: Hòa **11/20 việc (55%)**; cả nhóm **33/61 (54%)**; giai đoạn 0 **15/15 (100%)**. H13 là lượt test cấu hình cuối riêng, chưa hoàn tất.
 
@@ -153,9 +160,9 @@ Cả ba họ đều không có CI cải thiện nằm trên 0; theo luật đã 
 |---|---|---|---|---|
 | **Giai đoạn 0: tái lập SEARLE** (trước kế hoạch) | 15 | 15 | **100%** | Đã đủ điểm test chính thức CIRR/CIRCO cho SEARLE gốc và phi_B32 ngày 13/11; FashionIQ val đầy đủ đã đánh giá với `--exclude-reference` ngày 26/10 |
 | Kế hoạch 2 tuần: Chí (C1–C24) | 20 | 24 | 83% | 15/11: C2, C4 nghiệm thu; C17 demo xong phần code (còn kiểm tra trên trình duyệt); còn C18 (chờ E3.8c), C19, C20 |
-| Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 17 | 20 | 85% | H2–H12, H15–H18, T1/T2 xong; H10 đủ 76 cấu hình, H11 E2.7 và H12 hoàn tất 14/11; còn H1/C1, C18/H13, H14 cuối; H18 P1/P2 đã xong, P3 tùy chọn |
+| Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 20 | 20 | 100% | H1–H18 và T1/T2 hoàn tất theo cấu hình mặc định phi_B32; H1/H13/H14 nghiệm thu 14/11; P3 tùy chọn, phi bền bổ sung theo C18 |
 | Kế hoạch 2 tuần: Doanh (D1–D17) | 11 | 17 | 65% | D1–D9, D12, D16 xong; D10 còn train `phi_B32_robust` (E3.3 xong); D11 còn E3.8c (E3.4, E3.9 xong); D15 bỏ |
-| **Kế hoạch 2 tuần: cả nhóm** | 48 | 61 | **79%** | Hòa + Doanh xong 28/37 việc; H10/H11/H12 nghiệm thu 14/11; Chí xong C1, ghi trước luật C18 để H13 không phải chờ |
+| **Kế hoạch 2 tuần: cả nhóm** | 51 | 61 | **84%** | Hòa 20/20, Chí 20/24, Doanh 11/17; phần Chí/Doanh và các mốc chung còn theo phân công |
 | Mốc kiểm tra M1–M5 | 1 | 5 | 20% | M3 đạt 12/11 (giữ hướng 02); M1, M2, M4, M5 quá hạn chưa đạt |
 
 Trang tự đánh giá của demo (`/api/assessment`, chỉ tính phần tái lập): lõi **93%**, tính cả phần mở rộng (SEARLE-XL, SEARLE-OTI) **75%**.
@@ -216,7 +223,7 @@ Chi tiết: [nhiem_vu_Chi.md](nhiem_vu_Chi.md).
 
 Chi tiết: [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md).
 
-- [ ] **H1** (Ngày 1) Dựng Colab, đóng gói dữ liệu, chạy thử SEARLE gốc trên CIRR val (một phần: Colab chạy được, cache CIRR val đã có trên Drive; đóng gói `.tar` hỏng nên dùng thư mục giải nén sẵn)
+- [x] **H1** (Ngày 1) 14/11 nghiệm thu: dùng thư mục Drive chính thức theo C1; cách ly hai tar hỏng, dọn đủ bốn dryrun_2ep, chạy lại runner ba tập sẵn sàng; có log và xác minh trực tiếp FIQ sau lỗi liệt kê thư mục.
 - [x] **H2** (Ngày 1) Kiểm tra dữ liệu nhanh CIRR, CIRCO, FashionIQ (E1.2) — 26/10. Báo cáo ở `Hoa_continue_20261026_100802_0ab7841f/E1.2-inventory-parallel/`: CIRR val/test1 2.297/2.315 ảnh đủ; CIRCO gallery 123.403/123.403; FashionIQ val đủ 6.016 truy vấn và 15.536 ảnh gallery theo danh sách tệp, nhưng train/test thiếu ảnh. Không kiểm tra CIRR train trong lượt nhanh; chưa kiểm tra giải mã mọi ảnh.
 - [x] **H3** File subset CIRR (`subset_phi_B32_cirr.json` đã có, hợp lệ) — 16/10
 - [x] **H4** (Ngày 2) Sinh file test SEARLE gốc; nộp test SEARLE gốc và phi_B32 (B8–B11) — **13/11 hoàn tất 6/6 lượt và đã lưu điểm chính thức**. Phi_B32 dùng ba file lịch sử; SEARLE sinh trên T4, baseline R@1 25,5919636451 đã đạt mốc. CIRR R@1: phi 23,349 / SEARLE 23,301; subset R@1: 54,458 / 54,000. CIRCO mAP@5: phi 9,44 / SEARLE 9,39. Người dùng xác nhận thứ tự hai email CIRCO. Xem bảng đầu trang và nhật ký B8–B11.
@@ -228,8 +235,8 @@ Chi tiết: [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md).
 - [x] **H10** (Ngày 8–9) Quét xếp hạng lại, K50, mặt nạ, phủ định — 14/11: hoàn tất 40 E2.3 + 24 E2.3b + 12 K50/E2.4/E2.5 = 76 cấu hình và CI; màu w=2 theo Chí. Đủ truy vấn/ứng viên, replay E2.3b khớp trên L4. Không tự thay cấu hình cuối.
 - [x] **H11** (Ngày 10) E4.4/E4.5 đã xong; E2.7 màu w=2 CIRCO đủ 220 truy vấn, có CI và đối chứng cùng giao thức exclude-reference ngày 14/11; FIQ dùng lại E2.3b. E2.6 bỏ theo Chí.
 - [x] **H12** (Ngày 11) Đủ E1.12/E1.13/E2.8: 20 ví dụ CIRR, 10 hình che khuất đã có, 20 ví dụ giải thích FIQ; seed 0, cấu hình màu w=2 theo Chí. Nghiệm thu 14/11.
-- [ ] **H13** (Ngày 12) Nộp test cấu hình cuối (E2.9); khoảng tin cậy bảng chính
-- [ ] **H14** (Ngày 13) Gói đã hợp nhất H10/H11/H12, T1/T2, H4 và nguồn cũ: 35 CSV, 74 PNG, báo cáo MD/HTML và SHA-256. [Gói cập nhật](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq). H14 cuối còn chờ H1/C1, C18/H13; chưa gửi thông báo.
+- [x] **H13** (Ngày 12) 14/11 nghiệm thu theo luật Chí: cấu hình mặc định phi_B32 dùng lại điểm H4 và 23 chỉ số/CI H7 trên ba tập val; không nộp thêm. Phi bền bổ sung chỉ khi E3.8c đạt cả hai điều kiện C18.
+- [x] **H14** (Ngày 13) 14/11 bàn giao cuối qua [thư mục chung](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq) và plans: 38 CSV, 74 PNG, summary.md, báo cáo MD/HTML, BAN_GIAO_CHO_CHI.md, nguồn/audit/SHA-256; H1/H13 đã nghiệm thu. Chưa gửi email/tin nhắn riêng.
 - [x] **H15** (Ngày 11) OTI warm-start CIRCO val E7.1a–d — 26/10: đủ 5 cấu hình (random 0,02; phi 0,02/0,005; SEARLE 0,02/0,005), 7 snapshot × token thường/EMA = 70 lượt đánh giá, seed 42. Mỗi lượt đủ 220 truy vấn, không lỗi ảnh hoặc truy vấn bị bỏ. Đã phân tích lại token OTI, lưu thời gian batch, đường cong và CI ghép cặp với P0. Xem H17_H15_attempt2/, oti-snapshot-metrics.csv, oti-inversion-timing.csv, oti-warmstart-curves.png, E7.1-ci-finals-circo/ trong phiên CIRCO/OTI. Chí chọn cấu hình cho D15; chưa tự chọn thay nhóm.
 - [x] **H16** (Ngày 10) Train phi với lịch LR cosine (E8.2a) — 31/10: đủ 100 epoch, checkpoint cuối và đánh giá CIRR/CIRCO cùng đối chứng; có CI ghép cặp và báo cáo nghiệm thu ở đầu trang.
 - [x] **H17** (Ngày 7) Liên kết khái niệm CIRCO val E7.0 và OTI E6.2-Pλ0 — 26/10: CSV đủ 220 ảnh tham chiếu, 250 khái niệm/ảnh; OTI 350 bước, seed 42, bộ câu gốc với lambda_gpt=0; mAP@5/10/25/50 = 2,16/3,03/3,89/4,32. Đánh giá đủ 220 truy vấn, không lỗi ảnh/truy vấn bị bỏ. Kết quả ở phiên CIRCO/OTI, thư mục H17_H15_attempt2. Giữ mặc định không --exclude-reference theo kế hoạch.
@@ -275,10 +282,10 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
    - bộ câu P2 đã được chép sang `SEARLE/outputs/GPT_phrases/` và H18-P2 đã nghiệm thu;
    - D17 (train phi trên shard s0 với bộ câu mới) nếu còn A100.
 2. **Hòa:**
-   - H10/H11/H12/H18 và T1/T2 đã nghiệm thu; Hòa 17/20 (85%). Không chạy lại các phần này.
-   - H13 chờ Chí chốt C18 sau E3.8c của phi bền. Nếu giữ phi_B32, dùng lại điểm H4 theo chỉ dẫn Chí.
-   - H1 còn C1 xác nhận dung lượng/đóng gói dữ liệu; cập nhật H14 cuối khi đủ đầu vào. P3 tùy chọn.
+   - Đã hoàn tất 20/20 việc; gói H14 cuối có đủ H1/H13 và nguồn kết quả, không có lượt GPU bắt buộc mới.
+   - Khi có E3.8c, chỉ bổ sung nhánh test phi bền nếu đạt cả hai điều kiện C18 đã ghi trước; chưa coi là phần đã chạy.
+   - P3 tùy chọn, không chặn nghiệm thu. Không chạy lại H10/H11/H12/H18 hoặc T1/T2.
 3. **Chí:**
    - chốt C18 khi có E3.8c: nếu phi bền không kém phi_B32 rõ rệt trên ảnh sạch thì cân nhắc nộp test, nếu không thì giữ phi_B32 mặc định (đã có điểm test từ H4);
-   - C1: đóng gói lại `CIRR.tar`, `FashionIQ.tar` và dọn 4 thư mục `dryrun_2ep`;
+   - C1/H1 đã xong theo quyết định không đóng gói lại; hai tar hỏng đã cách ly, bốn dryrun đã chuyển vào discarded;
    - C17–C20: demo, báo cáo, slide, video.
