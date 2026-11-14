@@ -162,6 +162,37 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 ul.notes { margin: 8px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 13.5px; }
 ul.notes li + li { margin-top: 4px; }
 [hidden] { display: none !important; }
+
+/* plan 05 features */
+.rgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.rcell { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.rmeta { font-size: 12px; color: var(--ink-2); line-height: 1.35; }
+.rmeta .why { color: var(--ink); }
+.swatch { display: inline-block; width: 13px; height: 13px; border-radius: 3px; border: 1px solid var(--border);
+  vertical-align: -2px; margin-right: 2px; }
+.move { font-weight: 700; font-variant-numeric: tabular-nums; }
+.move.up { color: var(--good); } .move.down { color: var(--bad); }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font-size: 12.5px;
+  text-align: left; }
+.linkbtn:hover { text-decoration: underline; }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.opts label { font-weight: 400; font-size: 12.5px; color: var(--ink-2); margin-bottom: 2px; }
+.opts select { width: 100%; }
+.check { display: flex; gap: 8px; align-items: center; font-size: 13.5px; }
+.proc { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.proc figure { margin: 0; }
+.proc img { width: 100%; border-radius: 6px; border: 1px solid var(--border); display: block; }
+.proc figcaption { font-size: 12px; color: var(--ink-2); margin-top: 3px; }
+.kv { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--ink-2); margin-top: 8px; }
+.kv b { color: var(--ink); font-weight: 600; }
+.cmp { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.cmp .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.cmp h3 { min-height: 2.6em; }
+.whybox { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 760px) { .whybox, .proc { grid-template-columns: minmax(0, 1fr); } }
+.whybox img { width: 100%; border-radius: 6px; border: 1px solid var(--border); display: block; }
+.heatscale { height: 8px; border-radius: 4px; margin-top: 6px;
+  background: linear-gradient(90deg, #00008f, #0000ff, #00ffff, #ffff00, #ff0000, #800000); }
 </style>
 </head>
 <body>
@@ -206,12 +237,34 @@ ul.notes li + li { margin-top: 4px; }
               <button data-mode="composed" aria-pressed="true" title="SEARLE: ảnh → pseudo-word S*, ghép với caption">Kết hợp (SEARLE)</button>
               <button data-mode="image" aria-pressed="false" title="Chỉ dùng ảnh (bỏ caption)">Chỉ ảnh</button>
               <button data-mode="text" aria-pressed="false" title="Chỉ dùng caption (bỏ ảnh)">Chỉ chữ</button>
+              <button data-mode="sum" aria-pressed="false" title="Cộng đặc trưng CLIP của ảnh và của mô tả">Tổng</button>
+              <button data-mode="cbir" aria-pressed="false" title="Truy xuất ảnh theo nội dung cổ điển: histogram màu HSV, LBP, HOG, Gabor (bỏ mô tả)">CBIR</button>
             </div>
           </div>
+
+          <div class="field">
+            <label class="check"><input type="checkbox" id="rerankChk"> Xếp hạng lại theo thuộc tính đo bằng xử lý ảnh</label>
+            <div class="row muted" style="margin-top:4px">
+              <label for="attrWeight" style="font-weight:400;margin:0">Trọng số w</label>
+              <select id="attrWeight"><option>0.3</option><option>1</option><option selected>2</option><option>4</option></select>
+              <span>màu, độ sáng, độ rực, hoa văn, zoom trong mô tả · top 30 kết quả</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Ảnh tham chiếu xấu → phục hồi</label>
+            <div class="opts">
+              <div><label for="degradeSel">Làm xấu ảnh</label><select id="degradeSel"></select></div>
+              <div><label for="restoreSel">Phục hồi</label><select id="restoreSel"></select></div>
+            </div>
+            <div class="muted" style="margin-top:4px">"auto" ước lượng loại suy giảm bằng xử lý ảnh cổ điển rồi chọn phép phục hồi; "auto_iqa" chọn theo điểm BRISQUE.</div>
+          </div>
+
           <div class="field row">
             <label for="topk" style="margin:0">Số kết quả</label>
             <select id="topk"><option>6</option><option selected>12</option><option>24</option><option>48</option></select>
             <span class="grow"></span>
+            <button class="btn" id="compareBtn" title="Chạy cùng truy vấn với 6 phương pháp, xem cạnh nhau">So sánh</button>
             <button class="btn primary" id="searchBtn">Tìm kiếm</button>
           </div>
           <div class="err" id="searchErr" hidden></div>
@@ -250,9 +303,35 @@ ul.notes li + li { margin-top: 4px; }
             <div class="muted">Pseudo-word <b>S*</b> (ảnh tham chiếu → từ) gần nhất với:</div>
             <div class="chips" id="neighChips"></div>
           </div>
-          <div class="grid" id="resGrid" style="margin-top:12px"></div>
-          <div class="muted" style="margin-top:8px">Bấm một ảnh kết quả để dùng nó làm ảnh tham chiếu mới.
-            Điểm = cosine similarity giữa vector truy vấn và ảnh.</div>
+          <div id="procBox" style="margin-top:12px" hidden>
+            <h3>Ảnh tham chiếu: gốc → làm xấu → phục hồi</h3>
+            <div class="proc" id="procImgs"></div>
+            <div class="kv" id="procInfo"></div>
+          </div>
+          <div id="constraintBox" style="margin-top:12px" hidden>
+            <div class="muted">Ràng buộc tách được từ mô tả (được đo trên từng ảnh kết quả):</div>
+            <div class="chips" id="constraintChips"></div>
+          </div>
+          <div class="rgrid" id="resGrid" style="margin-top:12px"></div>
+          <div id="beforeBox" style="margin-top:14px" hidden>
+            <h3>Trước khi phục hồi (truy vấn bằng ảnh đã làm xấu)</h3>
+            <div class="grid" id="beforeGrid"></div>
+          </div>
+          <div class="muted" style="margin-top:8px">Bấm một ảnh kết quả để dùng nó làm ảnh tham chiếu mới; bấm "Vì sao?"
+            để xem vùng nào của ảnh tham chiếu quyết định kết quả đó. Điểm = cosine similarity giữa vector truy vấn và ảnh.</div>
+        </div>
+
+        <div class="card" id="whyCard" hidden>
+          <h2>Vì sao kết quả này? <span class="muted" id="whyMeta"></span></h2>
+          <div class="whybox" id="whyImgs"></div>
+          <div class="heatscale" aria-hidden="true"></div>
+          <div class="row muted" style="justify-content:space-between"><span>không ảnh hưởng</span><span>che vùng này làm điểm giảm nhiều nhất</span></div>
+          <div id="whyAttr" style="margin-top:10px"></div>
+        </div>
+
+        <div class="card" id="compareCard" hidden>
+          <h2>So sánh phương pháp <span class="muted" id="cmpMeta"></span></h2>
+          <div class="cmp" id="cmpCols"></div>
         </div>
 
         <div class="card">
@@ -480,40 +559,149 @@ $$('#modeSeg button').forEach(b => b.onclick = () => {
   $$('#modeSeg button').forEach(x => x.setAttribute('aria-pressed', x === b));
 });
 
-async function runSearch() {
-  const err = $('#searchErr'); err.hidden = true;
-  if (!state.ready) { err.hidden = false; err.textContent = 'Mô hình chưa sẵn sàng, vui lòng đợi.'; return; }
-  if (!state.ref) { err.hidden = false; err.textContent = 'Hãy chọn ảnh tham chiếu (tải lên hoặc bấm ảnh trong thư viện).'; return; }
+/* options of the new features */
+const LABELS = {
+  none: 'không', gauss_noise: 'nhiễu Gauss', salt_pepper: 'nhiễu muối tiêu', gauss_blur: 'mờ Gauss',
+  motion_blur: 'mờ chuyển động', jpeg: 'nén JPEG', low_light: 'thiếu sáng', low_res: 'độ phân giải thấp',
+  color_cast: 'lệch màu', auto: 'auto (luật)', auto_iqa: 'auto_iqa (BRISQUE)', oracle: 'oracle (biết loại)',
+};
+const optLabel = v => { const [t, l] = v.split(':'); return (LABELS[t] || t) + (l ? ` · mức ${l}` : ''); };
+api('/api/options').then(o => {
+  $('#degradeSel').innerHTML = o.degrade.map(v => `<option value="${v}">${esc(optLabel(v))}</option>`).join('');
+  $('#restoreSel').innerHTML = o.restore.map(v => `<option value="${v}">${esc(optLabel(v))}</option>`).join('');
+}).catch(() => {});
+
+function queryForm() {
   const fd = new FormData();
   if (state.ref.type === 'file') fd.append('ref', state.ref.file); else fd.append('ref_id', state.ref.id);
   fd.append('caption', $('#caption').value);
   fd.append('mode', state.mode);
-  fd.append('topk', $('#topk').value);
-  const btn = $('#searchBtn'); btn.disabled = true; btn.textContent = 'Đang tìm…';
-  try {
-    const r = await api('/api/search', { method: 'POST', body: fd });
-    renderResults(r);
-  } catch (e) { err.hidden = false; err.textContent = e.message; }
-  btn.disabled = false; btn.textContent = 'Tìm kiếm';
+  fd.append('degrade', $('#degradeSel').value || 'none');
+  fd.append('restore', $('#restoreSel').value || 'none');
+  fd.append('rerank', $('#rerankChk').checked ? '1' : '0');
+  fd.append('attr_weight', $('#attrWeight').value);
+  return fd;
+}
+function checkQuery() {
+  const err = $('#searchErr'); err.hidden = true;
+  if (!state.ready) { err.hidden = false; err.textContent = 'Mô hình chưa sẵn sàng, vui lòng đợi.'; return false; }
+  if (!state.ref) { err.hidden = false; err.textContent = 'Hãy chọn ảnh tham chiếu (tải lên hoặc bấm ảnh trong thư viện).'; return false; }
+  return true;
+}
+async function busy(btn, text, fn) {
+  const old = btn.textContent; btn.disabled = true; btn.textContent = text;
+  try { await fn(); } catch (e) { $('#searchErr').hidden = false; $('#searchErr').textContent = e.message; }
+  btn.disabled = false; btn.textContent = old;
+}
+
+async function runSearch() {
+  if (!checkQuery()) return;
+  const fd = queryForm(); fd.append('topk', $('#topk').value);
+  state.lastQuery = { mode: state.mode };
+  await busy($('#searchBtn'), 'Đang tìm…', async () => renderResults(await api('/api/search', { method: 'POST', body: fd })));
 }
 $('#searchBtn').onclick = runSearch;
 $('#caption').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) runSearch(); });
 
+$('#compareBtn').onclick = async () => {
+  if (!checkQuery()) return;
+  const fd = queryForm(); fd.append('topk', '6');
+  await busy($('#compareBtn'), 'Đang chạy…', async () => {
+    const r = await api('/api/compare', { method: 'POST', body: fd });
+    $('#compareCard').hidden = false;
+    $('#cmpMeta').textContent = `· top-6 trên ${r.gallery_size} ảnh`;
+    $('#cmpCols').innerHTML = '';
+    r.columns.forEach(c => {
+      const col = document.createElement('div');
+      col.innerHTML = `<h3>${esc(c.label)}</h3><div class="grid"></div>`;
+      c.results.forEach(it => col.querySelector('.grid').appendChild(tile(it, { rank: it.rank, onclick: () => setRefFromGallery(it) })));
+      $('#cmpCols').appendChild(col);
+    });
+    markRef();
+    $('#compareCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+};
+
+const fmt = (v, d = 1) => v == null ? '—' : Number(v).toFixed(d);
+function attrLine(a) {
+  if (!a) return '';
+  const sw = a.colors.map(c => `<span class="swatch" style="background:${c.hex}" title="${c.hex} · ${Math.round(c.share * 100)}%"></span>`).join('');
+  return `${sw} L* ${fmt(a.l_star, 0)} · rực ${fmt(a.colorfulness, 0)} · sọc ${fmt(a.striped, 2)}`;
+}
+function resultCell(it, i, rerank) {
+  const cell = document.createElement('div'); cell.className = 'rcell';
+  cell.appendChild(tile(it, { rank: i + 1, score: it.score,
+    onclick: () => { setRefFromGallery(it); window.scrollTo({ top: 0, behavior: 'smooth' }); } }));
+  const meta = document.createElement('div'); meta.className = 'rmeta';
+  let html = '';
+  if (rerank && it.clip_rank) {
+    const d = it.clip_rank - (i + 1);
+    const mv = d > 0 ? `<span class="move up">▲${d}</span>` : d < 0 ? `<span class="move down">▼${-d}</span>` : '<span class="move">=</span>';
+    html += `${mv} hạng CLIP ${it.clip_rank} · thỏa ${fmt(it.satisfaction, 2)}<br>${attrLine(it.attributes)}`;
+    if (it.why && it.why.length) html += `<br><span class="why">${esc(it.why[0])}</span>`;
+  }
+  meta.innerHTML = html;
+  cell.appendChild(meta);
+  if (['composed', 'image', 'sum'].includes(state.lastQuery.mode)) {
+    const b = document.createElement('button'); b.className = 'linkbtn'; b.textContent = 'Vì sao?';
+    b.onclick = () => runWhy(it, b);
+    cell.appendChild(b);
+  }
+  return cell;
+}
+
 function renderResults(r) {
   $('#resultsCard').hidden = false;
-  $('#resMeta').textContent = `· ${r.results.length}/${r.gallery_size} ảnh · ${r.ms} ms`;
+  $('#resMeta').textContent = `· ${r.results.length}/${r.gallery_size} ảnh` + (r.ms ? ` · ${r.ms} ms` : '');
   $('#resPrompt').textContent = r.mode === 'text' ? `"${r.prompt}"  (chỉ văn bản)` : `"${r.prompt}"`;
   const nb = $('#neighbors');
-  nb.hidden = r.mode === 'text' || !r.neighbors.length;
-  $('#neighChips').innerHTML = r.neighbors.map(n =>
+  nb.hidden = r.mode === 'text' || !(r.neighbors || []).length;
+  $('#neighChips').innerHTML = (r.neighbors || []).map(n =>
     `<span class="chip static" title="cosine ${n.sim}">${esc(n.word)}</span>`).join('');
+
+  const p = r.processing;
+  $('#procBox').hidden = !p;
+  if (p) {
+    const restored = (p.info.restored || {}).restoration;
+    const q = p.info.restored || p.info.degraded || {};
+    $('#procImgs').innerHTML = [['original', 'Gốc'], ['degraded', `Làm xấu: ${optLabel(p.degrade)}`],
+      ['restored', `Phục hồi: ${optLabel(p.restore)}` + (restored ? ` → ${restored}` : '')]]
+      .map(([k, t]) => `<figure><img src="${p.images[k]}" alt="${esc(t)}"><figcaption>${esc(t)}</figcaption></figure>`).join('');
+    const est = p.info.estimated || {};
+    $('#procInfo').innerHTML =
+      (q.psnr != null ? `<span>PSNR so với ảnh gốc <b>${fmt(q.psnr)} dB</b></span><span>SSIM <b>${fmt(q.ssim, 3)}</b></span>` : '') +
+      Object.entries(est).map(([k, v]) => `<span>${esc(k)} <b>${fmt(v, 3)}</b></span>`).join('');
+  }
+  $('#constraintBox').hidden = !(r.constraints || []).length;
+  $('#constraintChips').innerHTML = (r.constraints || []).map(c => `<span class="chip static">${esc(c)}</span>`).join('') +
+    (r.constraints && r.constraints.length && !r.rerank ? '<span class="muted">(không đo được trên ảnh, giữ thứ hạng CLIP)</span>' : '');
+
   const grid = $('#resGrid'); grid.innerHTML = '';
-  r.results.forEach((it, i) => grid.appendChild(tile(it, {
-    rank: i + 1, score: it.score,
-    onclick: () => { setRefFromGallery(it); window.scrollTo({ top: 0, behavior: 'smooth' }); },
-  })));
+  r.results.forEach((it, i) => grid.appendChild(resultCell(it, i, r.rerank)));
+  const before = r.before_restoration;
+  $('#beforeBox').hidden = !before;
+  $('#beforeGrid').innerHTML = '';
+  (before || []).forEach(it => $('#beforeGrid').appendChild(tile(it, { rank: it.rank, score: it.score, onclick: () => setRefFromGallery(it) })));
+  $('#whyCard').hidden = true;
   markRef();
   $('#resultsCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function runWhy(it, btn) {
+  if (!checkQuery()) return;
+  const fd = queryForm(); fd.set('mode', state.lastQuery.mode); fd.append('target_id', it.id);
+  await busy(btn, 'Đang tính…', async () => {
+    const r = await api('/api/why', { method: 'POST', body: fd });
+    $('#whyCard').hidden = false;
+    $('#whyMeta').textContent = `· ${it.name} · ${r.n_occlusions} vùng che ${r.patch}px · điểm gốc ${r.base_score}`;
+    $('#whyImgs').innerHTML =
+      `<figure style="margin:0"><img src="${r.reference}" alt="Ảnh tham chiếu"><figcaption class="muted">Ảnh tham chiếu (sau tiền xử lý)</figcaption></figure>` +
+      `<figure style="margin:0"><img src="${r.overlay}" alt="Bản đồ che khuất"><figcaption class="muted">Bản đồ che khuất (giảm tối đa ${r.max_drop})</figcaption></figure>` +
+      `<figure style="margin:0"><img src="${r.target_mask}" alt="Mặt nạ đối tượng của kết quả"><figcaption class="muted">Kết quả, mặt nạ đối tượng (${esc(r.mask_kind)})</figcaption></figure>`;
+    $('#whyAttr').innerHTML = r.explanations ? `<div class="muted">${attrLine(r.attributes)}</div><ul class="notes">` +
+      r.explanations.map(e => `<li><b>${esc(e.constraint)}</b>: mức thỏa ${fmt(e.satisfaction, 2)} · ${esc(e.why)}</li>`).join('') + '</ul>' : '';
+    $('#whyCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
 }
 
 /* ================= assessment ================= */

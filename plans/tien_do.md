@@ -152,10 +152,10 @@ Cả ba họ đều không có CI cải thiện nằm trên 0; theo luật đã 
 | Phần | Xong | Tổng | Tiến độ | Ghi chú |
 |---|---|---|---|---|
 | **Giai đoạn 0: tái lập SEARLE** (trước kế hoạch) | 15 | 15 | **100%** | Đã đủ điểm test chính thức CIRR/CIRCO cho SEARLE gốc và phi_B32 ngày 13/11; FashionIQ val đầy đủ đã đánh giá với `--exclude-reference` ngày 26/10 |
-| Kế hoạch 2 tuần: Chí (C1–C24) | 18 | 24 | 75% | Xong toàn bộ code cần cho Colab và C1 (14/11); C2, C4 một phần; còn C17–C20 (demo, cấu hình cuối, báo cáo, video) |
+| Kế hoạch 2 tuần: Chí (C1–C24) | 20 | 24 | 83% | 15/11: C2, C4 nghiệm thu; C17 demo xong phần code (còn kiểm tra trên trình duyệt); còn C18 (chờ E3.8c), C19, C20 |
 | Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 17 | 20 | 85% | H2–H12, H15–H18, T1/T2 xong; H10 đủ 76 cấu hình, H11 E2.7 và H12 hoàn tất 14/11; còn H1/C1, C18/H13, H14 cuối; H18 P1/P2 đã xong, P3 tùy chọn |
 | Kế hoạch 2 tuần: Doanh (D1–D17) | 11 | 17 | 65% | D1–D9, D12, D16 xong; D10 còn train `phi_B32_robust` (E3.3 xong); D11 còn E3.8c (E3.4, E3.9 xong); D15 bỏ |
-| **Kế hoạch 2 tuần: cả nhóm** | 46 | 61 | **75%** | Hòa + Doanh xong 28/37 việc; H10/H11/H12 nghiệm thu 14/11; Chí xong C1, ghi trước luật C18 để H13 không phải chờ |
+| **Kế hoạch 2 tuần: cả nhóm** | 48 | 61 | **79%** | Hòa + Doanh xong 28/37 việc; H10/H11/H12 nghiệm thu 14/11; Chí xong C1, ghi trước luật C18 để H13 không phải chờ |
 | Mốc kiểm tra M1–M5 | 1 | 5 | 20% | M3 đạt 12/11 (giữ hướng 02); M1, M2, M4, M5 quá hạn chưa đạt |
 
 Trang tự đánh giá của demo (`/api/assessment`, chỉ tính phần tái lập): lõi **93%**, tính cả phần mở rộng (SEARLE-XL, SEARLE-OTI) **75%**.
@@ -183,14 +183,14 @@ Trang tự đánh giá của demo (`/api/assessment`, chỉ tính phần tái l�
 Chi tiết: [nhiem_vu_Chi.md](nhiem_vu_Chi.md).
 
 - [x] **C1** (Ngày 1) Chia sẻ Drive cho Hòa, Doanh; xác nhận vị trí dữ liệu và dung lượng Drive — 14/11: không đóng gói lại; thư mục giải nén sẵn trên Drive là nguồn chính thức; `prepare_data.sh` bỏ qua `.tar` rỗng/cụt; hai gói hỏng đổi tên và dọn `dryrun_2ep` giao cho Hòa ở H1
-- [ ] **C2** (Ngày 1) Bộ chạy Colab: `setup_env.sh`, `prepare_data.sh`, `requirements-xla.txt`, `SEARLE_runner.ipynb` (một phần: notebook đã chạy được trên runtime mới (Hòa 19/10 trên T4, Doanh 21/10 trên A100); tiêu chí "R@1 = 25.66" chưa đạt: ra 25.59 trên T4, xem H5)
+- [x] **C2** (Ngày 1) Bộ chạy Colab: `setup_env.sh`, `prepare_data.sh`, `requirements-xla.txt`, `SEARLE_runner.ipynb` — 15/11: Hòa, Doanh chạy được trên runtime mới (T4, L4, A100); SEARLE gốc CIRR R@1 25,59 trên T4 đúng mốc T4 (quyết định 12/11), 25,66 là mốc A100; `prepare_data.sh` chịu được gói `.tar` hỏng (14/11)
 - [x] **C3** (Ngày 1) Gộp `datasets.py`, sửa nuốt lỗi, xử lý batch rỗng, đưa file nhỏ của `outputs/` vào git — 17/10
   - [x] Gộp bản `datasets.py` của repo và bản vá Colab
   - [x] Thay `except: pass` bằng cảnh báo + đếm mẫu lỗi
   - [x] Xử lý batch `None` trong các vòng lặp
   - [x] `outputs/submissions/` vào git
   - [x] `REPORT*.md`, `pip_freeze.txt`, `merge_oti.py`, csv/json của `phi_B32`, log `eval*.log` vào git
-- [ ] **C4** (Ngày 2) Module truy xuất chung; `--output-dir`, `--cache-dir`, `--note`; CIRR luôn sinh cả file subset (một phần: code xong, trên dữ liệu giả lập mọi chỉ số và file nộp trùng code cũ; 26/10 đã kiểm tra code gốc/main trên cùng T4: 7 chỉ số CIRR khớp tới làm tròn, R@1 cùng 25,59; còn chờ đối chiếu file test và baseline các tập khác ở H5)
+- [x] **C4** (Ngày 2) Module truy xuất chung; `--output-dir`, `--cache-dir`, `--note`; CIRR luôn sinh cả file subset — 15/11: H5 nghiệm thu đủ E1.7a–f; code gốc và `main` trùng 7 chỉ số CIRR trên cùng T4 và trùng 100% top-10 file test; H4 nộp test thành công bằng file do module chung sinh
 - [x] **C5** (Ngày 2) Baseline CLIP `image`, `text`, `sum`; `--exclude-reference` — 17/10
 - [x] **C6** (Ngày 3) Cờ tiền xử lý `--targetpad-ratio`, `--interp`, `--tta` (cache phân biệt theo cấu hình) — 17/10
 - [x] **C7** (Ngày 3) `check_datasets.py`, `bootstrap_ci.py`, `collect_results.py`; đối chiếu số "Paper" (khớp arXiv v2) — 17/10
@@ -203,7 +203,7 @@ Chi tiết: [nhiem_vu_Chi.md](nhiem_vu_Chi.md).
 - [x] **C14** (Ngày 8) Ước lượng suy giảm; `--restore auto`, `auto_iqa`, `oracle`; `--degrade mixed` (cả 4 chạy được; `tools/calibrate_restore_rules.py` nhận đúng loại suy giảm 86,9%; ngưỡng hiện tại là bản tạm từ 17 ảnh mẫu, phải hiệu chỉnh lại trên 300 ảnh CIRR train trước E3.3) — 18/10
 - [x] **C15** (Ngày 8) Kết hợp điểm ảnh + văn bản; ensemble prompt (sửa lỗi mẫu `"$,"` làm mất token `$`) — 18/10
 - [x] **C16** (Ngày 9) Công cụ hình ảnh: ví dụ, bản đồ che khuất, hình suy giảm, PSNR so với điểm truy xuất (`visualize_queries.py`, `occlusion_map.py`, `visualize_degradations.py`, `quality_vs_retrieval.py`; thử trên dữ liệu giả lập) — 18/10
-- [ ] **C17** (Ngày 10–11) Demo: tab thuộc tính, tab ảnh xấu → phục hồi, so sánh phương pháp, nút "Vì sao?"
+- [ ] **C17** (Ngày 10–11) Demo: tab thuộc tính, tab ảnh xấu → phục hồi, so sánh phương pháp, nút "Vì sao?" (một phần, 15/11: đủ 4 tính năng trong `demo/features.py`, thử mọi endpoint bằng Flask test client trên 18 ảnh mẫu; còn kiểm tra giao diện trên trình duyệt và chụp ảnh màn hình cho báo cáo; nhập tiếng Việt chưa làm)
 - [ ] **C18** (Ngày 11) Chọn cấu hình cuối, gửi lệnh nộp test
 - [ ] **C19** (Ngày 12–13) README gốc repo, `CHANGES.md`, báo cáo, slide
 - [ ] **C20** (Ngày 14) Video demo, kiểm tra trước khi nộp, nộp bài

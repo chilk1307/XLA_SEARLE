@@ -9,3 +9,10 @@ ftfy
 regex
 tqdm
 setuptools<81
+# image processing of the new demo features (plan 05, C17)
+opencv-python-headless
+scikit-image
+scipy
+PyWavelets
+# optional, only for --restore auto_iqa (BRISQUE)
+piq

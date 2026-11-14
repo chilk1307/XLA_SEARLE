@@ -166,3 +166,12 @@ Trên dữ liệu thật, Hòa kiểm tra lại ở H5 (CIRR R@1 phải là 25.6
 | `src/restore_oracle.json` | C14 | Thay bảng tạm bằng phép phục hồi có R@1 CIRR val cao nhất ở E3.2 (Doanh, 13/11): gauss_noise → bilateral, salt_pepper → median, gauss_blur → unsharp, motion_blur → wiener, jpeg → bilateral, low_light → gamma, low_res → unsharp, color_cast → white_patch. Khoá cache của `--restore oracle` chứa hash của file nên kết quả cũ không bị dùng lại nhầm. |
 | `src/restore_rules.json` | C14 | Ngưỡng `--restore auto` hiệu chỉnh lại trên 300 ảnh CIRR train (seed 0) bằng `tools/calibrate_restore_rules.py` (Doanh, 14/11), thay bản tạm từ 17 ảnh mẫu; nhận đúng loại suy giảm 81,3%. Đúng file đã dùng cho E3.3. |
 | `colab/prepare_data.sh` | C1 | Gói `.tar` rỗng hoặc giải nén lỗi (bị cụt, thiếu file kiểm tra) không còn làm dừng script: xoá phần giải nén dở và dùng thư mục trên Drive. Đã thử với một `.tar` cụt, một `.tar` rỗng và một `.tar` tốt. |
+
+## 15/11/2026: demo (C17), nghiệm thu C2, C4
+
+| File | Việc | Thay đổi |
+|---|---|---|
+| `demo/features.py` (mới) | C17 | Bốn tính năng của kế hoạch 05 mục 5.2, dùng đúng code xử lý ảnh của thí nghiệm: (1) xếp hạng lại theo thuộc tính, kèm ràng buộc tách từ mô tả, màu chủ đạo, L*, độ rực, điểm sọc của từng kết quả, thứ hạng CLIP cũ và lời giải thích; (2) làm xấu ảnh tham chiếu → ước lượng suy giảm → phục hồi (`auto`, `auto_iqa`, `oracle` hoặc một phép cố định), hiện ảnh gốc / xấu / phục hồi, PSNR, SSIM, các đại lượng ước lượng và kết quả trước / sau phục hồi; (3) so sánh 6 phương pháp cạnh nhau (SEARLE, SEARLE + thuộc tính, CLIP ảnh, CLIP chữ, tổng, CBIR cổ điển); (4) "Vì sao?": bản đồ che khuất của ảnh tham chiếu cho một kết quả, kèm mặt nạ đối tượng của kết quả. Cache thuộc tính và đặc trưng CBIR của gallery trong `demo/cache/`. |
+| `demo/app.py` | C17 | Thêm chế độ `sum`, `cbir`; route `/api/compare`, `/api/why`, `/api/options`; tuỳ chọn `rerank`, `attr_weight`, `degrade`, `restore` cho `/api/search`. Khi không bật tuỳ chọn mới, truy vấn đi đúng đường cũ. |
+| `demo/static/index.html` | C17 | Giao diện các tính năng trên. |
+| `demo/requirements.txt` | C17 | Thêm OpenCV, scikit-image, SciPy, PyWavelets (piq tuỳ chọn cho `auto_iqa`). |

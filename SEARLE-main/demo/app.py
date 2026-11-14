@@ -257,6 +257,10 @@ class Engine:
 
 engine = Engine()
 
+import features  # noqa: E402  (plan 05 features: attributes, degraded query, comparison, occlusion)
+
+demo = features.DemoFeatures(engine, CACHE_FILE.parent)
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Đánh giá dự án (đọc từ file thật trong outputs/)
@@ -547,35 +551,99 @@ def serve_img(img_id: str):
     return send_file(io.BytesIO(engine.thumbs[key]), mimetype="image/jpeg", max_age=3600)
 
 
-@app.post("/api/search")
-def search():
+def _read_reference():
+    """
+    Reference image of the request (uploaded file or gallery id) and the gallery id to exclude from the results
+    """
+    ref_id = request.form.get("ref_id")
+    if "ref" in request.files and request.files["ref"].filename:
+        ref = Image.open(request.files["ref"].stream)
+        ref.load()
+        return ref, None
+    if ref_id and ref_id in engine.id2idx:
+        ref = Image.open(engine.items[engine.id2idx[ref_id]]["path"])
+        ref.load()
+        return ref, ref_id
+    raise LookupError("Hãy chọn ảnh tham chiếu.")
+
+
+def _query_options():
+    degrade = request.form.get("degrade", "none")
+    restore = request.form.get("restore", "none")
+    if degrade not in features.DEGRADE_CHOICES or restore not in features.RESTORE_CHOICES:
+        raise ValueError("Tuỳ chọn suy giảm / phục hồi không hợp lệ")
+    return degrade, restore
+
+
+def _check_ready():
     if engine.state != "ready":
         return jsonify({"error": "Mô hình chưa sẵn sàng"}), 503
     if not engine.items:
         return jsonify({"error": "Thư viện ảnh đang trống - hãy thêm ảnh trước."}), 400
+    return None
+
+
+@app.post("/api/search")
+def search():
+    not_ready = _check_ready()
+    if not_ready:
+        return not_ready
     mode = request.form.get("mode", "composed")
-    if mode not in ("composed", "image", "text"):
+    if mode not in ("composed", "image", "text", "sum", "cbir"):
         return jsonify({"error": "mode không hợp lệ"}), 400
     caption = request.form.get("caption", "").strip()
-    if mode != "image" and not caption:
+    if mode in ("composed", "text", "sum") and not caption:
         return jsonify({"error": "Hãy nhập mô tả thay đổi (caption)."}), 400
     topk = max(1, min(int(request.form.get("topk", 12)), 60))
-
-    ref_id = request.form.get("ref_id")
-    exclude = None
     try:
-        if "ref" in request.files and request.files["ref"].filename:
-            ref = Image.open(request.files["ref"].stream)
-            ref.load()
-        elif ref_id and ref_id in engine.id2idx:
-            ref = Image.open(engine.items[engine.id2idx[ref_id]]["path"])
-            ref.load()
-            exclude = ref_id
-        else:
-            return jsonify({"error": "Hãy chọn ảnh tham chiếu."}), 400
+        ref, exclude = _read_reference()
+        degrade, restore = _query_options()
+    except LookupError as e:
+        return jsonify({"error": str(e)}), 400
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     except Exception:  # noqa: BLE001
         return jsonify({"error": "Không đọc được ảnh tham chiếu."}), 400
-    return jsonify(engine.search(ref, caption, mode, topk, exclude))
+    rerank = request.form.get("rerank") == "1"
+    if mode in ("composed", "image", "text") and not rerank and degrade == "none" and restore == "none":
+        return jsonify(engine.search(ref, caption, mode, topk, exclude))  # original demo path
+    weight = float(request.form.get("attr_weight", features.DEFAULT_ATTR_WEIGHT))
+    return jsonify(demo.search(ref, caption, mode, topk, exclude, degrade, restore, rerank, weight))
+
+
+@app.post("/api/compare")
+def compare():
+    not_ready = _check_ready()
+    if not_ready:
+        return not_ready
+    caption = request.form.get("caption", "").strip()
+    topk = max(1, min(int(request.form.get("topk", 6)), 24))
+    try:
+        ref, exclude = _read_reference()
+        degrade, restore = _query_options()
+    except (LookupError, ValueError) as e:
+        return jsonify({"error": str(e)}), 400
+    return jsonify(demo.compare(ref, caption, topk, exclude, degrade, restore))
+
+
+@app.post("/api/why")
+def why():
+    not_ready = _check_ready()
+    if not_ready:
+        return not_ready
+    try:
+        ref, _ = _read_reference()
+        degrade, restore = _query_options()
+        return jsonify(demo.why(ref, request.form.get("caption", ""), request.form.get("mode", "composed"),
+                                request.form.get("target_id", ""), degrade, restore))
+    except (LookupError, ValueError) as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.get("/api/options")
+def options():
+    return jsonify({"degrade": features.DEGRADE_CHOICES, "restore": features.RESTORE_CHOICES,
+                    "attr_weight": features.DEFAULT_ATTR_WEIGHT})
 
 
 if __name__ == "__main__":
