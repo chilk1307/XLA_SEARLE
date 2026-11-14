@@ -44,7 +44,7 @@ Kiểm tra không hồi quy: sau khi sửa, chạy 2 epoch với cấu hình g�
 | E8.1b | oti_B32_s0 + s1 | 66.667 | 4–5 giờ |
 | (đã có) | oti_B32 | 100.000 | — |
 
-**Kiểm kê T2 14/11/2026:** s0 có 33.334 ảnh, s1 có 33.333 ảnh, tổng không trùng là 66.667; đã sửa số dự kiến 66.668. T2 đang train, chưa có điểm cuối; [log/kết quả](https://drive.google.com/drive/folders/1aYIIvTm-csZG0pfFfhA-fkmgab4vubG0).
+**Kiểm kê T2 14/11/2026:** s0 có 33.334 ảnh, s1 có 33.333 ảnh, tổng không trùng là 66.667; đã sửa số dự kiến 66.668. T2 đã nghiệm thu 100 epoch ngày 14/11: CIRR R@1/R@10 **24,68/68,72**; T1 **24,30/67,78**, phi_B32 cùng A100 **25,47/69,24**. CI Δ R@1 so T1 [−0,29; +1,05], so phi_B32 [−1,32; −0,26]. Một seed; chưa kết luận bão hòa; [log/kết quả](https://drive.google.com/drive/folders/1aYIIvTm-csZG0pfFfhA-fkmgab4vubG0).
 
 - Giữ nguyên 100 epoch như paper (ít ảnh hơn thì ít bước cập nhật hơn; ghi rõ điều này khi báo cáo).
 - Kết quả: biểu đồ R@1 và R@10 theo số ảnh (thang log). Câu hỏi: đã bão hoà ở 100.000 ảnh chưa? Nếu chưa thì có lý do tạo thêm token (dùng warm-start ở [07](07_hoc_may_oti_warm_start.md) E7.6 cho rẻ).
