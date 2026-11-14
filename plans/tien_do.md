@@ -1,5 +1,11 @@
 # Tiến độ dự án
 
+**14/11/2026 tối (Chí): chốt D10.** Doanh đã chạy xong trong ngày: D9, E3.3, E3.4, E3.6, E3.7, E3.9, D16 (thư mục `Doanh_SEARLE`).
+- **D9 → phi bền dùng `degaug`:** trung bình 8 suy giảm R@1 23,16 so với `clean` 22,79 (+0,37) và `noise` 23,02; suy giảm chưa thấy khi train vẫn +0,31; ảnh sạch −0,24 (24,16 so với 24,40). Doanh train ngay `phi_B32_robust` 100 epoch (D10, khoảng 4 giờ A100), sau đó chạy E3.8c. Bảng và lý do ở đầu [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
+- **E3.3 (CIRR, `mixed`):** không phục hồi 24,49; `auto` **25,16** (+0,67); `auto_iqa` 25,04; `oracle` 24,97. Trên **ảnh sạch**, `auto` còn 25,21 và `auto_iqa` 25,09, so với 25,50: phục hồi tự động làm hỏng nhẹ ảnh tốt, vì `auto` xử lý 63% ảnh sạch (riêng `deblock` 720 ảnh do ảnh CIRR vốn là JPEG). CIRCO `mixed` + `auto`: mAP@5 9,77.
+- **Ngưỡng `--restore auto`** hiệu chỉnh trên 300 ảnh CIRR train (nhận đúng loại suy giảm 81,3%). Chí đã commit `src/restore_rules.json` (đúng file Doanh dùng cho E3.3).
+- **D16:** bộ câu P2 (Qwen2.5-1.5B, CIRCO val) đã sinh. Doanh chép sang `SEARLE/outputs/GPT_phrases/` để Hòa chạy H18-P2.
+
 **14/11/2026 (Chí): quyết định sau E2.3b và D5–D8.**
 - **Hòa, H10:** xác nhận màu w = 2 cho phân tích (K = 50, E2.4, E2.5; 12 lượt, lệnh ở đầu [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md)). Cả ba họ đều có CI chứa 0, nên **cấu hình cuối không dùng xếp hạng lại thuộc tính** (phi_B32 mặc định, chính là cấu hình đã nộp test ở H4). Riêng hoa văn với w = 4 làm FIQ R@10 giảm 0,56 điểm (CI [−0,90; −0,24]): trọng số lớn khuếch đại sai số của bộ đo.
 - **Doanh** (thư mục `Doanh_SEARLE`, 13–14/11):
@@ -107,8 +113,8 @@ Cả ba họ đều không có CI cải thiện nằm trên 0; theo luật đã 
 | **Giai đoạn 0: tái lập SEARLE** (trước kế hoạch) | 15 | 15 | **100%** | Đã đủ điểm test chính thức CIRR/CIRCO cho SEARLE gốc và phi_B32 ngày 13/11; FashionIQ val đầy đủ đã đánh giá với `--exclude-reference` ngày 26/10 |
 | Kế hoạch 2 tuần: Chí (C1–C24) | 17 | 24 | 71% | Xong toàn bộ code cần cho Colab (C3, C5–C16, C21–C24); C2, C4 chờ nghiệm thu trên Colab; C1 cần làm tay; còn C17–C20 (demo, cấu hình cuối, báo cáo, video) |
 | Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 13 | 20 | 65% | H2, H3, H4, H5, H6, H7, H8, H9, H15, H16, H17, T1, T2 xong; H10 xong E2.3 + E2.3b (64 lượt), đã có xác nhận màu w=2 để chạy K=50/mask/negation; H4 hoàn tất sáu lượt nộp/điểm test chính thức; H18 P2/P3 chờ Doanh |
-| Kế hoạch 2 tuần: Doanh (D1–D17) | 8 | 17 | 47% | D1–D8 xong; D15 bỏ (14/11); tiếp theo D9 (3 bản sàng lọc × 9 điều kiện ảnh) và E3.3 |
-| **Kế hoạch 2 tuần: cả nhóm** | 38 | 61 | **62%** | Hòa + Doanh xong 21/37 việc; T2 hoàn tất 14/11; 14/11 Chí chốt trọng số H10, điền bảng oracle, bỏ D15 |
+| Kế hoạch 2 tuần: Doanh (D1–D17) | 11 | 17 | 65% | D1–D9, D12, D16 xong; D10 còn train `phi_B32_robust` (E3.3 xong); D11 còn E3.8c (E3.4, E3.9 xong); D15 bỏ |
+| **Kế hoạch 2 tuần: cả nhóm** | 41 | 61 | **67%** | Hòa + Doanh xong 24/37 việc; 14/11 Chí chốt trọng số H10, bảng oracle, ngưỡng auto và biến thể phi bền (D10) |
 | Mốc kiểm tra M1–M5 | 1 | 5 | 20% | M3 đạt 12/11 (giữ hướng 02); M1, M2, M4, M5 quá hạn chưa đạt |
 
 Trang tự đánh giá của demo (`/api/assessment`, chỉ tính phần tái lập): lõi **93%**, tính cả phần mở rộng (SEARLE-XL, SEARLE-OTI) **75%**.
@@ -202,14 +208,14 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
 - [x] **D6** (Ngày 5) Phân tích miền tần số (E3.5) — 10/11: 10 lượt CIRR; lowpass ≥ 0,1 mất ≤ 0,24 điểm, highpass mất 4,6–7,7 điểm
 - [x] **D7** (Ngày 6) Đặc trưng ảnh xấu shard s0; bắt đầu sàng lọc phi bền (E3.8a) — 10/11: đặc trưng 9/9 phiên bản, `phi_s0_clean` 50 epoch R@1 24,32
 - [x] **D8** (Ngày 7) Phục hồi cố định (E3.2); sàng lọc tiếp; nhóm left/right (E4.3b) — 14/11: E3.2 18/18 lượt CIRR; `phi_s0_degaug` 24,20 và `phi_s0_noise` 24,16 (50 epoch); E4.3b xong
-- [ ] **D9** (Ngày 8) Đánh giá 3 bản sàng lọc, chọn biến thể; đặc trưng ảnh xấu 100k
-- [ ] **D10** (Ngày 9) Train phi bền bản đầy đủ (E3.8b); phục hồi tự động (E3.3)
-- [ ] **D11** (Ngày 10) PSNR/SSIM so với điểm truy xuất (E3.4); đánh giá phi bền (E3.8c); độ trôi vector (E3.9)
-- [ ] **D12** (Ngày 11) Độ bền bộ đo thuộc tính (E3.6); hình minh hoạ (E3.7)
+- [x] **D9** (Ngày 8) Đánh giá 3 bản sàng lọc, chọn biến thể; đặc trưng ảnh xấu 100k — 14/11: 27 lượt; chọn `degaug` (TB 8 suy giảm 23,16 so với clean 22,79); đặc trưng 9 phiên bản × 100.000 ảnh đã xác minh
+- [ ] **D10** (Ngày 9) Train phi bền bản đầy đủ (E3.8b); phục hồi tự động (E3.3) (một phần: E3.3 xong 14/11, `auto` tốt nhất trên `mixed` 25,16; còn train `phi_B32_robust`)
+- [ ] **D11** (Ngày 10) PSNR/SSIM so với điểm truy xuất (E3.4); đánh giá phi bền (E3.8c); độ trôi vector (E3.9) (một phần: E3.4, E3.9 CIRR/CIRCO xong 14/11; còn E3.8c sau D10)
+- [x] **D12** (Ngày 11) Độ bền bộ đo thuộc tính (E3.6); hình minh hoạ (E3.7) — 14/11
 - [ ] **D13** (Ngày 12) Chạy bổ sung; nộp test phi bền (nếu được chọn)
 - [ ] **D14** (Ngày 13) Tổng hợp bảng, hình → bàn giao Chí
 - [ ] **D15** (Ngày 12) OTI warm-start trên CIRR val (E7.2) — **bỏ** (Chí, 14/11): E7.1 trên CIRCO không có cấu hình warm-start nào hơn khởi tạo ngẫu nhiên rõ ràng
-- [ ] **D16** (Ngày 12) Thống kê bộ câu (E6.1); sinh bộ câu mới quy mô nhỏ
+- [x] **D16** (Ngày 12) Thống kê bộ câu (E6.1); sinh bộ câu mới quy mô nhỏ — 14/11: E6.1 P0/P1/P2; P2 = Qwen2.5-1.5B cho CIRCO val (`Doanh_SEARLE/outputs/GPT_phrases/P2_qwen25_15b_circo_val`)
 - [ ] **D17** (Ngày 13) Train phi trên shard s0 với bộ câu mới (E6.4)
 
 ## Mốc kiểm tra
@@ -222,16 +228,15 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
 
 ## Việc tiếp theo
 
-1. **Hòa:**
-   - H10, phần còn lại: màu w = 2 với K = 50, E2.4 (4 mặt nạ), E2.5 (negation off) trên CIRR và FIQ, tổng 12 lượt, kèm CI. Lệnh ở đầu [nhiem_vu_Hoa.md](nhiem_vu_Hoa.md).
-   - Sau đó: E2.7 (màu w = 2 trên CIRCO), E1.12 và E2.8 (dùng lượt màu w = 2). E2.6 không cần chạy.
-   - T1/T2 đã nghiệm thu; Hòa 13/20 (65%). H18 P2/P3 chờ D16 của Doanh.
-2. **Doanh:**
-   - D9: 27 lượt đánh giá 3 bản sàng lọc → gửi Chí bảng để chọn biến thể → tính đặc trưng ảnh xấu cho 100.000 ảnh.
-   - Song song: `git pull` để lấy bảng oracle, hiệu chỉnh ngưỡng trên CIRR train, rồi chạy E3.3 (lệnh ở đầu [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md)). Gửi Chí `restore_rules.json` để commit.
+1. **Doanh:**
+   - **D10:** train `phi_B32_robust` (degaug, 100 epoch);
+   - sau đó **E3.8c** (CI ghép cặp với phi_B32) và E3.9 cho phi bền;
+   - chép bộ câu P2 sang `SEARLE/outputs/GPT_phrases/`;
+   - D17 (train phi trên shard s0 với bộ câu mới) nếu còn A100.
+2. **Hòa:**
+   - phần còn lại của H10 (màu w = 2: K = 50, E2.4, E2.5), rồi E2.7, E1.12, E2.8;
+   - H18-P2 khi bộ câu P2 đã ở thư mục chung.
 3. **Chí:**
-   - chọn biến thể phi bền khi có bảng D9;
-   - commit `restore_rules.json` của Doanh;
-   - chốt C18 khi có kết quả phi bền (nếu phi bền không hơn phi_B32 trên ảnh sạch, cấu hình cuối là phi_B32 mặc định, đã có điểm test từ H4);
+   - chốt C18 khi có E3.8c: nếu phi bền không kém phi_B32 rõ rệt trên ảnh sạch thì cân nhắc nộp test, nếu không thì giữ phi_B32 mặc định (đã có điểm test từ H4);
    - C1: đóng gói lại `CIRR.tar`, `FashionIQ.tar` và dọn 4 thư mục `dryrun_2ep`;
    - C17–C20: demo, báo cáo, slide, video.

@@ -10,6 +10,30 @@
 5. Hình minh hoạ (E3.7), độ bền bộ đo thuộc tính (E3.6).
 6. Kết quả luồng học máy và bộ câu GPT (E7.2, E6.1, E6.4), nếu đã chạy.
 
+## Quyết định của Chí, 14/11 (tối): chốt D10, phi bền bản đầy đủ dùng `degaug`
+
+Bảng D9 (CIRR val R@1, 4.181 truy vấn mỗi lượt, 3 bản sàng lọc 50 epoch trên shard s0):
+
+| Điều kiện ảnh | `phi_s0_clean` | `phi_s0_degaug` | `phi_s0_noise` |
+|---|---:|---:|---:|
+| Ảnh sạch | **24,40** | 24,16 | 24,35 |
+| TB 4 suy giảm đã thấy khi train (`gauss_noise`, `gauss_blur`, `jpeg`, `low_light`) | 22,98 | **23,40** | 23,16 |
+| TB 4 suy giảm chưa thấy (`salt_pepper`, `motion_blur`, `low_res`, `color_cast`) | 22,60 | **22,91** | 22,88 |
+| TB cả 8 suy giảm | 22,79 | **23,16** | 23,02 |
+
+**Chọn `degaug`** (`--aug-feature-dir`, `--aug-prob 0.5`):
+- Biến thể này bền nhất: trung bình 8 suy giảm +0,37 điểm so với `clean`; cả suy giảm chưa thấy cũng +0,31, rõ nhất là `motion_blur:2` +1,03.
+- Cái giá trên ảnh sạch là −0,24 điểm, khoảng 10 truy vấn.
+- `noise` gần như không mất trên ảnh sạch, nhưng chỉ bền thêm +0,23.
+- Riêng `salt_pepper:2`, `degaug` kém `clean` 0,41: ghi vào báo cáo như một giới hạn.
+- Đây là số trên một seed và chưa có CI, đủ để chọn biến thể nhưng không đủ để kết luận. Kết luận cuối lấy từ E3.8c (có CI).
+
+**D10, chạy ngay.** Đặc trưng ảnh xấu cho 100.000 ảnh đã đủ (`cache/imagenet_full`, 9/9 phiên bản). Lệnh train là lệnh ở mục D10 (`phi_B32_robust`, 100 epoch, `--aug-feature-dir $DRIVE/cache/imagenet_full --aug-prob 0.5`), khoảng 4 giờ trên A100 theo đo ở D2. Colab ngắt thì chạy lại đúng lệnh, thêm `--resume`. Phần E3.3 của D10 đã xong (14/11), nên D10 xong khi train xong.
+
+**Sau khi train:** chạy E3.8c (mục D11: ảnh sạch trên 3 tập, 8 suy giảm trên CIRR và CIRCO, biến `CIRCO` có `--exclude-reference`), tính CI ghép cặp với phi_B32 trên cùng điều kiện, rồi chạy lệnh E3.9 cho phi bền (mục D11). Gửi Chí bảng để chốt C18.
+
+**Bộ câu P2 (D16):** đã có ở `Doanh_SEARLE/outputs/GPT_phrases/P2_qwen25_15b_circo_val`. Chép thư mục này sang `SEARLE/outputs/GPT_phrases/` (thư mục chung) để Hòa chạy H18-P2.
+
 ## Quyết định của Chí, 14/11: sau D5–D8
 
 Đã nhận đủ: E3.1 CIRCO chạy lại có `--exclude-reference` (17 lượt), E3.2 (18 lượt), E4.3b, `phi_s0_degaug` và `phi_s0_noise` 50 epoch. **D5, D7, D8 xong.**

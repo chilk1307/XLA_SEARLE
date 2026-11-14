@@ -164,3 +164,4 @@ Trên dữ liệu thật, Hòa kiểm tra lại ở H5 (CIRR R@1 phải là 25.6
 | File | Việc | Thay đổi |
 |---|---|---|
 | `src/restore_oracle.json` | C14 | Thay bảng tạm bằng phép phục hồi có R@1 CIRR val cao nhất ở E3.2 (Doanh, 13/11): gauss_noise → bilateral, salt_pepper → median, gauss_blur → unsharp, motion_blur → wiener, jpeg → bilateral, low_light → gamma, low_res → unsharp, color_cast → white_patch. Khoá cache của `--restore oracle` chứa hash của file nên kết quả cũ không bị dùng lại nhầm. |
+| `src/restore_rules.json` | C14 | Ngưỡng `--restore auto` hiệu chỉnh lại trên 300 ảnh CIRR train (seed 0) bằng `tools/calibrate_restore_rules.py` (Doanh, 14/11), thay bản tạm từ 17 ảnh mẫu; nhận đúng loại suy giảm 81,3%. Đúng file đã dùng cho E3.3. |
