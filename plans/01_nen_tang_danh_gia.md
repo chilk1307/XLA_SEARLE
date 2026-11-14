@@ -223,7 +223,7 @@ Che lần lượt từng ô của ảnh tham chiếu (ô 32 × 32 px, bước 16
 | E1.14a | `oti_B32_s0` | 33.334 | 2–3 giờ |
 | E1.14b | `oti_B32_s0` + `oti_B32_s1` | 66.667 | 4–5 giờ |
 
-**Kiểm kê T2 14/11/2026:** s0 có 33.334 ảnh, s1 có 33.333 ảnh, tổng không trùng là 66.667; đã sửa số dự kiến 66.668. T2 đang train, chưa có điểm cuối; [log/kết quả](https://drive.google.com/drive/folders/1aYIIvTm-csZG0pfFfhA-fkmgab4vubG0).
+**Kiểm kê T2 14/11/2026:** s0 có 33.334 ảnh, s1 có 33.333 ảnh, tổng không trùng là 66.667; đã sửa số dự kiến 66.668. T2 đã nghiệm thu 100 epoch ngày 14/11: CIRR R@1/R@10 **24,68/68,72**; T1 **24,30/67,78**, phi_B32 cùng A100 **25,47/69,24**. CI Δ R@1 so T1 [−0,29; +1,05], so phi_B32 [−1,32; −0,26]. Một seed; chưa kết luận bão hòa; [log/kết quả](https://drive.google.com/drive/folders/1aYIIvTm-csZG0pfFfhA-fkmgab4vubG0).
 
 Vẽ R@1, R@10 theo số ảnh (thang log). Chưa rõ 6.824 ảnh của lần chạy cũ có trùng shard s0 không; ghi chú khi vẽ.
 
