@@ -41,8 +41,10 @@ Kiểm tra không hồi quy: sau khi sửa, chạy 2 epoch với cấu hình g�
 |---|---|---|---|
 | (đã có) | oti_b32 cũ | 6.824 | — |
 | E8.1a | oti_B32_s0 | 33.334 | 2–3 giờ |
-| E8.1b | oti_B32_s0 + s1 | 66.668 | 4–5 giờ |
+| E8.1b | oti_B32_s0 + s1 | 66.667 | 4–5 giờ |
 | (đã có) | oti_B32 | 100.000 | — |
+
+**Kiểm kê T2 14/11/2026:** s0 có 33.334 ảnh, s1 có 33.333 ảnh, tổng không trùng là 66.667; đã sửa số dự kiến 66.668. T2 đang train, chưa có điểm cuối; [log/kết quả](https://drive.google.com/drive/folders/1aYIIvTm-csZG0pfFfhA-fkmgab4vubG0).
 
 - Giữ nguyên 100 epoch như paper (ít ảnh hơn thì ít bước cập nhật hơn; ghi rõ điều này khi báo cáo).
 - Kết quả: biểu đồ R@1 và R@10 theo số ảnh (thang log). Câu hỏi: đã bão hoà ở 100.000 ảnh chưa? Nếu chưa thì có lý do tạo thêm token (dùng warm-start ở [07](07_hoc_may_oti_warm_start.md) E7.6 cho rẻ).
