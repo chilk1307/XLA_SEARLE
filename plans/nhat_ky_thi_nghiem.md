@@ -24,6 +24,7 @@
 | B10 | 13/11 | Điểm test chính thức | SEARLE gốc, sinh trên T4 | CIRR test1 rc2 | R@1/5/10/50 = 23.301 / 52.916 / 66.916 / 89.831; subset R@1/2/3 = 54.000 / 76.265 / 87.783 | — | CIRR server, H4 | 4.148 truy vấn; recall và recall_subset nộp riêng; không trộn với baseline val T4 25.59 |
 | B11 | 13/11 | Điểm test chính thức | SEARLE gốc, sinh trên T4 | CIRCO test | mAP@5/10/25/50 = 9.39 / 9.96 / 11.14 / 11.86 | — | Email CIRCO, H4 | 800 truy vấn; người dùng xác nhận nộp SEARLE sau phi_B32 |
 | E1.14a (= E8.1a) | 14/11 | T1 quy mô một shard s0, 100 epoch | phi_scale_s0_Hoa_20261114_e0dbcd, seed 42 | CIRR val, 4.181 truy vấn | R@1 24,30; R@10 67,78 | phi_B32 cùng A100: 25,47; Δ R@1 −1,17, CI [−1,89; −0,45] | [Gói T1](https://drive.google.com/drive/folders/1Efh_KhmM6PldYHMM9VrSS2ovZv3KfokS) | Đủ checkpoint/audit/CI; một seed; T2 chưa chạy |
+| E1.14b (= E8.1b) | 14/11 | T2 hai shard s0+s1, 100 epoch | phi_scale_s01_Hoa_20261114_c059b1, seed 42 | CIRR val, 4.181 truy vấn | R@1 24,68; R@10 68,72 | phi_B32: −0,79, CI [−1,32; −0,26]; T1: +0,38, CI [−0,29; +1,05] | [Gói T2](https://drive.google.com/drive/folders/1aYIIvTm-csZG0pfFfhA-fkmgab4vubG0) | 66.667 ảnh; đủ checkpoint/audit/CI; một seed |
 | E2.0s | 18/10 | Tỉ lệ truy vấn có thuộc tính đo được (**sơ bộ**) | `attributes/parser.py` | CIRR val (4.181), FIQ val (6.016, đủ câu), CIRCO val (220) | 36,3% / 90,7% / 25,5% | Ngưỡng M3: 10% | file chú thích công khai trên GitHub của từng tập | Chưa phải lượt chính thức (H9, trên tập con FIQ có ảnh) |
 | E2.1 | 18/10 | Kiểm thử bộ đo trên ảnh tổng hợp | `attributes/meters.py` | 46 sắc độ màu, 20 ảnh sọc/không sọc, 6 ảnh mẫu | Màu 100%; sọc 19/20 (đúng hướng 8/8); độ sáng, độ rực màu, diện tích đơn điệu; mặt nạ Otsu, GrabCut IoU 1,00, spectral residual 0,05–0,08 | — | `tools/test_meters.py` | Sai duy nhất: đốm thưa (ít cạnh) không được coi là có hoa văn |
 | C11-chấm | 18/10 | Độ chính xác parser và bộ phân loại | `parser.py`, `taxonomy.py` | 100 câu thật ngẫu nhiên (50 CIRR + 50 FIQ, seed 1) | Ràng buộc đúng 97%; nhóm đúng 78% | — | `tools/grading/parser_grading_seed1.csv` | Chấm bởi trợ lý AI thay Chí: Chí nên rà lại phiếu |
@@ -125,3 +126,24 @@ _(Thêm các mục chi tiết bên dưới, mới nhất ở trên cùng.)_
 
 - **Kết luận:** T1 giảm R@1 so với đối chứng, CI của Δ nằm dưới 0; không đổi số liệu để khớp kỳ vọng. Chỉ một seed train, query bootstrap không đo phương sai giữa seed; giữ 100 epoch làm số bước cập nhật khác theo lượng ảnh. Cache bỏ qua trích đặc trưng cũng thay đổi chuỗi RNG so với tự trích; T2 cần dùng cùng cách cache. B3 (6.824 ảnh) là mốc lịch sử, chọn mẫu có thể khác/không lồng nhau; chưa fit đường cong hoặc kết luận bão hòa. T2 (66.668 ảnh) chưa chạy.
 - **Bàn giao:** [T1 báo cáo MD/HTML, bốn CSV, ba hình, audit, manifest/SHA-256 và nguồn](https://drive.google.com/drive/folders/1Efh_KhmM6PldYHMM9VrSS2ovZv3KfokS). [H14 đã bổ sung T1](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq): 22 CSV, 29 PNG; H14 vẫn một phần chờ H10–H13. Hòa 12/20 (60%).
+
+### E1.14b (= E8.1b): nghiệm thu T2, 14/11/2026
+
+- **Người chạy:** Hòa; hoàn tất **14:53:55 GMT+7** (`2026-11-14T07:53:55Z`). Một experiment `phi_scale_s01_Hoa_20261114_c059b1`, mã `e64f1c50d5b2b008ff2cde0bb058c9cba6a363b6`, NVIDIA A100-SXM4-80GB, torch 1.11.0+cu113. Không sửa mã mô hình.
+- **Train:** s0 33.334 + s1 33.333 = **66.667 ảnh/token**, không trùng; raw/EMA bằng đúng phép nối hai shard, hữu hạn. Dùng token EMA, seed 42, batch 256, LR cố định 0,0001, 100 epoch, validation mỗi 5 epoch. Cache chọn đúng hàng từ cùng cache 100.000 ảnh như T1; hash cache s01 `3685c39fec94997e70a33d3f8910bc085da02f4252b1e101df6cffa582c294f0`.
+- **Audit:** đủ 100 dòng train liên tiếp/20 validation, mọi số hữu hạn; loss cuối 4,7181194691. `phi_last.pt`/`resume.pt` tại epoch 100, tham số hữu hạn. SHA-256 lần lượt `2eb465a68de6f31b7fbd575c66463ce9e5fd78b8b86685b6aad4d2e768745e60` / `bfcae7d25256f0615ff39f601ef96f53702fff61a4dcefe8fae584ed2c43f27c`.
+- **Đánh giá:** T2, T1 và phi_B32 chạy lại cùng A100/CIRR val 2.297 ảnh, 4.181 truy vấn/lượt. Không lỗi ảnh/bỏ/trùng qid; ba tập qid khớp; chỉ số khớp trung bình dump từng truy vấn. T1 và đối chứng khớp đủ bảy chỉ số của phiên nghiệm thu T1.
+
+| Chỉ số (%) | phi_B32 | T1 s0 | T2 s0+s1 |
+|---|---:|---:|---:|
+| cirr_recall_at1 | 25.47 | 24.30 | 24.68 |
+| cirr_recall_at5 | 55.23 | 54.08 | 54.65 |
+| cirr_recall_at10 | 69.24 | 67.78 | 68.72 |
+| cirr_recall_at50 | 90.43 | 89.79 | 90.60 |
+| cirr_group_recall_at1 | 55.20 | 54.63 | 54.96 |
+| cirr_group_recall_at2 | 76.11 | 75.63 | 75.94 |
+| cirr_group_recall_at3 | 87.83 | 87.63 | 87.66 |
+
+- **Hai CI ghép cặp:** 1.000 lần, seed 0, n_shared=4.181. R@1 T2 có CI [23,46; 25,95]. So T1: +0,38 điểm, CI [−0,29; +1,05] chứa 0, chưa chứng minh cải thiện rõ. So phi_B32: −0,79 điểm, CI [−1,32; −0,26] nằm dưới 0.
+- **Giới hạn:** một seed train; CI theo truy vấn không đo biến thiên giữa seed, chưa điều chỉnh nhiều phép so sánh. Giữ 100 epoch làm số bước cập nhật khác theo lượng dữ liệu; T1/T2 cùng dùng cache. Mốc B3 6.824 ảnh là lịch sử, chọn mẫu có thể khác/không lồng nhau. Không kết luận bão hòa ở 100.000 ảnh hoặc quan hệ nhân quả chỉ do lượng dữ liệu.
+- **Bàn giao:** [T2 — báo cáo MD/HTML, bốn CSV, ba hình, chỉ số/CI/audit và gói ZIP](https://drive.google.com/drive/folders/1aYIIvTm-csZG0pfFfhA-fkmgab4vubG0). [H14 cập nhật T1/T2](https://drive.google.com/drive/folders/1AfGRsrFrKQliryolxddAvKZOS8p40Yfq): 26 CSV, 32 PNG, Hòa 13/20 (65%). H14 cuối cùng vẫn chờ các phần H10–H13; Chí đã xác nhận màu w=2 để chạy 12 lượt H10 còn lại. Không gửi thông báo cho Chí trong phiên này.
