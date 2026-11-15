@@ -34,9 +34,9 @@ function runs(text, base = {}) {
   while ((m = re.exec(text))) {
     if (m.index > last) out.push(new TextRun({ text: lit(text.slice(last, m.index)), font: FONT, ...base }));
     const t = m[0];
-    if (t.startsWith('**')) out.push(new TextRun({ text: lit(t.slice(2, -2)), bold: true, font: FONT, ...base }));
-    else if (t.startsWith('`')) out.push(new TextRun({ text: lit(t.slice(1, -1)), font: 'Consolas', size: 22, ...base }));
-    else out.push(new TextRun({ text: lit(t.slice(1, -1)), italics: true, font: FONT, ...base }));
+    if (t.startsWith('**')) out.push(new TextRun({ font: FONT, ...base, text: lit(t.slice(2, -2)), bold: true }));
+    else if (t.startsWith('`')) out.push(new TextRun({ ...base, text: lit(t.slice(1, -1)), font: 'Consolas', size: 22 }));
+    else out.push(new TextRun({ font: FONT, ...base, text: lit(t.slice(1, -1)), italics: true }));
     last = m.index + t.length;
   }
   if (last < text.length) out.push(new TextRun({ text: lit(text.slice(last)), font: FONT, ...base }));
@@ -137,7 +137,7 @@ add(P('Truy xuất ảnh kết hợp (Composed Image Retrieval, CIR) nhận mộ
 add(P('Nhóm tái lập toàn bộ quy trình SEARLE với CLIP ViT-B/32 (OTI trên 100.000 ảnh ImageNet, huấn luyện mạng φ 100 epoch). Mô hình của nhóm đạt **CIRR test R@1 23,35** và **CIRCO test mAP@5 9,44** trên server chấm chính thức, ngang checkpoint của tác giả chạy cùng quy trình (23,30 và 9,39). Trên nền đó, nhóm thêm hai hướng xử lý ảnh:'));
 add(UL([
   '**Kiểm chứng thuộc tính bằng xử lý ảnh cổ điển:** tách ràng buộc màu, độ sáng, độ rực, hoa văn, zoom từ câu mô tả; đo chúng trên ảnh bằng CIELAB, CIEDE2000, phân vùng Otsu/GrabCut, phổ Fourier, LBP, Gabor; dùng để xếp hạng lại. Bộ đo đồng thuận với câu mô tả 63–76% (mức ngẫu nhiên 46–52%), nhưng qua 76 cấu hình, không cấu hình nào cải thiện truy xuất có ý nghĩa thống kê: thông tin bộ đo bắt được phần lớn CLIP đã có.',
-  '**Độ bền với ảnh xấu và phục hồi ảnh:** 8 loại suy giảm × 2 mức, 14 phép phục hồi, bộ ước lượng loại suy giảm để tự chọn phép phục hồi, và mạng φ huấn luyện thêm trên đặc trưng ảnh xấu. Phục hồi đúng loại cứu được tới 1,9 điểm R@1 (Wiener với mờ chuyển động, median với nhiễu muối tiêu), nhưng **mức tăng PSNR không đi cùng mức tăng truy xuất** (Spearman ρ = −0,09 trên 18 cặp); độ lệch của vector CLIP so với ảnh sạch dự báo thiệt hại tốt hơn hẳn PSNR/SSIM (ρ = +0,80 so với −0,54/−0,64).',
+  '**Độ bền với ảnh xấu và phục hồi ảnh:** 8 loại suy giảm × 2 mức, 14 phép phục hồi, bộ ước lượng loại suy giảm để tự chọn phép phục hồi, và mạng φ huấn luyện thêm trên đặc trưng ảnh xấu. Phục hồi đúng loại cứu được tới 1,9 điểm R@1 (Wiener với mờ chuyển động, median với nhiễu muối tiêu), nhưng **mức tăng PSNR không đi cùng mức tăng truy xuất** (Spearman ρ = −0,09 trên 18 cặp); độ lệch của vector CLIP so với ảnh sạch dự báo thiệt hại tốt hơn hẳn PSNR/SSIM (ρ = +0,80 so với −0,54/−0,64). Mạng φ huấn luyện thêm trên đặc trưng ảnh xấu tăng 0,44 điểm R@1 trung bình trên ảnh xấu (CI [+0,16; +0,72]) mà không mất gì trên ảnh sạch, kể cả với loại suy giảm chưa thấy khi huấn luyện.',
 ]));
 add(P('Ngoài ra nhóm phân tích lỗi (giữ – sửa, theo nhóm kiểu sửa đổi), phân tích pseudo-token so với từ thật, miền tần số, tiền xử lý, và một số hướng học máy (khởi tạo OTI, bộ câu GPT mới, lịch học, lượng dữ liệu). Mọi kết luận "cải thiện" đều kèm khoảng tin cậy bootstrap ghép cặp 95%.'));
 
@@ -409,7 +409,21 @@ add(TABLE(['Điều kiện ảnh tham chiếu', 'φ thường', 'φ ảnh xấu 
   ['TB 4 suy giảm chưa thấy', '22,60', '**22,91**', '22,88'],
   ['TB cả 8 suy giảm', '22,79', '**23,16**', '23,02'],
 ], [40, 20, 20, 20], 'Sàng lọc φ bền (E3.8a): 50 epoch trên 33.334 ảnh, CIRR val R@1, một seed.', { numeric: [1, 2, 3] }));
-add(P('Biến thể degaug bền nhất (+0,37 điểm trung bình trên 8 suy giảm, +0,31 trên suy giảm chưa thấy, rõ nhất mờ chuyển động +1,03), đổi lại −0,24 trên ảnh sạch. Bản đầy đủ (100.000 ảnh, 100 epoch) và đánh giá có khoảng tin cậy (E3.8b, E3.8c) **đang chạy khi viết báo cáo; kết quả sẽ bổ sung vào mục này**.'));
+add(P('Biến thể degaug bền nhất (+0,37 điểm trung bình trên 8 suy giảm, +0,31 trên suy giảm chưa thấy, rõ nhất mờ chuyển động +1,03), đổi lại −0,24 trên ảnh sạch. Nhóm huấn luyện bản đầy đủ `phi_B32_robust` theo biến thể này (100.000 ảnh, 100 epoch, E3.8b) và so với phi_B32 trên cùng điều kiện (E3.8c).'));
+add(TABLE(['Điều kiện ảnh tham chiếu', 'phi_B32', 'phi_B32_robust', 'Δ (CI 95%)'], [
+  ['Ảnh sạch (CIRR R@1)', '25,47', '25,45', '−0,02 [−0,45; +0,43]'],
+  ['Trung bình 8 suy giảm (CIRR R@1)', '24,11', '24,55', '**+0,44 [+0,16; +0,72]**'],
+  ['JPEG, mức 2 (đã thấy)', '23,94', '24,68', '**+0,74 [+0,10; +1,36]**'],
+  ['Thiếu sáng, mức 2 (đã thấy)', '23,25', '23,99', '**+0,74 [+0,10; +1,36]**'],
+  ['Nhiễu Gauss, mức 2 (đã thấy)', '24,49', '25,02', '+0,53 [−0,10; +1,10]'],
+  ['Mờ Gauss, mức 2 (đã thấy)', '25,14', '24,92', '−0,22 [−0,84; +0,45]'],
+  ['Mờ chuyển động, mức 2 (chưa thấy)', '22,70', '23,61', '**+0,91 [+0,31; +1,53]**'],
+  ['Muối tiêu, mức 2 (chưa thấy)', '23,46', '24,13', '**+0,67 [+0,12; +1,24]**'],
+  ['Lệch màu, mức 2 (chưa thấy)', '24,78', '25,11', '+0,33 [−0,14; +0,86]'],
+  ['Độ phân giải thấp, mức 2 (chưa thấy)', '25,11', '24,92', '−0,19 [−0,74; +0,41]'],
+  ['Ảnh sạch (CIRCO mAP@5 / FashionIQ R@10)', '8,78 / 22,59', '8,82 / 22,79', '+0,04 / +0,20 (CI chứa 0)'],
+], [40, 16, 18, 26], 'φ bền bản đầy đủ so với phi_B32 (E3.8c, val; CIRCO loại ảnh tham chiếu; CI ghép cặp 1.000 lần). Hàng "trung bình 8 suy giảm": mỗi truy vấn lấy trung bình 8 kết quả top-1 rồi mới bootstrap.', { numeric: [1, 2] }));
+add(P('φ bền **không mất gì trên ảnh sạch** (CI của hiệu số nằm trong ±0,5 điểm) và tăng trung bình 0,44 điểm trên ảnh xấu, có ý nghĩa thống kê. Quan trọng hơn, nó **tổng quát hoá sang suy giảm chưa thấy khi huấn luyện**: mờ chuyển động +0,91 và muối tiêu +0,67, ngang các loại đã thấy. Trên CIRCO, thiếu sáng (+1,40) và muối tiêu (+1,11) cũng tăng có ý nghĩa. Hai loại gần như vô hại với CLIP (mờ Gauss, độ phân giải thấp) không được lợi. Theo luật quyết định ghi trước, φ bền được nộp thêm lên server test; cấu hình chính của báo cáo vẫn là phi_B32. *[Bổ sung điểm test của phi_B32_robust khi có.]*'));
 add(Figure(['e37_example.png', 'Một truy vấn CIRR (E3.7): ảnh gốc, nhiễu Gauss, nhiễu Gauss + NLM, kèm top-5 và thứ hạng ảnh đích. Riêng truy vấn này NLM kéo ảnh đích từ hạng 24 lên 4, dù trung bình NLM có hại (Hình 7.2).', 590]));
 
 // ---------------- Chương 8 ----------------
@@ -462,6 +476,7 @@ add(UL([
   'Tái lập SEARLE ViT-B/32 đầy đủ, ngang checkpoint của tác giả trên server test chính thức (CIRR R@1 23,35 so với 23,30; CIRCO mAP@5 9,44 so với 9,39).',
   'Kiểm chứng thuộc tính bằng xử lý ảnh: bộ đo đúng hơn ngẫu nhiên rõ rệt nhưng không cải thiện truy xuất có ý nghĩa trong 76 cấu hình; trọng số lớn còn có hại. Giá trị còn lại là giải thích được kết quả bằng con số đo trên ảnh.',
   'Phục hồi ảnh: phục hồi đúng loại cứu tới 1,9 điểm R@1; phục hồi tự động bằng ước lượng cổ điển tăng 0,67 trên ảnh xấu nhưng giảm 0,29 trên ảnh sạch. PSNR/SSIM không dự báo được lợi ích cho truy xuất; độ trôi vector CLIP thì có (ρ ≈ 0,8).',
+  'φ bền (huấn luyện thêm trên đặc trưng ảnh xấu): không mất gì trên ảnh sạch, tăng 0,44 điểm R@1 trung bình trên 8 suy giảm (CI [+0,16; +0,72]), kể cả trên suy giảm chưa thấy khi huấn luyện; đây là kết quả dương rõ nhất của đề tài.',
   'CLIP dựa chủ yếu vào tần số thấp; cấu hình tiền xử lý gốc của SEARLE đã tối ưu; pseudo-token không phải một từ: lớn gấp ~38 lần từ thật và mất 8 điểm R@1 khi bị ép về từ gần nhất.',
 ]));
 add(H2('11.2. Hạn chế'));

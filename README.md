@@ -23,7 +23,7 @@ Các phần mở rộng (val, có khoảng tin cậy bootstrap ghép cặp 95%; 
 - **Phục hồi ảnh** (CIRR val R@1, ảnh tham chiếu suy giảm mức 2): median trên nhiễu muối tiêu +1,72, Wiener trên mờ chuyển động +1,87, gamma trên thiếu sáng +0,79. **PSNR tăng không kéo theo truy xuất tăng**: NLM trên nhiễu Gauss tăng PSNR 5,8 dB mà R@1 giảm 0,65. Phục hồi tự động (`auto`) trên bộ suy giảm hỗn hợp: 24,49 → 25,16, nhưng làm giảm nhẹ trên ảnh sạch (25,50 → 25,21).
 - **Miền tần số**: lọc thông thấp bán kính ≥ 0,1 gần như không mất điểm, lọc thông cao mất 4,6–7,7 điểm R@1, tức CLIP dựa chủ yếu vào tần số thấp.
 - **Tiền xử lý**: targetpad 1.25 + bicubic (mặc định của SEARLE) tốt nhất; lật ảnh (tối đa +0,05), kết hợp điểm ảnh + chữ và ensemble prompt (đều làm giảm R@1) không giúp.
-- **φ bền với ảnh xấu**: bản sàng lọc huấn luyện thêm trên đặc trưng ảnh xấu (`degaug`) tăng trung bình 0,37 điểm R@1 trên 8 loại suy giảm, giá −0,24 trên ảnh sạch; bản đầy đủ đang được huấn luyện và đánh giá (E3.8b, E3.8c).
+- **φ bền với ảnh xấu**: huấn luyện φ thêm trên đặc trưng ảnh xấu (`phi_B32_robust`) tăng CIRR R@1 trung bình 0,44 điểm trên 8 loại suy giảm (CI [+0,16; +0,72]) mà không mất gì trên ảnh sạch (−0,02, CI [−0,45; +0,43]); tăng có ý nghĩa cả trên suy giảm chưa thấy khi huấn luyện (mờ chuyển động +0,91, nhiễu muối tiêu +0,67).
 
 ## Cấu trúc repo
 

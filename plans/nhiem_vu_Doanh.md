@@ -10,6 +10,30 @@
 5. Hình minh hoạ (E3.7), độ bền bộ đo thuộc tính (E3.6).
 6. Kết quả luồng học máy và bộ câu GPT (E7.2, E6.1, E6.4), nếu đã chạy.
 
+## Quyết định của Chí, 15/11: C18, nộp test phi bền (D13)
+
+E3.8c đạt **cả hai** điều kiện của luật C18 ghi ngày 14/11 (CIRR val R@1, CI ghép cặp 1.000 lần, seed 0):
+
+| Điều kiện | phi_B32 | phi_B32_robust | Δ | CI 95% | Ngưỡng |
+|---|---:|---:|---:|---|---|
+| Ảnh sạch | 25,47 | 25,45 | −0,02 | [−0,45; +0,43] | cận dưới ≥ −1,0: đạt |
+| Trung bình 8 suy giảm | 24,11 | 24,55 | +0,44 | [+0,16; +0,72] | CI > 0: đạt |
+
+Từng loại trên CIRR: tăng có ý nghĩa ở JPEG +0,74, thiếu sáng +0,74 (đã thấy khi train), muối tiêu +0,67, mờ chuyển động +0,91 (**chưa thấy khi train**). CIRCO: thiếu sáng +1,40, muối tiêu +1,11 (mAP@5). Ảnh sạch CIRCO +0,04, FashionIQ +0,20 (CI chứa 0).
+
+**Quyết định:** cấu hình cuối của báo cáo vẫn là phi_B32 mặc định (điểm test đã có từ H4). **Nộp thêm phi_B32_robust** lên server test để báo cáo có thêm dòng phi bền. D13, chạy trên A100/T4, đặt `--exp-name` đúng thư mục checkpoint trong `outputs/phi_models/`:
+```bash
+ROB="--eval-type phi --exp-name phi_B32_robust --phi-checkpoint-name phi_last.pt --cache-dir $DRIVE/cache"
+$PY src/generate_test_submission.py $ROB --submission-name robust_cirr  --dataset cirr  --dataset-path $DATA/CIRR
+$PY src/generate_test_submission.py $ROB --submission-name robust_circo --dataset circo --dataset-path $DATA/CIRCO
+mkdir -p $DRIVE/outputs/submissions
+cp data/test_submissions/cirr/*robust_cirr*.json data/test_submissions/circo/robust_circo.json $DRIVE/outputs/submissions/
+```
+- CIRCO test **không** thêm `--exclude-reference`, đúng giao thức của hai file phi_B32 và SEARLE đã nộp ở H4, để ba dòng test so được với nhau.
+- Kiểm tra như H4: đủ 4.148 truy vấn CIRR (file thường + file `subset_`), 800 truy vấn CIRCO, 50 kết quả mỗi truy vấn; ghi SHA-256.
+- Nộp server cần làm tay (hCaptcha của CIRR, email của CIRCO), như H4. Gửi Chí 3 file và điểm nhận được để ghi vào nhật ký (B12, B13).
+- D17 (train phi trên shard s0 với bộ câu mới) vẫn tuỳ chọn: bộ P2 hiện chỉ phủ khái niệm của CIRCO val.
+
 ## Quyết định của Chí, 14/11 (tối): chốt D10, phi bền bản đầy đủ dùng `degaug`
 
 Bảng D9 (CIRR val R@1, 4.181 truy vấn mỗi lượt, 3 bản sàng lọc 50 epoch trên shard s0):
