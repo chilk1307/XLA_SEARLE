@@ -9,13 +9,14 @@ Bài tập lớn môn Xử lý ảnh. Nhóm tái lập **SEARLE** (Baldrati et a
 
 ## Kết quả chính
 
-Tái lập (ViT-B/32). Điểm **test** do server chính thức chấm (13/11/2026); số val đo bằng code của repo.
+Tái lập (ViT-B/32). Điểm **test** do server chính thức chấm (13/11/2026; φ bền 15/11/2026); số val đo bằng code của repo.
 
 | | CIRR test R@1 | CIRR test R@5 | CIRR test Rsubset@1 | CIRCO test mAP@5 | CIRR val R@1 |
 |---|---:|---:|---:|---:|---:|
 | SEARLE, số trong bài báo (Table 2, 3, 9) | 24.00 | 53.42 | 54.89 | 9.35 | 25.09 |
 | SEARLE, checkpoint của tác giả, chạy lại | 23.30 | 52.92 | 54.00 | 9.39 | 25.66 (A100) / 25.59 (T4) |
 | **φ của nhóm** (`phi_B32`: OTI trên 100.000 ảnh ImageNet + huấn luyện 100 epoch) | **23.35** | **52.65** | **54.46** | **9.44** | **25.47** |
+| φ bền với ảnh xấu (`phi_B32_robust`, xem bên dưới) | 23.47 | 53.13 | 54.48 | 9.62 | 25.45 |
 
 Các phần mở rộng (val, có khoảng tin cậy bootstrap ghép cặp 95%; chi tiết ở [tien_do.md](plans/tien_do.md) và [nhat_ky_thi_nghiem.md](plans/nhat_ky_thi_nghiem.md)):
 

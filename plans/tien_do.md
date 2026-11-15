@@ -1,5 +1,11 @@
 # Tiến độ dự án
 
+**15/11/2026 tối (Chí): Doanh xong D13.** Sinh `robust_cirr`, `subset_robust_cirr`, `robust_circo` trên A100 (commit `bffac34`, 4.148 / 4.148 / 800 truy vấn, có SHA-256 và audit) và đã nộp tay đủ ba file. Điểm test `phi_B32_robust` (ảnh sạch) so với phi_B32:
+- CIRR R@1 **23,47** (23,35), R@5 53,13 (52,65), R@10 66,94 (66,94), Rsubset@1 54,48 (54,46);
+- CIRCO mAP@5 **9,62** (9,44), mAP@10 9,93 (9,79).
+
+Server không trả kết quả từng truy vấn nên không có CI; kết luận là φ bền không kém phi_B32 trên ảnh sạch, khớp val. Đã ghi B12/B13 trong [nhật ký](nhat_ky_thi_nghiem.md), Mục 7.8 báo cáo và README. Nguồn: `Doanh_SEARLE/results/D13-robust-Doanh/`, ảnh chụp ở `Doanh_SEARLE/outputs/submissions/`. **Doanh 15/17 (88%); cả nhóm 56/61 (92%).**
+
 **15/11/2026 (Chí): chốt C18.** Doanh xong D10 (train `phi_B32_robust`, degaug, 100 epoch), D11 (E3.8c 19 lượt có CI, E3.9 phi bền), D14 (bàn giao). E3.8c đạt cả hai điều kiện của luật C18:
 - ảnh sạch CIRR R@1 25,47 → 25,45, Δ −0,02 [−0,45; +0,43];
 - trung bình 8 suy giảm 24,11 → 24,55, Δ **+0,44 [+0,16; +0,72]**. Tăng có ý nghĩa cả ở hai loại chưa thấy khi train (muối tiêu +0,67, mờ chuyển động +0,91).
@@ -167,8 +173,8 @@ Cả ba họ đều không có CI cải thiện nằm trên 0; theo luật đã 
 | **Giai đoạn 0: tái lập SEARLE** (trước kế hoạch) | 15 | 15 | **100%** | Đã đủ điểm test chính thức CIRR/CIRCO cho SEARLE gốc và phi_B32 ngày 13/11; FashionIQ val đầy đủ đã đánh giá với `--exclude-reference` ngày 26/10 |
 | Kế hoạch 2 tuần: Chí (C1–C24) | 21 | 24 | 88% | C18 chốt 15/11; C17 demo xong code (còn kiểm tra trên trình duyệt); C19 báo cáo Word xong bản đủ chương (còn ảnh demo, thông tin bìa, slide); còn C20 |
 | Kế hoạch 2 tuần: Hòa (H1–H18, T1–T2) | 20 | 20 | 100% | H1–H18 và T1/T2 hoàn tất theo cấu hình mặc định phi_B32; H1/H13/H14 nghiệm thu 14/11; P3 tùy chọn, phi bền bổ sung theo C18 |
-| Kế hoạch 2 tuần: Doanh (D1–D17) | 14 | 17 | 82% | D1–D12, D14, D16 xong; D15 bỏ; còn D13 (nộp test phi bền), D17 (tuỳ chọn) |
-| **Kế hoạch 2 tuần: cả nhóm** | 55 | 61 | **90%** | Hòa 20/20, Chí 21/24, Doanh 14/17 (D15 bỏ) |
+| Kế hoạch 2 tuần: Doanh (D1–D17) | 15 | 17 | 88% | D1–D14, D16 xong; D15 bỏ; còn D17 (tuỳ chọn) |
+| **Kế hoạch 2 tuần: cả nhóm** | 56 | 61 | **92%** | Hòa 20/20, Chí 21/24, Doanh 15/17 (D15 bỏ) |
 | Mốc kiểm tra M1–M5 | 1 | 5 | 20% | M3 đạt 12/11 (giữ hướng 02); M1, M2, M4, M5 quá hạn chưa đạt |
 
 Trang tự đánh giá của demo (`/api/assessment`, chỉ tính phần tái lập): lõi **93%**, tính cả phần mở rộng (SEARLE-XL, SEARLE-OTI) **75%**.
@@ -218,7 +224,7 @@ Chi tiết: [nhiem_vu_Chi.md](nhiem_vu_Chi.md).
 - [x] **C16** (Ngày 9) Công cụ hình ảnh: ví dụ, bản đồ che khuất, hình suy giảm, PSNR so với điểm truy xuất (`visualize_queries.py`, `occlusion_map.py`, `visualize_degradations.py`, `quality_vs_retrieval.py`; thử trên dữ liệu giả lập) — 18/10
 - [ ] **C17** (Ngày 10–11) Demo: tab thuộc tính, tab ảnh xấu → phục hồi, so sánh phương pháp, nút "Vì sao?" (một phần, 15/11: đủ 4 tính năng trong `demo/features.py`, thử mọi endpoint bằng Flask test client trên 18 ảnh mẫu; còn kiểm tra giao diện trên trình duyệt và chụp ảnh màn hình cho báo cáo; nhập tiếng Việt chưa làm)
 - [x] **C18** (Ngày 11) Chọn cấu hình cuối, gửi lệnh nộp test — 15/11: theo luật ghi 14/11, cấu hình cuối phi_B32 mặc định (điểm test H4); E3.8c đạt cả hai điều kiện nên nộp thêm `phi_B32_robust` (D13)
-- [ ] **C19** (Ngày 12–13) README gốc repo, `CHANGES.md`, báo cáo, slide (một phần, 15/11: README, CHANGES.md xong; **báo cáo Word 35 trang, đủ 11 chương** dựng bằng `report/build_report.js` (file `report/Bao_cao_XLA_SEARLE.docx`, không đưa lên git vì có ảnh dataset); còn: kết quả φ bền E3.8b/c ở Mục 7.8, ảnh chụp demo ở Chương 9, họ tên/MSSV/giảng viên ở bìa; slide chưa làm)
+- [ ] **C19** (Ngày 12–13) README gốc repo, `CHANGES.md`, báo cáo, slide (một phần, 15/11: README, CHANGES.md xong; **báo cáo Word đủ 11 chương** dựng bằng `report/build_report.js` (file `report/Bao_cao_XLA_SEARLE.docx`, không đưa lên git vì có ảnh dataset); Mục 7.8 đã có E3.8c và điểm test φ bền (15/11); còn: ảnh chụp demo ở Chương 9, họ tên/MSSV/giảng viên ở bìa; slide chưa làm)
 - [ ] **C20** (Ngày 14) Video demo, kiểm tra trước khi nộp, nộp bài
 - [x] **C21** (Ngày 9) Code OTI warm-start (`--init`, `--snapshot-steps`, `--token-file`) (`--init random` trùng từng bit code gốc; thêm `timing.json`, `--gpt-exp-name none`, nội suy token khi đánh giá) — 18/10
 - [x] **C22** (Ngày 9) Công cụ bộ câu GPT: thống kê, làm sạch (P1), `--phrase-match`, `--concept-filter`, sửa lỗi `saved_exp_name` (đọc/ghi file câu dạng luồng, không cần nạp cả 700 MB) — 18/10
@@ -266,7 +272,7 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
 - [x] **D10** (Ngày 9) Train phi bền bản đầy đủ (E3.8b); phục hồi tự động (E3.3) — 15/11: `phi_B32_robust` degaug 100 epoch; E3.3 xong 14/11
 - [x] **D11** (Ngày 10) PSNR/SSIM so với điểm truy xuất (E3.4); đánh giá phi bền (E3.8c); độ trôi vector (E3.9) — 15/11: E3.8c 19 lượt (3 tập sạch, 8 suy giảm × CIRR/CIRCO) và 19 CI; E3.9 cho phi gốc và phi bền
 - [x] **D12** (Ngày 11) Độ bền bộ đo thuộc tính (E3.6); hình minh hoạ (E3.7) — 14/11
-- [ ] **D13** (Ngày 12) Chạy bổ sung; nộp test phi bền (nếu được chọn) — 15/11: **đã được chọn** (C18); sinh `robust_cirr`, `robust_circo`, nộp tay
+- [x] **D13** (Ngày 12) Chạy bổ sung; nộp test phi bền (nếu được chọn) — 15/11: được chọn ở C18; đã sinh và nộp tay đủ 3 file; CIRR test R@1 23,47, Rsubset@1 54,48; CIRCO test mAP@5 9,62 (B12/B13)
 - [x] **D14** (Ngày 13) Tổng hợp bảng, hình → bàn giao Chí — 15/11: `Doanh_SEARLE/results/D14-Doanh-20261115/` và `figures_Doanh/`
 - [ ] **D15** (Ngày 12) OTI warm-start trên CIRR val (E7.2) — **bỏ** (Chí, 14/11): E7.1 trên CIRCO không có cấu hình warm-start nào hơn khởi tạo ngẫu nhiên rõ ràng
 - [x] **D16** (Ngày 12) Thống kê bộ câu (E6.1); sinh bộ câu mới quy mô nhỏ — 14/11: E6.1 P0/P1/P2; P2 = Qwen2.5-1.5B cho CIRCO val (`Doanh_SEARLE/outputs/GPT_phrases/P2_qwen25_15b_circo_val`)
@@ -282,16 +288,11 @@ Chi tiết: [nhiem_vu_Doanh.md](nhiem_vu_Doanh.md).
 
 ## Việc tiếp theo
 
-1. **Doanh:**
-   - **D10:** train `phi_B32_robust` (degaug, 100 epoch);
-   - sau đó **E3.8c** (CI ghép cặp với phi_B32) và E3.9 cho phi bền;
-   - bộ câu P2 đã được chép sang `SEARLE/outputs/GPT_phrases/` và H18-P2 đã nghiệm thu;
-   - D17 (train phi trên shard s0 với bộ câu mới) nếu còn A100.
-2. **Hòa:**
-   - Đã hoàn tất 20/20 việc; gói H14 cuối có đủ H1/H13 và nguồn kết quả, không có lượt GPU bắt buộc mới.
-   - Khi có E3.8c, chỉ bổ sung nhánh test phi bền nếu đạt cả hai điều kiện C18 đã ghi trước; chưa coi là phần đã chạy.
-   - P3 tùy chọn, không chặn nghiệm thu. Không chạy lại H10/H11/H12/H18 hoặc T1/T2.
-3. **Chí:**
-   - chốt C18 khi có E3.8c: nếu phi bền không kém phi_B32 rõ rệt trên ảnh sạch thì cân nhắc nộp test, nếu không thì giữ phi_B32 mặc định (đã có điểm test từ H4);
-   - C1/H1 đã xong theo quyết định không đóng gói lại; hai tar hỏng đã cách ly, bốn dryrun đã chuyển vào discarded;
-   - C17–C20: demo, báo cáo, slide, video.
+Cập nhật 15/11 tối: mọi lượt GPU bắt buộc đã xong; phần còn lại là việc của Chí.
+
+1. **Chí:**
+   - **C17:** mở demo trên trình duyệt, kiểm tra 4 tính năng mới, chụp ảnh màn hình cho Chương 9 báo cáo.
+   - **C19:** điền bìa (họ tên, MSSV, lớp, giảng viên), chèn ảnh demo, làm slide.
+   - **C20:** video demo, kiểm tra cuối, nộp bài.
+2. **Doanh:** D17 (train phi trên shard s0 với bộ câu mới, E6.4) chỉ khi còn A100; không chặn nộp bài.
+3. **Hòa:** đã xong 20/20; P3 tùy chọn. Không chạy lại H10/H11/H12/H18 hoặc T1/T2.
